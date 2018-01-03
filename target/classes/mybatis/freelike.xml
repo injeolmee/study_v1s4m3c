@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace = "freelike">
+  
+  <!-- 좋아요 등록 -->
+  <insert id="create" parameterType="HashMap">
+    INSERT INTO freelike(goodno, goodchk, freeno, memberno)
+    VALUES ((SELECT NVL(MAX(goodno), 0) + 1 as goodno FROM freelike), 0, #{freeno}, #{memberno})
+  </insert>
+  
+  <!-- 이미 입력된 회원인지 체크여부 확인 -->
+  <select id="good_chk" resultType="int" parameterType="HashMap">
+    SELECT count(goodno)
+    FROM freelike
+    WHERE freeno = #{freeno} AND memberno = #{memberno}
+  </select>
+  
+  <!-- 게시글 및 회원별로 좋아요 체크여부 확인 -->
+  <select id="check" resultType="int" parameterType="HashMap">
+    SELECT goodchk
+    FROM freelike
+    WHERE freeno = #{freeno} AND memberno = #{memberno}
+  </select>
+  
+  <!-- 회원이 좋아요를 체크한다면 좋아요 체크여부를 1로 바꿈 -->
+  <update id="good_chk_y" parameterType="HashMap">
+    UPDATE freelike
+    SET goodchk = 1
+    WHERE freeno = #{freeno} AND memberno = #{memberno}
+  </update>
+  
+  <!-- 회원이 좋아요가 체크된 상태에서 좋아요를 다시 체크한다면 좋아요 체크여부를 0로 바꿈 -->
+  <update id="good_chk_n" parameterType="HashMap">
+    UPDATE freelike
+    SET goodchk = 0
+    WHERE freeno = #{freeno} AND memberno = #{memberno}
+  </update>
+  
+</mapper>

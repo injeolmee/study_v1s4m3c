@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="message_admin">
+  <select id="msg_list_admin" resultType="MessageVO" parameterType="HashMap">
+    SELECT msg_no, memberno_recv, memberno_send, msg_title, msg_confirm, msg_content, msg_rev_date, msg_date, r
+      FROM (
+        SELECT msg_no, memberno_recv, memberno_send, msg_title, msg_confirm, msg_content, msg_rev_date, msg_date, rownum as r
+        FROM(
+          SELECT msg_no, memberno_recv, memberno_send, msg_title, msg_confirm, msg_content, msg_rev_date, msg_date
+          FROM message
+          <choose>
+            <!-- 아이디로 검색하는 경우 search_condition 도 HashMap으로 전달 받는다. -->
+            <when test="search_condition=='search_id'">
+              WHERE (memberno_send=#{memberno_send } OR memberno_recv=#{memberno_recv})
+            </when>
+            <!-- 제목으로 검색하는 경우 -->
+            <when test="search_condition=='msg_title'">
+              WHERE msg_title LIKE '%' || #{msg_title} || '%'
+            </when>
+            <!-- 내용으로 검색하는 경우  -->
+            <when test="search_condition=='msg_content'">
+              WHERE msg_content LIKE '%' || #{msg_content} || '%'
+            </when>
+          </choose>
+          ORDER BY msg_no DESC
+        ) 
+        <choose> 
+          <!-- 선택한 날짜에 따른 검색 조건 -->
+          <when test="first_day != ''">
+            where msg_date between TO_DATE(#{first_day}, 'YYYY-MM-DD') and TO_DATE(#{second_day}, 'YYYY-MM-DD')+0.99999
+          </when>
+        </choose>
+    )where <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]>
+  </select>
+  
+  <select id="message_admin_search_cnt" parameterType="HashMap" resultType="int">
+    SELECT count(*) as cnt
+      FROM( 
+        SELECT msg_no, memberno_recv, memberno_send, msg_title, msg_confirm, msg_content, msg_rev_date, msg_date
+        FROM message
+        <choose> 
+          <!-- 아이디로 검색하는 경우 search_condition 도 HashMap으로 전달 받는다. -->
+          <when test="search_condition=='search_id'">
+            WHERE (memberno_send=#{memberno_send } OR memberno_recv=#{memberno_recv})
+          </when>
+          <!-- 제목으로 검색하는 경우 -->
+          <when test="search_condition=='msg_title'">
+            WHERE msg_title LIKE '%' || #{msg_title} || '%'
+          </when>
+          <!-- 내용으로 검색하는 경우  -->
+          <when test="search_condition=='msg_content'">
+            WHERE msg_content LIKE '%' || #{msg_content} || '%'
+          </when>
+        </choose>
+        ORDER BY msg_no DESC
+      )
+      <choose>
+        <!-- 선택한 날짜에 따른 검색 조건 -->
+        <when test="first_day != ''">
+          where msg_date between TO_DATE(#{first_day}, 'YYYY-MM-DD') and TO_DATE(#{second_day}, 'YYYY-MM-DD')+0.99999
+        </when>
+      </choose>
+  </select>
+  
+  <delete id="message_del_admin" parameterType="int">
+    DELETE
+    FROM message
+    WHERE msg_no=#{msg_no}
+  </delete>
+</mapper>

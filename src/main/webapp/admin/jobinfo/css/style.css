@@ -1,0 +1,1309 @@
+
+/* style.css 관련 구성 내용
+1 .General                            (+) created general styles and overide some bootstrap classes.
+
+2. Layout 관련
+ 2.1 애니메이션
+ 2.2 버튼
+ 2.3 썸네일                          (+) overide bootstrap thumbnail and add mased efect
+ 2.4 Social icons                   (+) style for social icons list
+
+3. Sections 관련                    (+) definition for section and subsection
+ 3.1 Services (사이트 소개)
+ 3.2 Portfolio (Study Room)
+ 3.3 Clients (Study Group)
+ 3.4 Footer (하단 메뉴)
+ 
+4. Responsive 
+*/
+
+/*********************************************************************
+1. General
+**********************************************************************/
+ body { /* body 태그 기본 속성 */
+    font-family:'Roboto', sans-serif;
+    color: #FFF;
+    line-height:1.2em;
+    font-size:17px;
+    line-height:20px;
+}
+
+  .div_grid_img {
+    background-color: #EEEEEE;
+    float: left;
+    position: relative;
+    left: 0%;
+    margin: 2%;
+    width: 23%;
+    height: 180px;
+  }
+  
+  .bottom_menu {
+    margin: 0px auto; 
+    text-align: center; 
+    background-color: #FFFFFF;
+    clear: both;
+    display: table;
+  }
+  
+  .outer {
+  display: table;
+  width: 100%;
+  height: 100%;
+  }
+  
+  .inner {
+    display: table-cell;
+    vertical-align: center;
+    text-align: center;
+  }
+  
+  .centered {
+    position: relative;
+    display: inline-block;
+    width: 24%;
+    padding: 0px;
+    background: orange;
+    color: white;
+    margin: 0px auto;
+    text-align: center;
+  }
+  
+  .hr_dotted {
+    width: 80%;
+    clear: both;
+    height: 1px;
+    border-top: dotted 1px #AAAAAA;
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+    margin: 10px auto;
+  }
+
+  .fieldset_basic{
+    width: 100%; 
+    margin: 10px auto;
+    border-left: none;
+    border-right: none;
+  }
+  
+  .li_home {
+    background: url(./images/bu6.gif) left center no-repeat;
+    line-height: 20px;
+    padding-left: 15px;
+    list-style: none;
+  }
+
+  .li_center {
+    text-align: center;
+    list-style: none;
+    margin: 20px auto;
+  }
+
+  .li_right {
+    text-align: right;
+    list-style: none;
+    margin: 10px auto;
+  }
+  
+  .message {
+    width: 80%;
+    border: none;
+    margin: 0px auto;
+    text-align: center;
+    background-color: #EEEEFF;
+    padding: 30px;
+  }
+  
+  .title_line{
+    color: #333333;
+    width: 20%; 
+    margin: 20px auto; 
+    padding: 3px;    
+    border-bottom: solid 2px #555555; 
+    text-align: center;
+  }
+  
+  .li_none{
+    list-style: none; /* 블렛 기호 생략 */
+    margin: 10px 10px; /* 위아래 좌우 */
+  }
+  
+  .span_info {
+    color: #FFFFFF;
+    background-color: #d9e6f2;
+    font-weight: bold;
+  }
+  
+  .span_info_sec {
+    color: #FFFFFF;
+    background-color: #9999ff;
+    font-weight: bold;
+  }
+  
+  .span_alert {
+    color: #FFFFFF;
+    background-color: #ffc6b3;
+    font-weight: bold;
+  }
+  
+  .span_warning {
+    color: #FFFFFF;
+    background-color: #ff6666;
+    font-weight: bold;
+  }
+
+a { /* A 태그 기본 속성 */
+    color:#181A1C;
+    text-decoration: none;
+}
+
+a:hover { /* A 태그에 마우스가 올라간 상태 */
+    color: #FECE1A;
+    text-decoration:none;
+}
+
+A:active{  /* A 태그를 클릭한 상태 */
+    text-decoration: none; /* 밑줄 삭제 */
+    color: #FECE1A;
+  }
+
+a.db:link {
+  font-size: 12px;
+  text-decoration: none;
+}
+
+a.db:VISITED {
+  font-size: 12px;
+  text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 { /* h1 ~ h6 태그 기본 속성 */
+    font-weight: normal;
+}
+
+h1 {/* h1 여백 속성 */
+    margin: 10px;
+}
+
+p { /* 배너(Home) Slice 상세설명 */
+    padding: 10px;
+    font-weight: 100;
+    color: #fff;
+}
+
+.menu_line{
+    width: 100%;
+    border-bottom: solid 1px #555555;
+    margin: 20px 0px 10px 0px; /* top right bottom left */
+  }   
+
+.navbar { /* 상단메뉴 전체 관련 기본 속성 */
+    background: #2d2d30;
+    margin-bottom:0;
+    min-height:70px;
+}
+
+.navbar-fixed-top { /* 상단 고정 메뉴 기본 속성*/
+    min-height:60px;
+    height:60px;
+    padding-top:0;
+}
+.navbar-inner {  /* 상단 메뉴 구성 기본 속성 */
+    background: #2d2d30;
+    border-radius:0;
+    filter: none;
+    border: none;
+    box-shadow: none;
+}
+
+.navbar .brand img { /* 상단메뉴 로고 이미지 */
+    width:200px;
+    height:40px;
+}
+
+.navbar .nav > li > a {  /* 상단메뉴 A 기본속성 */
+    text-transform:uppercase;
+    line-height: auto;
+    vertical-align: middle;
+    margin:10px 3px;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    border: 1px solid #2d2d30;
+    box-shadow: none;
+    font-size:15px;
+    text-shadow: none;
+    color: #fff;
+    transition: border-color 1s ease;
+}
+
+/* 상단메뉴 활성화 OR 마우스오버 상태의 A 속성 */
+.navbar .nav > li:hover> a,
+.navbar .nav > .active > a, 
+.navbar .nav > .active > a:focus {
+    border: 1px solid #2d2d30;
+    color: #fff;
+    background-color: #2d2d30;
+    transition: border-color 1s ease;
+}
+
+/* 상단 메뉴 누른 후 상태  */
+.navbar .nav > li > a:VISITED { 
+  color: #FFFFFF;
+} 
+
+/* 상단메뉴 눌렀을 때 상태  */
+.navbar .nav > .active > a:hover {
+  background-color: #2d2d30;
+}
+
+.nav-pills {
+    margin-bottom: 30px;
+}
+
+.nav-pills > li > a {
+    background: transparent;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    margin-right:5px;
+    padding-left:25px;
+    padding-right:25px;
+    border: 1px solid #2d2d30;
+}
+
+.nav-pills > li > a:hover,
+.nav-pills > .active > a,
+.nav-pills > .active > a:hover,
+.nav-pills > .active > a:focus {
+    background: #2d2d30;
+    color: #FFFFFF;
+}
+
+.navbar .btn-navbar:hover, 
+.navbar .btn-navbar {
+    border-radius:0;
+    background:#FECE1A;
+    color: #FFFFFF;
+}
+
+/*********************************************************************
+2. Layout 관련
+*********************************************************************/
+
+.centered {
+    margin-left:auto;
+    margin-right:auto;
+    float: none;
+    text-align: center;
+}
+/* Use this class if you want ceter element with span* class */
+ .center {
+    float: none !important;
+    margin: 0 auto !important;
+    text-align: center;
+}
+
+.highlighted-box {
+    background:#F4F8F9;
+    padding:20px 30px;
+}
+
+.highlighted-box h1 {
+    margin:0px;
+}
+
+.large-text {
+    line-height:1.2em;
+    font-size: 30px;
+    color: #181A1C;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+.highlighted-box h1, .highlighted-box p {
+    color: #181A1C !important;
+}
+
+.circle-border { /* 서비스안내 관련 외곽선 속성 */
+    display: inline-block;
+    -webkit-border-radius: 500px;
+    -moz-border-radius: 500px;
+    border-radius: 500px;
+    -khtml-border-radius: 500px;
+    border: 3px solid #fff;
+}
+
+.left-align { /* 왼쪽 정렬 */
+    text-align:left;
+}
+
+.right-align { /* 오른쪽 정렬 */
+    text-align:left;
+}
+.error { /* ERROR 표시 */
+    color: #CF0000;
+    display: none;
+}
+
+.invisible {
+    display:none;
+    visibility:visible;
+}
+
+.triangle { /* 배너의 Slider Images 기본 속성 */
+    margin: 0 auto;
+    text-align:center;
+    width: 0;
+    height: 0;
+    border-top: 30px solid #2d2d30;
+    border-left: 585px outset transparent;
+    border-right: 585px outset transparent;
+    position: relative;
+}
+
+/*********************************************************************
+2.1 애니메이션 관련
+*********************************************************************/
+ 
+ .zoom-in { /* 이미지 확대 */
+    -webkit-transform: scale(1, 1);
+    -moz-transform: scale(1, 1);
+    -o-transform: scale(1, 1);
+    -ms-transform: scale(1, 1);
+    -webkit-transition: all 250ms ease;
+    -moz-transition: all 250ms ease;
+    -o-transition: all 250ms ease;
+    -ms-transition: all 250ms ease;
+    transition: all 250ms ease;
+}
+
+.zoom-in:hover { /* 이미지 확대 마우스오버 */
+    -webkit-transform: scale(1.1, 1.1);
+    -moz-transform: scale(1.1, 1.1);
+    -o-transform: scale(1.1, 1.1);
+    -ms-transform: scale(1.1, 1.1);
+}
+
+/*********************************************************************
+2.2 버튼 관련
+*********************************************************************/
+
+/* 버튼 클릭하고 난 후 OR 마우스오버 상태 */
+ .button, 
+ .button:visited, 
+ .button:focus {
+    display:inline-block;
+    border:1px solid #181A1C;
+    color: #FFFFFF;
+    background-color:transparent;
+    padding:15px 30px;
+    font-size:17px;
+    line-height:auto;
+}
+
+/* 버튼 눌렀을때 OR 활성화때 */
+.button:hover, .button:active{
+    background-color:#181A1C;
+    color:#fff;
+}
+
+
+.button-sp, .button-sp:visited, .button-sp:focus {
+    border:none;
+    background-color:#FECE1A;
+    color:#181A1C;
+}
+.button-sp:hover, .button-sp:active {
+    background-color:#181A1C;
+    color:#FECE1A;
+}
+.button-ps, .button-ps:visited, .button-ps:focus {
+    border:none;
+    background-color:#181A1C;
+    color:#FECE1A;
+}
+.button-ps:hover, .button-ps:active {
+    background-color:#FECE1A;
+    color:#181A1C;
+}
+
+
+/*********************************************************************
+2.3 썸네일 (Predefined bootstrap's thumbnail class)
+*********************************************************************/
+
+ .thumbnail { /* 썸네일 기본 속성*/
+    width:100%;
+    height:100%;
+    padding:0;
+    overflow: hidden;
+    position: relative;
+    border:0;
+    border-radius:0;
+    box-shadow:none;
+    text-align:center;
+    background: #191a1c;
+}
+
+.thumbnail .more { /* 썸네일 더보기 속성 */
+    display:block;
+    z-index:4;
+    position:absolute;
+    top:-100px;
+    left:50%;
+    margin:0 auto;
+    margin-left:-41px;
+    width:80px;
+    height:80px;
+    font-size:40px;
+    color:#fff;
+    text-decoration:none;
+    line-height: 70px;
+    text-align: center;
+}
+
+.thumbnail:hover .more { /* 썸네일 누른 후 더보기 속성*/
+    top:40%;
+    margin-top:-40px;
+    -webkit-transition: all 0.3s ease-out;
+    -moz-transition: all 0.3s ease-out;
+    -o-transition: all 0.3 s ease-out;
+    -ms-transition: all 0.3s ease-out;
+    transition: all 0.3s ease-out;
+}
+
+/* 썸네일에 쓰는 h3과 p 속성 */
+.thumbnail h3, 
+.thumbnail p {
+    margin:0;
+    padding:0;
+    position:relative;
+    z-index:4;
+}
+
+/* Study Room Grid 관련 h3 */
+.thumbnail h3 {
+    color: #FECE1A;
+    margin-top:10px;
+    font-size:20px;
+}
+
+/* Study Room Grid 관련 간략정보 */
+.thumbnail > p {
+    padding-bottom:20px;
+}
+
+/* Study Room Grid 관련 mask 속성 */
+.thumbnail .mask {
+    opacity:0.85;
+    filter: alpha(opacity=85);
+    top:100%;
+    left:0;
+    width:100%;
+    height:100%;
+    background:#181A1C;
+    position:absolute;
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    -o-transition: all 0.2 s ease-out;
+    -ms-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+}
+
+/* Study Room Grid 마우스온오버일때 mask 속성 */
+.thumbnail:hover .mask {
+    top:0;
+}
+
+/*********************************************************************
+2.4 Socail icons
+*********************************************************************/
+
+ .social {
+    list-style: none;
+    float: none;
+    position:relative;
+    margin:5px; auto;
+}
+.social li {
+    display:inline-block;
+    line-height: 32px;
+    font-family:'Porta';
+    font-size: 32px;
+    padding:0 5px;
+}
+.social li a {
+    margin:0;
+    padding:0;
+    width:32px;
+    height:32px;
+    color: #FECE1A;
+}
+.social li a:hover {
+    color:#181A1C;
+} 
+
+/**********************************************************************
+3. Sections 관련
+**********************************************************************/
+ 
+ /******** 공통적 Section CSS ********/
+ 
+ .section { /* Section 기본 속성*/
+    padding-bottom: 50px;
+}
+
+.section .container { /* Section 안 모든 content 기본 속성 */
+    padding-top:50px;
+}
+
+.section .title { /* Sectoin title 속성 */
+    text-align: center;
+    padding:10px;
+    margin-bottom: 30px;
+}
+.section .title h1 {  /* Section title h1 속성 */
+    font-weight: normal;
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.section .title > p { /* Saction 상세설명 속성*/
+    font-size: 20px;
+    color: #FFF;
+    font-weight: lighter;
+}
+
+/******** 서비스안내 Section CSS ********/
+ 
+.primary-section { /* 서비스안내 Section 기본 속성 */
+    background:#2d2d30;
+}
+
+.primary-section .triangle { /* 서비스안내 Section */
+    border-top: 40px solid #FECE1A;
+}
+
+.primary-section .title {
+    border-bottom: 1px solid #FFF;
+}
+
+.primary-section, .primary-section .title p, .primary-section h3 {
+    color: #FECE1A;
+}
+
+.primary-section h1 {
+    color:#FFF;
+}
+
+/******** Study Room Section CSS ********/
+.secondary-section {
+    background:#FECE1A;
+}
+
+.secondary-section .title {
+    border-bottom: 1px solid #181A1C;
+}
+.secondary-section h1, .secondary-section .title p {
+    color: #181A1C;
+}
+
+
+/******** Study Group Section CSS ********/
+ 
+/*이 구간에서는 Background-images를 사용할 수 있습니다.*/
+
+.third-section { /* Study Group Section 전체 속성 */
+    padding-bottom: 70px;
+    background: #181A1C url(../images/brand-bg.png) no-repeat center;
+    border-top:6px solid #FECE1A;
+}
+.third-section .container { /* Study Group container 전체 속성 */
+    padding-top:20px;
+    position:relative;
+}
+.third-section .title { /* Study Group Section title 속성 */
+    border-bottom: 1px solid #A1AAB7;
+    color: #FECE1A;
+}
+
+/******* Study Group Section CSS ********/
+
+.sub-section { /*Section Top 여백 주기*/
+    margin-top:30px;
+}
+
+.sub-section .title { /*Section 여백 준 후 안쪽 여백 X */
+    padding:0;
+}
+
+/**********************************************************************
+3.1 서비스안내(Service) 관련
+**********************************************************************/
+
+.service{ /* 서비스안내 Top 여백 주기*/
+    margin-top:20px;
+}
+
+ .service, .service h2 { /* 서비스안내 h2 속성 */
+    padding-top:15px;
+}
+
+.service p { /* 서비스안내 상세설명 속성 */
+    padding:0px 50px;
+    height:60px;
+}
+
+.service img { /* 서비스안내 이미지 속성 */
+    width:150px;
+    height:150px;
+}
+
+/**********************************************************************
+3.2 Study Room (Portfolio) 관련 
+**********************************************************************/
+
+ .single-project {
+    margin-bottom:30px;
+    background:#181A1C;
+}
+
+.single-project img {
+    width:100%;
+}
+
+.project-description {
+    padding-right:20px;
+}
+
+.project-description p {
+    padding-left:0;
+}
+
+.project-title {
+    margin-top:15px;
+    margin-bottom:15px;
+    border-bottom:1px solid #FECE1A;
+}
+
+.project-title h3 {
+    float:left;
+    margin-top:0;
+    padding:0;
+    width:80%;
+}
+
+.project-title .close {
+    color: #FECE1A;
+    margin-top:10px;
+}
+
+.project-info span, .project-title h3 {
+    color:#FECE1A;
+}
+
+.project-info {
+    font-weight:100;
+    padding:10px 0;
+}
+
+.project-info span {
+    width: 80px;
+    display: inline-block;
+}
+
+.project-info div {
+    margin-bottom:5px;
+}
+
+.close {
+    float: right;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+}
+
+#portfolio-grid .mix {
+    opacity: 0;
+    display: none;
+}
+
+/***********************************************************************
+3.3 Study Group(Clients) 관련
+**********************************************************************/
+
+ .client-slider img {
+    border:1px solid white;
+}
+
+}
+.client-slider img:hover {
+    background-color:#FECE1A;
+}
+
+.client-nav {
+    list-style:none;
+    margin-top:10px;
+}
+
+.client-nav li {
+    float:left;
+    display:block;
+    margin-left:10px;
+}
+
+.client-nav li a {
+    display:inherit;
+    padding:5px;
+    background:#FECE1A;
+    border-radius:3px;
+    width:20px;
+    height:20px;
+}
+
+.client-nav li a:hover {
+    background:#181A1C;
+}
+
+.testimonial p { /* 썸네일 상세 설명 속성 */
+    color:#181A1C;
+    background:#FECE1A;
+    padding:15px;
+    margin:0;
+}
+
+.testimonial .arrow {
+    margin-left:10px;
+    width:0;
+    border-top:10px solid #FECE1A;
+    border-left: 20px outset transparent;
+    border-right: 20px outset transparent;
+}
+
+.testimonial .whopic {
+    display:inline-block;
+}
+.testimonial .whopic img {
+    margin-top:10px;
+    width:50px;
+    height:50px;
+    float:left;
+}
+.testimonial .whopic strong {
+    float:left;
+    margin-top:10px;
+    padding-left:10px;
+}
+.testimonial .whopic small {
+    display:block;
+    font-size:12px; 
+}
+
+.testimonial-text{
+    display:block;
+    font-size:22px;
+    text-align:center;
+    margin:0 auto;
+    margin-top:30px;
+    width:70%;
+    line-height:1.3em;
+}
+
+
+/***********************************************************************
+3.4 Footer 관련
+***********************************************************************/
+
+ .footer { /* Footer 기본 속성 */
+    background: #181A1C;
+    text-align: center;
+}
+
+.footer > p { /* Footer Text 속성 */
+    color: #fff;
+    margin:0;
+}
+
+.footer a{
+    color:#FECE1A;
+}
+
+.footer a:hover, .footer a:focus{
+    text-decoration: underline;
+}
+
+.scrollup { /* 위로 올리기 속성 */
+    text-align:center;
+    cursor:pointer;
+    vertical-align:middle;
+    width:39px;
+    height:39px;
+    border-radius:5px;
+    font-size:20px;
+    position:fixed;
+    bottom:30px;
+    right:20px;
+	  border:1px solid #fff;
+    display:none;
+    background: #FECE1A;
+}
+
+.scrollup > a { /* 위로 올리기 A 속성 */
+    position:relative;
+    top:7px;
+    color:#fff;
+}
+
+/*
+4 Responsible
+********************************************************************/
+ @media (min-width: 1200px) {
+    .thumbnail .more { 
+        margin-left:-41px;
+        width:80px;
+        height:80px;
+        border-radius:40px;
+        line-height: 80px;
+    }
+}
+
+@media (max-width: 979px) {
+    body {
+        padding-left:0;
+        padding-right:0;
+    }
+    
+    .navbar-fixed-top, .navbar-fixed-bottom {
+        position: fixed;
+    }
+    .navbar .nav > li > a {
+        line-height: 20px;
+        vertical-align: middle;
+    }
+    
+    .section {
+        padding-left:20px;
+        padding-right:20px;
+    }
+    
+    .navbar-fixed-top, .navbar-fixed-bottom, .navbar-static-top {
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+    
+    .nav-collapse {
+        clear: both;
+    }
+    
+    .nav-collapse .nav {
+        float: none;
+        margin: 0 0 10px;
+    }
+    
+    .nav-collapse .nav > li {
+        float: none;
+    }
+    
+    .nav-collapse, .nav-collapse.collapse {
+        width: 100%;
+        display: inherit;
+    }
+    
+    .thumbnail .more { /* 썸네일 더보기 응답시 */
+        margin-left:-21px;
+        width:40px;
+        height:40px;
+        border-radius:30px;
+        line-height: 40px;
+    }
+    .thumbnail:hover .more {
+        margin-top:-20px;
+    }
+    .newsletter form {
+        text-align:center;
+    }
+}
+@media (max-width: 767px) {
+    .info-mail {
+        width:90%;
+        padding:15px 0px;
+    }
+    .project-description {
+        padding-left:20px;
+    }
+    .price-column, .testimonial {
+        margin-top:30px;
+    }
+}
+
+  .container{
+    width: 80%;
+    margin: 0px auto; /* 0px: 위아래 간격, auto: 좌우 간격, 가운데 정렬 */
+  }
+  
+  .container_body{
+    width: 90%;
+    margin: 0px auto; /* 0px: 위아래 간격, auto: 좌우 간격, 가운데 정렬 */
+  }
+  
+  .content {
+    width: 100%;
+    margin: 0px auto;
+    padding: 20px;
+  }
+  
+  /************************************* 댓글 부분 CSS 시작 *************************************/
+  .star-input>.input,
+  .star-input>.input>label:hover,
+  .star-input>.input>input:focus+label,
+  .star-input>.input>input:checked+label {
+      display: inline-block;
+      vertical-align: middle;
+      background: url('./images/grade_img.png')no-repeat;
+  }
+  
+  .star-input {
+      display: inline-block; 
+      white-space: nowrap;
+      width: 225px;
+      height: 40px;
+      padding: 25px;
+      line-height: 30px;
+  }
+  
+  .star-input>.input {
+      display: inline-block;
+      width: 150px;
+      background-size: 150px;
+      height: 28px;
+      white-space: nowrap;
+      overflow: hidden;
+      position: relative;
+  }
+  
+  .star-input>.input>input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity:0;
+  }
+  
+  star-input>.input.focus {
+      outline: 1px dotted #ddd;
+  }
+  
+  .star-input>.input>label {
+      width: 30px;
+      height: 0;
+      padding: 28px 0 0 0;
+      overflow: hidden;
+      float: left;
+      cursor: pointer; 
+      position: absolute;
+      top: 0;
+      left: 0;
+  }
+  
+  .star-input>.input>label:hover,
+  .star-input>.input>input:focus+label,
+  
+  .star-input>.input>input:checked+label {
+      background-size: 150px;
+      background-position: 0 bottom;
+  }
+  
+  .star-input>.input>label:hover~label {
+      background-image: none;
+  }
+  
+  .star-input>.input>label[for="p1"] {
+      width: 30px;
+      z-index: 5;
+  }
+  
+  .star-input>.input>label[for="p2"] {
+      width: 60px;
+      z-index: 4;
+  }
+  
+  .star-input>.input>label[for="p3"] {
+      width: 90px;
+      z-index: 3;
+  }
+  
+  .star-input>.input>label[for="p4"] {
+      width: 120px;
+      z-index: 2;
+  }
+  
+  .star-input>.input>label[for="p5"] {
+      width: 150px;
+      z-index: 1;
+  }
+  
+  .star-input>output {
+      display: inline-block;
+      width: 60px; 
+      font-size: 20px;
+      text-align: right; 
+      vertical-align: middle;
+  }
+  
+  .star-output>.out,
+  .star-output>.out>label,
+  /* .star-output>.out>span:focus+label, */
+  .star-output>.out>span+label {
+      display: inline-block;
+      vertical-align: middle;
+      background: url('./images/grade_img.png')no-repeat;
+  },
+  
+  .star-output {
+      display: inline-block; 
+      white-space: nowrap;
+      width: 225px;
+      height: 40px;
+      padding: 25px;
+      line-height: 30px;
+  }
+  
+  .star-output>.out {
+      display: inline-block;
+      width: 150px;
+      background-size: 150px;
+      height: 28px;
+      white-space: nowrap;
+      overflow: hidden;
+      position: relative;
+  }
+  
+  .star-output>.out>span {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+  }
+  
+  star-output>.out.focus {
+      outline: 1px dotted #ddd;
+  }
+  
+  .star-output>.out>label {
+      width: 30px;
+      height: 0;
+      padding: 28px 0 0 0;
+      overflow: hidden;
+      float: left;
+      position: absolute;
+      top: 0;
+      left: 0;
+  }
+  
+  .star-output>.out>label,
+  /* .star-output>.out>span:focus+label, */
+  .star-output>.out>span+label {
+      background-size: 150px;
+      background-position: 0 bottom;
+  },
+  
+  .star-output>.out>label[for="a1"] {
+      width: 30px;
+      z-index: 5;
+  }
+  
+  .star-output>.out>label[for="a2"] {
+      width: 60px;
+      z-index: 4;
+  }
+  
+  .star-output>.out>label[for="a3"] {
+      width: 90px;
+      z-index: 3;
+  }
+  
+  .star-output>.out>label[for="a4"] {
+      width: 120px;
+      z-index: 2;
+  }
+  
+  .star-output>.out>label[for="a5"] {
+      width: 150px;
+      z-index: 1;
+  }
+  
+  /************************************* 댓글 부분 CSS 종료 *************************************/
+  
+  /************************************* read 부분 CSS 시작 *************************************/
+  .info_tit {
+    width: 680px;
+    height: 28px;
+    background-color: #55398C;
+    padding: 7px 10px 0 10px;
+    color: #FFFFFF;
+    font-size: 15px;
+    line-height: 25px;
+    font-weight: bold;
+  }
+  
+  .info_title {
+    width: 85%;
+    height: 28px;
+    background-color: #55398C;
+    padding: 7px 10px 0 10px;
+    color: #FFFFFF;
+    font-size: 15px;
+    line-height: 25px;
+    font-weight: bold;
+  }
+  
+  .info_bott {
+    float: left;
+    width: 700px;
+  }
+  
+  .info_img {
+    float: left;
+    width: 178px;
+    margin-right: 36px;
+  }
+  
+  .info_right {
+    float: left;
+    width: 485px;
+  }
+  
+  .info_c {
+    width: 700px;
+    border-bottom: 1px solid #CACACA;
+  }
+  
+  #pup_cont {
+    width: 295px;
+    position: fixed;
+    border: 8px solid #FFFFFF;
+    background-color: #FFFFFF;
+    top: 30px;
+    margin-left: 41%;
+    z-index: 501;
+  }
+  
+  #pup_bg {
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+    background: #000000;
+    visibility: hidden;
+    -moz-opacity: 0.5;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2080px;
+    z-index: 500;
+}
+  
+  .pup_btn {
+    position: absolute;
+    top: 0px;
+    left: 0%;
+    padding-left: 260px;
+  }
+  
+  .tao_bg1 {
+    width: 700px;
+    height: 30px;
+    background: url(../contest/images/bg_img01.png) repeat-x;
+  }
+  
+  table {
+    border-collapse: collapse;
+  }
+  
+  .table2 {
+    width: 100%;
+    border-top: 2px solid #A0A0A0;
+  }
+  
+  .table3 {
+    width: 100%;
+  }
+  
+  colgroup {
+    display: table-column-group;
+  }
+  
+  .th {
+    text-align: left;
+    border-bottom: 1px solid #DEDEDE;
+    color: #535353;
+    font-size: 12px;
+    padding: 6px 0 6px 20px;
+    background-color: #EBF2F9;
+  }
+  
+  .td {
+    text-align: left;
+    border-bottom: 1px solid #DEDEDE;
+    color: #535353;
+    font-size: 12px;
+    padding: 6px 0 6px 14px;
+  }
+  
+  .cb {
+    clear: both;
+  }
+  
+  .t5 {
+    padding-top: 5px !important;
+  }
+  
+  .t10 {
+    padding-top: 10px !important;
+  }
+  
+  .t30 {
+    padding-top: 30px !important;
+  }
+    
+  .t35 {
+    padding-top: 35px !important;
+  }
+
+  .button_example{
+     border-color:#000000;border-width: 1px 50px 1px 1px;border-style: solid; -webkit-border-radius: 3px; -moz-border-radius: 3px;border-radius: 3px;font-size:14px;font-family:arial, helvetica, sans-serif; padding: 10px 10px 10px 10px; text-decoration:none; display:inline-block;text-shadow: -1px -1px 0 rgba(0,0,0,0.3);font-weight:bold; color: #000000;
+     background-color: #E6E6E6; background-image: -webkit-gradient(linear, left top, left bottom, from(#E6E6E6), to(#CCCCCC));
+     background-image: -webkit-linear-gradient(top, #E6E6E6, #CCCCCC);
+     background-image: -moz-linear-gradient(top, #E6E6E6, #CCCCCC);
+     background-image: -ms-linear-gradient(top, #E6E6E6, #CCCCCC);
+     background-image: -o-linear-gradient(top, #E6E6E6, #CCCCCC);
+     background-image: linear-gradient(to bottom, #E6E6E6, #CCCCCC);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#E6E6E6, endColorstr=#CCCCCC);
+  }
+
+  .button_example:hover{
+     border-top-color: #000000;border-right-color: #000000;border-bottom-color: #000000;border-left-color: #000000;border-width: 1px 1px 1px 50px;border-style: solid;
+     background-color: #E6E6E6; background-image: -webkit-gradient(linear, left top, left bottom, from(#E6E6E6), to(#CCCCCC));
+     background-image: -webkit-linear-gradient(top, #E6E6E6, #CCCCCC);
+     background-image: -moz-linear-gradient(top, #E6E6E6, #CCCCCC);
+     background-image: -ms-linear-gradient(top, #E6E6E6, #CCCCCC);
+     background-image: -o-linear-gradient(top, #E6E6E6, #CCCCCC);
+     background-image: linear-gradient(to bottom, #E6E6E6, #CCCCCC);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#E6E6E6, endColorstr=#CCCCCC);
+  }
+
+  .popup1 {
+    line-height: 50px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 5px;
+    position: absolute;
+    top: 30%;
+    left: 35%;
+    width: 36%;
+    height: 40%;
+    background-color: #333333;
+    opacity: 0.8;
+    text-align: center;
+    color: #FFFFFF;
+  }
+
+  
+  

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 부분은 테이블명을 명시 -->
+<mapper namespace="std_reply">
+
+ <insert id="create" parameterType="ReplyVO">
+  insert into std_reply(std_repno, std_repcont, std_repdate, std_repname, memberno, stdlist_no) 
+  values((SELECT NVL(MAX(std_repno), 0)+1 as std_repno FROM std_reply), #{std_repcont}, sysdate, #{std_repname}, #{memberno}, #{stdlist_no})
+ </insert>
+
+<!-- 스터디 그룹별 댓글 전체목록을 검색한다. -->
+  <select id="list" resultType="ReplyVO" parameterType="int">
+    select std_repno, std_repcont, std_repdate, std_repname, memberno, stdlist_no
+    from std_reply
+    where stdlist_no = #{stdlist_no}
+    order by std_repno desc
+  </select>
+  
+<!-- 스터디 그룹별 댓글 전체목록을 검색 + 페이징 -->
+  <select id="list2" resultType="ReplyVO" parameterType="Hashmap">
+  
+  select std_repno, std_repcont, std_repdate, std_repname, memberno, stdlist_no, r
+  from(
+        select std_repno, std_repcont, std_repdate, std_repname, memberno, stdlist_no, rownum as r
+          from(
+                select std_repno, std_repcont, std_repdate, std_repname, memberno, stdlist_no
+                from std_reply
+                where stdlist_no = #{stdlist_no}
+                order by std_repno desc
+              )
+      )
+      WHERE <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]>
+  </select>
+  
+  
+  <!--스터디그룹별 댓글 개수  -->
+  <select id = 'search_count' resultType="int" parameterType="int">
+    SELECT COUNT(*) as cnt
+    FROM std_reply
+    where stdlist_no = #{stdlist_no}
+  </select>
+  
+  <!--스터디리스트별 댓글중 하나의 댓글을 읽어온다.  -->
+  <select id="read" resultType="ReplyVO"  parameterType="Hashmap">
+    select std_repno, std_repcont, std_repdate, std_repname, memberno, stdlist_no
+    from std_reply
+    where stdlist_no = #{stdlist_no}
+    and std_repno = #{std_repno}
+  </select>
+  
+  <!-- 댓글을 수정한다. -->
+  <update id="update" parameterType="ReplyVO">
+    update std_reply
+    set std_repcont = #{std_repcont}, std_repdate = sysdate
+    where stdlist_no = #{stdlist_no}
+    and std_repno = #{std_repno}
+  </update>
+  
+  <!-- 하나의 댓글을 삭제한다. -->
+  <delete id="delete" parameterType="Hashmap">
+    DELETE FROM std_reply
+    where stdlist_no = #{stdlist_no}
+    and std_repno = #{std_repno}
+  </delete>
+  
+  <!-- 스터디그룹에 관한 모든 댓글을 삭제한다. -->
+  <delete id="delete_all" parameterType="int">
+    DELETE FROM std_reply
+    where stdlist_no = #{stdlist_no}
+  </delete>
+
+  <!--댓글을 쓴 사람이 본인이 맞는지 검사한다.  -->
+  <select id= "check_memberno" resultType="int" parameterType="Hashmap">
+  select count(memberno)
+  from std_reply
+  where memberno = #{memberno}
+  and stdlist_no = #{stdlist_no}
+  and std_repno = #{std_repno}
+  </select>
+
+</mapper>

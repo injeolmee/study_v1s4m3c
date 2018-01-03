@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="freereply">
+
+  <!-- 댓글 등록 -->
+  <insert id="create" parameterType="FreereplyVO">
+    INSERT INTO freereply (freplyno, freplycontent, freplyname, freplydate, freplygrpno, 
+                                 freplyindent, freplyansnum, freeno, memberno, seqno) 
+    VALUES ((SELECT NVL(MAX(freplyno), 0)+1 as freplyno FROM freereply), #{freplycontent}, #{freplyname}, sysdate,
+               (SELECT NVL(MAX(freplygrpno), 0)+1 as freplygrpno FROM freereply), 0, 0, #{freeno}, #{memberno}, 1)
+  </insert>
+  
+  <!-- 목록 + 페이징 -->
+  <select id="total_list_reply" resultType="FreereplyVO" parameterType="HashMap">
+    SELECT freplyno, freplycontent, freplyname, freplydate, freplygrpno, 
+              freplyindent, freplyansnum, freeno, memberno, seqno, r
+    FROM (SELECT freplyno, freplycontent, freplyname, freplydate, freplygrpno, 
+                       freplyindent, freplyansnum, freeno, memberno, seqno, rownum as r
+              FROM (SELECT freplyno, freplycontent, freplyname, freplydate, freplygrpno, 
+                                freplyindent, freplyansnum, freeno, memberno, seqno
+                   FROM freereply
+                   WHERE freeno = #{freeno}
+                   ORDER BY freplygrpno ASC, freplyindent ASC, freplyansnum DESC
+             )
+    )
+    WHERE <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]>
+  </select>
+  
+  <!-- 총 레코드 갯수 산출 -->
+  <select id="search_count" resultType="int" parameterType="int">
+    SELECT COUNT(freplyno) as cnt
+    FROM freereply
+    WHERE freeno = #{freeno}
+  </select>
+  
+  <!-- 특정 댓글 조회 -->
+  <select id="read" resultType="FreereplyVO" parameterType="int">
+    SELECT freplyno, freplycontent, freplyname, freplydate, freplygrpno, 
+             freplyindent, freplyansnum, freeno, memberno, seqno
+    FROM freereply
+    WHERE freplyno = #{freplyno}
+    ORDER BY freplyno ASC
+  </select>
+  
+  <!-- ******************** 대댓글(답변) 관련 시작 ******************** -->
+  
+  <!-- 신규 답변을 최우선으로 출력하기위한 답변 순서 조절 -->
+  <update id='updateAnsnum' parameterType="FreereplyVO">  
+    UPDATE freereply
+    SET freplyansnum = freplyansnum + 1
+    WHERE freeno = #{freeno} AND freplygrpno = #{freplygrpno} AND freplyansnum > #{freplyansnum}
+  </update>  
+   
+  <!-- 댓글의 답변(대댓글) 등록 --> 
+  <insert id="reply" parameterType="FreereplyVO">
+    INSERT INTO freereply (freplyno, freplycontent, freplyname, freplydate, freplygrpno, 
+                                  freplyindent, freplyansnum, freeno, memberno, seqno)    
+    VALUES ((SELECT NVL(MAX(freplyno), 0)+1 as freplyno FROM freereply), #{freplycontent}, #{freplyname}, sysdate, 
+               #{freplygrpno}, #{freplyindent}, #{freplyansnum}, #{freeno}, #{memberno}, #{seqno})
+  </insert>
+
+  <!-- ******************** 대댓글(답변) 관련 종료 ******************** -->
+  
+  <!-- 댓글 수정 -->
+  <update id="update" parameterType="FreereplyVO">
+    UPDATE freereply
+    SET freplycontent = #{freplycontent}, freplydate = sysdate
+    WHERE freplyno = #{freplyno}
+  </update>
+  
+  <!-- 댓글 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM freereply
+    WHERE freplyno = #{freplyno}
+  </delete>
+  
+  <!-- 부모 댓글의 seqno 변경 -->
+  <update id="update_seqno" parameterType="int">
+    UPDATE freereply
+    SET seqno = 0
+    WHERE freplyno = #{freplyno}
+  </update>
+  
+  <!-- 부모글 (seqno=0) 일경우 delete 처리를 update로 처리 -->
+  <update id="update_parent" parameterType="int">
+    UPDATE freereply
+    SET freplycontent = '삭제된 댓글입니다.', seqno = 3
+    WHERE freplyno = #{freplyno}
+  </update>
+  
+  <!-- 게시글 삭제시 댓글 전체 삭제 -->
+  <delete id="delete_all" parameterType="int">
+    DELETE FROM freereply
+    WHERE freeno = #{freeno}
+  </delete>
+  
+</mapper>

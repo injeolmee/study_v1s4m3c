@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 부분은 테이블명을 명시 -->
+<mapper namespace="notice">
+
+  <!-- 등록 -->
+  <insert id="notice_create" parameterType="NoticeVO">    
+    INSERT INTO notice(noticeno, ntitle, nname, ncontent, nseqno, ncnt, ndate, adminno)
+    VALUES((SELECT NVL(MAX(noticeno), 0)+1 as noticeno FROM notice), #{ntitle}, #{nname}, #{ncontent}, #{nseqno}, 
+    #{ncnt}, sysdate, #{adminno})
+  </insert>
+
+  <!-- 목록 -->
+  <select id="notice_list" resultType="NoticeVO" parameterType="HashMap">
+    SELECT noticeno, ntitle, nname, ncontent, nseqno, ncnt, ndate, adminno, r
+    FROM (
+              SELECT noticeno, ntitle, nname, ncontent, nseqno, ncnt, ndate, adminno, rownum as r
+              FROM(
+                      SELECT noticeno, ntitle, nname, ncontent, nseqno, ncnt, ndate, adminno
+                      FROM notice
+                      <choose>
+                      <when test="(word == null or word == '')">
+                      </when> 
+                      <when test="search.equals('ntitle')">  <!-- 제목별 검색 -->
+                        where ntitle like '%' || #{word} || '%' 
+                      </when>
+                      <when test="search.equals('nname')"> <!-- 작성자별 검색  -->
+                        where nname like '%' || #{word} || '%' 
+                      </when>
+                      <when test="search.equals('ncontent')"> <!-- 내용별 검색 -->
+                        where ncontent like '%' || #{word} || '%' 
+                      </when>  
+                      <when test="search.equals('ntitle_ncontent')"> <!-- 제목+내용별 검색 -->
+                        where ntitle like '%' || #{word} || '%' or ncontent like '%' || #{word} || '%'
+                      </when>  
+                    </choose>
+                    ORDER BY nseqno desc, noticeno desc
+              )
+    )
+    WHERE <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]>
+  </select>
+  
+  <!-- 검색된 레코드 개수 -->
+  <select id="search_count" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as cnt
+    FROM notice
+    <choose>
+    <when test="(word == null or word == '')">
+    </when> 
+    <when test="search.equals('ntitle')">  <!-- 제목별 검색 -->
+      where ntitle like '%' || #{word} || '%' 
+    </when>
+    <when test="search.equals('nname')"> <!-- 작성자별 검색  -->
+      where nname like '%' || #{word} || '%' 
+    </when>
+    <when test="search.equals('ncontent')"> <!-- 내용별 검색 -->
+      where ncontent like '%' || #{word} || '%' 
+    </when>  
+    <when test="search.equals('ntitle') or search.equals('ncontent')"> <!-- 제목+내용별 검색 -->
+      where ntitle like '%' || #{word} || '%' or ncontent like '%' || #{word} || '%'
+    </when>  
+  </choose>    
+  </select>
+  
+  <!-- 조회 -->
+  <select id="notice_read" resultType="NoticeVO" parameterType="int">
+    SELECT noticeno, ntitle, nname, ncontent, nseqno, ncnt, ndate, adminno
+    FROM notice
+    WHERE noticeno = #{noticeno}
+  </select>
+  
+  <!-- 수정 -->
+  <update id ="notice_update" parameterType="NoticeVO">
+    UPDATE notice
+    SET ntitle=#{ntitle}, nname=#{nname}, ncontent=#{ncontent}, nseqno=#{nseqno}, ndate=sysdate
+    WHERE noticeno = #{noticeno}
+  </update>
+  
+    <!-- 삭제 -->
+  <delete id="notice_delete" parameterType= "int">
+    DELETE FROM notice
+    WHERE noticeno = #{noticeno}
+  </delete>
+  
+  <!-- 출력순서 높임 -->
+  <update id ="nseqno_up" parameterType= "int">
+    UPDATE notice 
+    SET nseqno = nseqno + 1 
+    WHERE noticeno = #{noticeno}
+  </update>
+  
+  <!-- 출력순서 낮춤 -->
+  <update id ="nseqno_down" parameterType= "int">
+    UPDATE notice 
+    SET nseqno = nseqno - 1 
+    WHERE noticeno = #{noticeno}
+  </update>
+  
+  <!-- 조회수 증가 -->
+  <update id="ncnt_up" parameterType= "int">
+    UPDATE notice
+    SET ncnt = ncnt + 1
+    WHERE noticeno = #{noticeno}
+  </update>
+
+
+  
+
+
+
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/mvc 
+    http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+
+ <mvc:interceptors>
+ 
+  <mvc:interceptor>
+    <mvc:mapping path="/user/**"/>    
+    <!-- 인터셉터 제외 비회원 아무나 볼수있는곳 --> <!-- 컨트롤에 매핑주소 시작점 -->
+<!--     <mvc:exclude-mapping path="/main/**"/> 
+    <mvc:exclude-mapping path="/login/**"/>   
+    <mvc:exclude-mapping path="/nonuser/**"/>   
+    <mvc:exclude-mapping path="/menu/**"/>  -->  
+    <beans:bean class="dev.mvc.study.MemberInterceptor" />
+  </mvc:interceptor>
+  
+  <mvc:interceptor>
+    <mvc:mapping path="/admin/**"/>
+    <beans:bean class="dev.mvc.study.AdminInterceptor" />
+  </mvc:interceptor>
+  
+  <mvc:interceptor>
+    <mvc:mapping path="/master/**"/>
+    <beans:bean class="dev.mvc.study.MasterInterceptor" />
+  </mvc:interceptor>
+  
+
+ 
+ </mvc:interceptors>
+
+
+</beans>

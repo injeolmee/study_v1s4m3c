@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+  <!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>/WEB-INF/spring/root-context.xml</param-value>
+  </context-param>
+  
+  <!-- Creates the Spring Container shared by all Servlets and Filters -->
+  <listener>
+      <listener-class>dev.mvc.visit.SessionListener</listener-class>
+  </listener>
+  
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+
+  <!-- Processes application requests -->
+  <servlet>
+  <!-- 발견된 서블릿 -->
+    <servlet-name>appServlet</servlet-name>
+    
+    <!-- 실행되는 서블릿 클래스 -->
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    
+    <!-- 환경 설정 xml 파일 -->
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>
+        /WEB-INF/spring/appServlet/servlet-context.xml
+        /WEB-INF/spring/interceptor-context.xml 
+      </param-value>
+    </init-param>
+    
+    <!-- 톰캣 실행시 서블릿을 실행하여 톰캣 메모리에 등록함. -->
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+    
+  <servlet-mapping>
+  <!-- 연결되는 서블릿 이름 -->
+    <servlet-name>appServlet</servlet-name>
+    
+    <!-- 모든 요청에 대해서 appServlet이 받음 -->
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+  
+  <!-- ******************** Korean Filter start ******************** -->
+  <filter>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+ 
+    <init-param>
+      <param-name>forceEncoding</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+ 
+  <filter-mapping>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <!-- ******************** Korean Filter end ******************** -->
+  
+  <servlet-mapping>
+      <servlet-name>default</servlet-name>
+      <url-pattern>*.js</url-pattern>
+      <url-pattern>*.css</url-pattern>
+      <url-pattern>*.jpg</url-pattern>
+      <url-pattern>*.gif</url-pattern>
+      <url-pattern>*.png</url-pattern>
+      <url-pattern>*.ico</url-pattern>
+      <url-pattern>*.swf</url-pattern>
+  </servlet-mapping>
+  
+  
+  <!-- ***************** Filter***************** -->
+  <filter>
+    <filter-name>URILogFilter</filter-name>   <!-- 필터 이름 -->
+    <filter-class>nation.web.tool.URILogFilter</filter-class> <!-- class 이름 -->
+    <init-param>
+      <param-name>charSet</param-name> <!-- 문자셋 -->
+      <param-value>utf-8</param-value>
+    </init-param>
+  </filter>
+ 
+  <filter-mapping>
+    <filter-name>URILogFilter</filter-name> <!-- 필터 이름 -->
+    <url-pattern>/*</url-pattern> <!-- 모든 접속 주소에 대하여 작동 -->
+  </filter-mapping>
+  <!-- ******************************************* -->
+  
+
+
+</web-app>

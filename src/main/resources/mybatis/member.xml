@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 부분은 테이블명을 명시 -->
+<mapper namespace="member">
+
+  <insert id="memberjoin" parameterType="MemberVO">
+    INSERT INTO member(memberno, memid, mememail, mempasswd, memname, memconfirm, memauth, 
+    membirth, memgender, memaddress, memphone, memsns, memintro, memphoto, memphoto_t, memsize, 
+    mbirthvb, mgendervb, maddressvb, mphonevb, msnsvb, mintrovb, mphotovb, memdate)
+    VALUES((SELECT NVL(MAX(memberno), 0)+1 as memberno FROM member), #{memid}, #{mememail}, #{mempasswd}, #{memname}, #{memconfirm}, 
+    #{memauth}, #{membirth}, #{memgender}, #{memaddress}, #{memphone}, #{memsns}, #{memintro}, #{memphoto}, #{memphoto_t}, #{memsize}, #{mbirthvb}, 
+    #{mgendervb}, #{maddressvb}, #{mphonevb}, #{msnsvb}, #{mintrovb}, #{mphotovb}, sysdate)
+  </insert>
+  
+  <select id="check_id" resultType="int" parameterType="String">
+    SELECT COUNT(memid) as cnt
+    FROM member
+    WHERE memid = #{memid}
+  </select>
+  
+  <select id="check_email" resultType="int" parameterType="String">
+    SELECT COUNT(mememail) as cnt
+    FROM member
+    WHERE mememail = #{mememail}
+  </select>
+
+  <select id="mem_list" resultType="MemberVO" parameterType="HashMap">
+    SELECT memberno, memid, mememail, mempasswd, memname, memconfirm, memauth, 
+              membirth, memgender, memaddress, memphone, memsns, memintro, memphoto, memphoto_t, memsize, 
+              mbirthvb, mgendervb, maddressvb, mphonevb, msnsvb, mintrovb, mphotovb, memdate, r
+    FROM (
+              SELECT memberno, memid, mememail, mempasswd, memname, memconfirm, memauth, 
+                        membirth, memgender, memaddress, memphone, memsns, memintro, memphoto, memphoto_t, memsize, 
+                        mbirthvb, mgendervb, maddressvb, mphonevb, msnsvb, mintrovb, mphotovb, memdate, rownum as r
+              FROM(
+                      SELECT memberno, memid, mememail, mempasswd, memname, memconfirm, memauth, 
+                                membirth, memgender, memaddress, memphone, memsns, memintro, memphoto, memphoto_t, memsize, 
+                                mbirthvb, mgendervb, maddressvb, mphonevb, msnsvb, mintrovb, mphotovb, memdate
+                      FROM member        
+                      <choose>
+                        <when test="(word == null or word == '')">
+                        </when> 
+                        <when test="search.equals('memberno')">  <!-- 회원번호별 검색 -->
+                          where memberno like '%' || #{word} || '%' 
+                        </when>
+                        <when test="search.equals('memid')"> <!-- 회원아이디별 검색  -->
+                          where memid like '%' || #{word} || '%' 
+                        </when>
+                        <when test="search.equals('memname')"> <!-- 회원이름별 검색 -->
+                          where memname like '%' || #{word} || '%' 
+                        </when>  
+                      </choose>
+                      ORDER BY memberno DESC
+            )
+    )
+    WHERE <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]>    
+    
+  </select>
+  
+  <!-- 검색된 레코드 개수 -->
+  <select id="search_count" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as cnt
+    FROM member
+    <choose>
+      <when test="(word == null or word == '')">
+      </when> 
+      <when test="search.equals('memberno')">  <!-- 회원번호별 검색 -->
+        where memberno like '%' || #{word} || '%' 
+      </when>
+      <when test="search.equals('memid')"> <!-- 회원아이디별 검색  -->
+        where memid like '%' || #{word} || '%' 
+      </when>
+      <when test="search.equals('memname')"> <!-- 회원이름별 검색 -->
+        where memname like '%' || #{word} || '%' 
+      </when>  
+    </choose>    
+  </select>
+  
+  <select id="mem_read" resultType="MemberVO" parameterType="int">
+    SELECT memberno, memid, mememail, mempasswd, memname, memconfirm, memauth, 
+    membirth, memgender, memaddress, memphone, memsns, memintro, memphoto, memphoto_t, memsize, 
+    mbirthvb, mgendervb, maddressvb, mphonevb, msnsvb, mintrovb, mphotovb, memdate
+    FROM member
+    WHERE memberno = #{memberno}
+  </select>
+  
+  <select id="mem_read_id" resultType="MemberVO" parameterType="String">
+    SELECT memberno, memid, mememail, mempasswd, memname, memconfirm, memauth,  
+    membirth, memgender, memaddress, memphone, memsns, memintro, memphoto, memphoto_t, memsize, 
+    mbirthvb, mgendervb, maddressvb, mphonevb, msnsvb, mintrovb, mphotovb, memdate
+    FROM member
+    WHERE memid = #{memid}
+  </select>
+  
+  <update id="mem_update" parameterType="MemberVO">
+    UPDATE member 
+    SET  mememail=#{mememail}, mempasswd=#{mempasswd}, memname=#{memname}, memconfirm=#{memconfirm}, memauth=#{memauth},
+          membirth=#{membirth}, memgender=#{memgender}, memaddress=#{memaddress}, memphone=#{memphone}, 
+          memsns=#{memsns}, memintro=#{memintro}, memphoto=#{memphoto}, memphoto_t=#{memphoto_t}, memsize=#{memsize}, 
+          mbirthvb=#{mbirthvb}, mgendervb=#{mgendervb}, maddressvb=#{maddressvb}, mphonevb=#{mphonevb}, 
+          msnsvb=#{msnsvb}, mintrovb=#{mintrovb}, mphotovb=#{mphotovb}
+    where memberno =#{memberno}
+  </update>
+  
+  <select id="login"  resultType="int" parameterType="Map">
+    SELECT COUNT(memberno) as cnt
+    FROM member
+    WHERE memid=#{memid} AND mempasswd=#{mempasswd}
+  </select>
+  
+  <select id="find_memid" resultType="String" parameterType="HashMap">
+    SELECT memid
+    FROM member
+    WHERE memname = #{memname} AND mememail = #{mememail}
+  </select>
+  
+  <select id="find_mempasswd" resultType="String" parameterType="HashMap">
+    SELECT memberno
+    FROM member
+    WHERE memname = #{memname} AND mememail = #{mememail} AND memid = #{memid} 
+  </select>
+  
+  <update id="mempasswd_change" parameterType="MemberVO">
+    UPDATE member
+    SET mempasswd = #{mempasswd}
+    WHERE memberno = #{memberno}
+  </update>
+  
+                   
+
+</mapper>

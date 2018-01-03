@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace = "qna">
+
+  <insert id="create" parameterType="QnaVO">
+    INSERT INTO qnaboard(qnano, adminno, memberno, qnatitle, wname, qnacont, qnafile1, qnasize1, qnafstor1, qnagrp, qnapwd, qnacnt, qnaword, qdate)
+    VALUES ((SELECT NVL(MAX(qnano), 0) + 1 as qnano FROM qnaboard), 1, 1, #{qnatitle}, #{wname}, #{qnacont}, 
+            #{qnafile1}, #{qnasize1}, #{qnafstor1}, #{qnagrp}, #{qnapwd}, #{qnacnt}, #{qnaword}, sysdate)
+  </insert>
+  
+  <select id="list_all_qna" resultType="QnaVO" parameterType="HashMap">
+    SELECT qnano, adminno, memberno, qnaTitle, wname, qnaCont, qnafile1, qnasize1, qnafstor1, qnagrp, 
+           qnacnt, qdate, r
+    FROM (
+          SELECT qnano, adminno, memberno, qnaTitle, wname, qnaCont, qnafile1, qnasize1, qnafstor1, qnagrp, 
+                 qnacnt, qdate, rownum as r
+          FROM (
+                SELECT qnano, adminno, memberno, qnaTitle, wname, qnaCont, qnafile1, qnasize1, qnafstor1, qnagrp, 
+                       qnacnt, qdate
+                FROM qnaboard
+                <choose>
+                  <when test="qnatitle == null or ''"></when>
+                  <otherwise>
+                    WHERE qnatitle LIKE '%' || #{qnatitle} || '%'
+                  </otherwise>
+                </choose>
+                ORDER BY qnano DESC
+          )
+    )
+    WHERE r &gt;= #{startNum} AND r &lt;= #{endNum}
+  </select>
+  
+  <select id="read" resultType="QnaVO" parameterType="int">
+    SELECT qnano, adminno, memberno, qnaTitle, wname, qnaCont, qnafile1, qnasize1, qnafstor1, qnagrp, 
+           qnacnt, qdate
+    FROM qnaboard
+    WHERE qnano = #{qnano}
+  </select>
+  
+  <update id="update" parameterType="QnaVO">
+    UPDATE qnaboard
+    SET qnatitle=#{qnatitle}, wname=#{wname}, qnacont=#{qnacont}, qnafile1=#{qnafile1}, qnasize1=#{qnasize1}, qnafstor1=#{qnafstor1},
+        qnagrp=#{qnagrp}
+    WHERE qnano = #{qnano}
+  </update>
+  
+  <update id="increaseCnt" parameterType="int">
+   UPDATE qnaboard
+   SET qnacnt = qnacnt + 1
+   WHERE qnano = #{qnano}
+  </update>
+  
+  <select id="total_count" resultType="int">
+    SELECT COUNT(*) as count
+    FROM qnaboard
+  </select>
+  
+  <select id="search_count" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as count
+    FROM qnaboard
+    <choose>
+      <when test="qnatitle == null or qnatitle == ''"></when>
+      <otherwise>
+        WHERE qnatitle LIKE '%' || #{qnatitle} || '%'
+      </otherwise>
+    </choose>
+  </select>
+  
+  <delete id="delete" parameterType="int">
+    DELETE FROM qnaboard
+    WHERE qnano = #{qnano}
+  </delete>
+  
+
+</mapper>

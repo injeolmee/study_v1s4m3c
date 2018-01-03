@@ -1,0 +1,796 @@
+
+/* style.css 관련 구성 내용
+1 .General                            (+) created general styles and overide some bootstrap classes.
+
+2. Layout 관련
+ 2.1 애니메이션
+ 2.2 버튼
+ 2.3 썸네일                          (+) overide bootstrap thumbnail and add mased efect
+ 2.4 Social icons                   (+) style for social icons list
+
+3. Sections 관련                    (+) definition for section and subsection
+ 3.1 Services (사이트 소개)
+ 3.2 Portfolio (Study Room)
+ 3.3 Clients (Study Group)
+ 3.4 Footer (하단 메뉴)
+ 
+4. Responsive 
+*/
+
+/*********************************************************************
+1. General
+**********************************************************************/
+ body { /* body 태그 기본 속성 */
+    font-family:'Roboto', sans-serif;
+    color: #FFF;
+    line-height:1.2em;
+    font-size:17px;
+    line-height:20px;
+}
+a { /* A 태그 기본 속성 */
+    color:#181A1C;
+    text-decoration: none;
+}
+
+a:hover { /* A 태그에 마우스가 올라간 상태 */
+    color: #FECE1A;
+    text-decoration:none;
+}
+
+A:active{  /* A 태그를 클릭한 상태 */
+    text-decoration: none; /* 밑줄 삭제 */
+    color: #FECE1A;
+  }
+
+h1, h2, h3, h4, h5, h6 { /* h1 ~ h6 태그 기본 속성 */
+    font-weight: normal;
+}
+
+h1 {/* h1 여백 속성 */
+    margin: 10px;
+}
+
+p { /* 배너(Home) Slice 상세설명 */
+    padding: 10px;
+    font-weight: 100;
+    color: #fff;
+}
+
+.navbar { /* 상단메뉴 전체 관련 기본 속성 */
+    background: #2d2d30;
+    margin-bottom:0;
+    min-height:70px;
+}
+
+.navbar-fixed-top { /* 상단 고정 메뉴 기본 속성*/
+    min-height:60px;
+    height:60px;
+    padding-top:0;
+}
+.navbar-inner {  /* 상단 메뉴 구성 기본 속성 */
+    background: #2d2d30;
+    border-radius:0;
+    filter: none;
+    border: none;
+    box-shadow: none;
+}
+
+.navbar .brand img { /* 상단메뉴 로고 이미지 */
+    width:200px;
+    height:40px;
+}
+
+.navbar .nav > li > a {  /* 상단메뉴 A 기본속성 */
+    text-transform:uppercase;
+    line-height: auto;
+    vertical-align: middle;
+    margin:10px 3px;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    border: 1px solid #2d2d30;
+    box-shadow: none;
+    font-size:15px;
+    text-shadow: none;
+    color: #fff;
+    transition: border-color 1s ease;
+}
+
+/* 상단메뉴 활성화 OR 마우스오버 상태의 A 속성 */
+.navbar .nav > li:hover> a,
+.navbar .nav > .active > a, 
+.navbar .nav > .active > a:focus {
+    border: 1px solid #2d2d30;
+    color: #fff;
+    background-color: #2d2d30;
+    transition: border-color 1s ease;
+}
+
+/* 상단 메뉴 누른 후 상태  */
+.navbar .nav > li > a:VISITED { 
+  color: #FFFFFF;
+} 
+
+/* 상단메뉴 눌렀을 때 상태  */
+.navbar .nav > .active > a:hover {
+  background-color: #2d2d30;
+}
+
+.nav-pills {
+    margin-bottom: 30px;
+}
+
+.nav-pills > li > a {
+    background: transparent;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    margin-right:5px;
+    padding-left:25px;
+    padding-right:25px;
+    border: 1px solid #2d2d30;
+}
+
+.nav-pills > li > a:hover,
+.nav-pills > .active > a,
+.nav-pills > .active > a:hover,
+.nav-pills > .active > a:focus {
+    background: #2d2d30;
+    color: #FFFFFF;
+}
+
+.navbar .btn-navbar:hover, 
+.navbar .btn-navbar {
+    border-radius:0;
+    background:#FECE1A;
+    color: #FFFFFF;
+}
+
+/*********************************************************************
+2. Layout 관련
+*********************************************************************/
+
+.centered {
+    margin-left:auto;
+    margin-right:auto;
+    float: none;
+    text-align: center;
+}
+/* Use this class if you want ceter element with span* class */
+ .center {
+    float: none !important;
+    margin: 0 auto !important;
+    text-align: center;
+}
+
+.highlighted-box {
+    background:#F4F8F9;
+    padding:20px 30px;
+}
+
+.highlighted-box h1 {
+    margin:0px;
+}
+
+.large-text {
+    line-height:1.2em;
+    font-size: 30px;
+    color: #181A1C;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+.highlighted-box h1, .highlighted-box p {
+    color: #181A1C !important;
+}
+
+.circle-border { /* 서비스안내 관련 외곽선 속성 */
+    display: inline-block;
+    -webkit-border-radius: 500px;
+    -moz-border-radius: 500px;
+    border-radius: 500px;
+    -khtml-border-radius: 500px;
+    border: 3px solid #fff;
+}
+
+.left-align { /* 왼쪽 정렬 */
+    text-align:left;
+}
+
+.right-align { /* 오른쪽 정렬 */
+    text-align:left;
+}
+.error { /* ERROR 표시 */
+    color: #CF0000;
+    display: none;
+}
+
+.invisible {
+    display:none;
+    visibility:visible;
+}
+
+.triangle { /* 배너의 Slider Images 기본 속성 */
+    margin: 0 auto;
+    text-align:center;
+    width: 0;
+    height: 0;
+    border-top: 30px solid #2d2d30;
+    border-left: 585px outset transparent;
+    border-right: 585px outset transparent;
+    position: relative;
+}
+
+/*********************************************************************
+2.1 애니메이션 관련
+*********************************************************************/
+ 
+ .zoom-in { /* 이미지 확대 */
+    -webkit-transform: scale(1, 1);
+    -moz-transform: scale(1, 1);
+    -o-transform: scale(1, 1);
+    -ms-transform: scale(1, 1);
+    -webkit-transition: all 250ms ease;
+    -moz-transition: all 250ms ease;
+    -o-transition: all 250ms ease;
+    -ms-transition: all 250ms ease;
+    transition: all 250ms ease;
+}
+
+.zoom-in:hover { /* 이미지 확대 마우스오버 */
+    -webkit-transform: scale(1.1, 1.1);
+    -moz-transform: scale(1.1, 1.1);
+    -o-transform: scale(1.1, 1.1);
+    -ms-transform: scale(1.1, 1.1);
+}
+
+/*********************************************************************
+2.2 버튼 관련
+*********************************************************************/
+
+/* 버튼 클릭하고 난 후 OR 마우스오버 상태 */
+ .button, 
+ .button:visited, 
+ .button:focus {
+    display:inline-block;
+    border:1px solid #181A1C;
+    color: #FFFFFF;
+    background-color:transparent;
+    padding:15px 30px;
+    font-size:17px;
+    line-height:auto;
+}
+
+/* 버튼 눌렀을때 OR 활성화때 */
+.button:hover, .button:active{
+    background-color:#181A1C;
+    color:#fff;
+}
+
+
+.button-sp, .button-sp:visited, .button-sp:focus {
+    border:none;
+    background-color:#FECE1A;
+    color:#181A1C;
+}
+.button-sp:hover, .button-sp:active {
+    background-color:#181A1C;
+    color:#FECE1A;
+}
+.button-ps, .button-ps:visited, .button-ps:focus {
+    border:none;
+    background-color:#181A1C;
+    color:#FECE1A;
+}
+.button-ps:hover, .button-ps:active {
+    background-color:#FECE1A;
+    color:#181A1C;
+}
+
+
+/*********************************************************************
+2.3 썸네일 (Predefined bootstrap's thumbnail class)
+*********************************************************************/
+
+ .thumbnail { /* 썸네일 기본 속성*/
+    width:100%;
+    height:100%;
+    padding:0;
+    overflow: hidden;
+    position: relative;
+    border:0;
+    border-radius:0;
+    box-shadow:none;
+    text-align:center;
+    background: #191a1c;
+}
+
+.thumbnail .more { /* 썸네일 더보기 속성 */
+    display:block;
+    z-index:4;
+    position:absolute;
+    top:-100px;
+    left:50%;
+    margin:0 auto;
+    margin-left:-41px;
+    width:80px;
+    height:80px;
+    font-size:40px;
+    color:#fff;
+    text-decoration:none;
+    line-height: 70px;
+    text-align: center;
+}
+
+.thumbnail:hover .more { /* 썸네일 누른 후 더보기 속성*/
+    top:40%;
+    margin-top:-40px;
+    -webkit-transition: all 0.3s ease-out;
+    -moz-transition: all 0.3s ease-out;
+    -o-transition: all 0.3 s ease-out;
+    -ms-transition: all 0.3s ease-out;
+    transition: all 0.3s ease-out;
+}
+
+/* 썸네일에 쓰는 h3과 p 속성 */
+.thumbnail h3, 
+.thumbnail p {
+    margin:0;
+    padding:0;
+    position:relative;
+    z-index:4;
+}
+
+/* Study Room Grid 관련 h3 */
+.thumbnail h3 {
+    color: #FECE1A;
+    margin-top:10px;
+    font-size:20px;
+}
+
+/* Study Room Grid 관련 간략정보 */
+.thumbnail > p {
+    padding-bottom:20px;
+}
+
+/* Study Room Grid 관련 mask 속성 */
+.thumbnail .mask {
+    opacity:0.85;
+    filter: alpha(opacity=85);
+    top:100%;
+    left:0;
+    width:100%;
+    height:100%;
+    background:#181A1C;
+    position:absolute;
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    -o-transition: all 0.2 s ease-out;
+    -ms-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+}
+
+/* Study Room Grid 마우스온오버일때 mask 속성 */
+.thumbnail:hover .mask {
+    top:0;
+}
+
+/*********************************************************************
+2.4 Socail icons
+*********************************************************************/
+
+ .social {
+    list-style: none;
+    float: none;
+    position:relative;
+    margin:5px; auto;
+}
+.social li {
+    display:inline-block;
+    line-height: 32px;
+    font-family:'Porta';
+    font-size: 32px;
+    padding:0 5px;
+}
+.social li a {
+    margin:0;
+    padding:0;
+    width:32px;
+    height:32px;
+    color: #FECE1A;
+}
+.social li a:hover {
+    color:#181A1C;
+} 
+
+/**********************************************************************
+3. Sections 관련
+**********************************************************************/
+ 
+ /******** 공통적 Section CSS ********/
+ 
+ .section { /* Section 기본 속성*/
+    padding-bottom: 50px;
+}
+
+.section .container { /* Section 안 모든 content 기본 속성 */
+    padding-top:50px;
+}
+
+.section .title { /* Sectoin title 속성 */
+    text-align: center;
+    padding:10px;
+    margin-bottom: 30px;
+}
+.section .title h1 {  /* Section title h1 속성 */
+    font-weight: normal;
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.section .title > p { /* Saction 상세설명 속성*/
+    font-size: 20px;
+    color: #FFF;
+    font-weight: lighter;
+}
+
+/******** 서비스안내 Section CSS ********/
+ 
+.primary-section { /* 서비스안내 Section 기본 속성 */
+    background:#2d2d30;
+}
+
+.primary-section .triangle { /* 서비스안내 Section */
+    border-top: 40px solid #FECE1A;
+}
+
+.primary-section .title {
+    border-bottom: 1px solid #FFF;
+}
+
+.primary-section, .primary-section .title p, .primary-section h3 {
+    color: #FECE1A;
+}
+
+.primary-section h1 {
+    color:#FFF;
+}
+
+/******** Study Room Section CSS ********/
+.secondary-section {
+    background:#FECE1A;
+}
+
+.secondary-section .title {
+    border-bottom: 1px solid #181A1C;
+}
+.secondary-section h1, .secondary-section .title p {
+    color: #181A1C;
+}
+
+
+/******** Study Group Section CSS ********/
+ 
+/*이 구간에서는 Background-images를 사용할 수 있습니다.*/
+
+.third-section { /* Study Group Section 전체 속성 */
+    padding-bottom: 70px;
+    background: #181A1C url(../images/brand-bg.png) no-repeat center;
+    border-top:6px solid #FECE1A;
+}
+.third-section .container { /* Study Group container 전체 속성 */
+    padding-top:20px;
+    position:relative;
+}
+.third-section .title { /* Study Group Section title 속성 */
+    border-bottom: 1px solid #A1AAB7;
+    color: #FECE1A;
+}
+
+/******* Study Group Section CSS ********/
+
+.sub-section { /*Section Top 여백 주기*/
+    margin-top:30px;
+}
+
+.sub-section .title { /*Section 여백 준 후 안쪽 여백 X */
+    padding:0;
+}
+
+/**********************************************************************
+3.1 서비스안내(Service) 관련
+**********************************************************************/
+
+.service{ /* 서비스안내 Top 여백 주기*/
+    margin-top:20px;
+}
+
+ .service, .service h2 { /* 서비스안내 h2 속성 */
+    padding-top:15px;
+}
+
+.service p { /* 서비스안내 상세설명 속성 */
+    padding:0px 50px;
+    height:60px;
+}
+
+.service img { /* 서비스안내 이미지 속성 */
+    width:150px;
+    height:150px;
+}
+
+/**********************************************************************
+3.2 Study Room (Portfolio) 관련 
+**********************************************************************/
+
+ .single-project {
+    margin-bottom:30px;
+    background:#181A1C;
+}
+
+.single-project img {
+    width:100%;
+}
+
+.project-description {
+    padding-right:20px;
+}
+
+.project-description p {
+    padding-left:0;
+}
+
+.project-title {
+    margin-top:15px;
+    margin-bottom:15px;
+    border-bottom:1px solid #FECE1A;
+}
+
+.project-title h3 {
+    float:left;
+    margin-top:0;
+    padding:0;
+    width:80%;
+}
+
+.project-title .close {
+    color: #FECE1A;
+    margin-top:10px;
+}
+
+.project-info span, .project-title h3 {
+    color:#FECE1A;
+}
+
+.project-info {
+    font-weight:100;
+    padding:10px 0;
+}
+
+.project-info span {
+    width: 80px;
+    display: inline-block;
+}
+
+.project-info div {
+    margin-bottom:5px;
+}
+
+.close {
+    float: right;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+}
+
+#portfolio-grid .mix {
+    opacity: 0;
+    display: none;
+}
+
+/***********************************************************************
+3.3 Study Group(Clients) 관련
+**********************************************************************/
+
+ .client-slider img {
+    border:1px solid white;
+}
+
+}
+.client-slider img:hover {
+    background-color:#FECE1A;
+}
+
+.client-nav {
+    list-style:none;
+    margin-top:10px;
+}
+
+.client-nav li {
+    float:left;
+    display:block;
+    margin-left:10px;
+}
+
+.client-nav li a {
+    display:inherit;
+    padding:5px;
+    background:#FECE1A;
+    border-radius:3px;
+    width:20px;
+    height:20px;
+}
+
+.client-nav li a:hover {
+    background:#181A1C;
+}
+
+.testimonial p { /* 썸네일 상세 설명 속성 */
+    color:#181A1C;
+    background:#FECE1A;
+    padding:15px;
+    margin:0;
+}
+
+.testimonial .arrow {
+    margin-left:10px;
+    width:0;
+    border-top:10px solid #FECE1A;
+    border-left: 20px outset transparent;
+    border-right: 20px outset transparent;
+}
+
+.testimonial .whopic {
+    display:inline-block;
+}
+.testimonial .whopic img {
+    margin-top:10px;
+    width:50px;
+    height:50px;
+    float:left;
+}
+.testimonial .whopic strong {
+    float:left;
+    margin-top:10px;
+    padding-left:10px;
+}
+.testimonial .whopic small {
+    display:block;
+    font-size:12px; 
+}
+
+.testimonial-text{
+    display:block;
+    font-size:22px;
+    text-align:center;
+    margin:0 auto;
+    margin-top:30px;
+    width:70%;
+    line-height:1.3em;
+}
+
+
+/***********************************************************************
+3.4 Footer 관련
+***********************************************************************/
+
+ .footer { /* Footer 기본 속성 */
+    background: #181A1C;
+    text-align: center;
+}
+
+.footer > p { /* Footer Text 속성 */
+    color: #fff;
+    margin:0;
+}
+
+.footer a{
+    color:#FECE1A;
+}
+
+.footer a:hover, .footer a:focus{
+    text-decoration: underline;
+}
+
+.scrollup { /* 위로 올리기 속성 */
+    text-align:center;
+    cursor:pointer;
+    vertical-align:middle;
+    width:39px;
+    height:39px;
+    border-radius:5px;
+    font-size:20px;
+    position:fixed;
+    bottom:30px;
+    right:20px;
+	border:1px solid #fff;
+    display:none;
+    background: #FECE1A;
+}
+
+.scrollup > a { /* 위로 올리기 A 속성 */
+    position:relative;
+    top:7px;
+    color:#fff;
+}
+
+/*
+4 Responsible
+********************************************************************/
+ @media (min-width: 1200px) {
+    .thumbnail .more { 
+        margin-left:-41px;
+        width:80px;
+        height:80px;
+        border-radius:40px;
+        line-height: 80px;
+    }
+}
+
+@media (max-width: 979px) {
+    body {
+        padding-left:0;
+        padding-right:0;
+    }
+    
+    .navbar-fixed-top, .navbar-fixed-bottom {
+        position: fixed;
+    }
+    .navbar .nav > li > a {
+        line-height: 20px;
+        vertical-align: middle;
+    }
+    
+    .section {
+        padding-left:20px;
+        padding-right:20px;
+    }
+    
+    .navbar-fixed-top, .navbar-fixed-bottom, .navbar-static-top {
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+    
+    .nav-collapse {
+        clear: both;
+    }
+    
+    .nav-collapse .nav {
+        float: none;
+        margin: 0 0 10px;
+    }
+    
+    .nav-collapse .nav > li {
+        float: none;
+    }
+    
+    .nav-collapse, .nav-collapse.collapse {
+        width: 100%;
+        display: inherit;
+    }
+    
+    .thumbnail .more { /* 썸네일 더보기 응답시 */
+        margin-left:-21px;
+        width:40px;
+        height:40px;
+        border-radius:30px;
+        line-height: 40px;
+    }
+    .thumbnail:hover .more {
+        margin-top:-20px;
+    }
+    .newsletter form {
+        text-align:center;
+    }
+}
+@media (max-width: 767px) {
+    .info-mail {
+        width:90%;
+        padding:15px 0px;
+    }
+    .project-description {
+        padding-left:20px;
+    }
+    .price-column, .testimonial {
+        margin-top:30px;
+    }
+}

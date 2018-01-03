@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 부분은 테이블명을 명시 -->
+<mapper namespace="studylist">
+
+  <!-- 스터디 그룹을 등록 -->
+  <insert id="create" parameterType="StudyListVO">
+    INSERT INTO
+    studylist(stdlist_no, stdlist_topic, stdlist_email,
+    stdlist_time,
+    stdlist_title, stdlist_area, stdlist_dow,
+    stdlist_date,
+    stdlist_tot_num, stdlist_curr_num, stdlist_goodcnt,
+    stdlist_content,
+    memberno)
+    VALUES((SELECT NVL(MAX(stdlist_no), 0)+1 as
+    stdlist_no FROM studylist),
+    #{stdlist_topic}, #{stdlist_email},
+    #{stdlist_time},
+    #{stdlist_title}, #{stdlist_area}, #{stdlist_dow},
+    sysdate, #{stdlist_tot_num}, 1, 0, #{stdlist_content}, #{memberno})
+  </insert>
+
+  <!-- 스터디 리스트의 전체목록을 검색한다. -->
+  <select id="list" resultType="StudyListVO">
+    select stdlist_no, stdlist_title,
+    stdlist_email, stdlist_topic, stdlist_time, stdlist_area,
+    stdlist_dow, stdlist_tot_num, stdlist_curr_num, stdlist_goodcnt,
+    stdlist_content, stdlist_cnt, stdlist_date, memberno
+    from
+    studylist
+    order by stdlist_no asc
+  </select>
+
+  <!-- 스터디리스트 조회 -->
+  <select id="read_std" resultType="StudyListVO" parameterType="int">
+    select stdlist_no, stdlist_title, stdlist_email, stdlist_topic,
+    stdlist_time, stdlist_area, stdlist_dow, stdlist_tot_num,
+    stdlist_curr_num, stdlist_goodcnt, stdlist_content, stdlist_cnt,
+    stdlist_date, memberno
+    from studylist
+    where stdlist_no =
+    #{stdlist_no}
+  </select>
+
+  <!-- 스터디모집내용을 수정한다. -->
+  <update id="update" parameterType="StudyListVO">
+    UPDATE studylist
+    SET
+    stdlist_title=#{stdlist_title}, stdlist_email=#{stdlist_email},
+    stdlist_topic=#{stdlist_topic}, stdlist_time=#{stdlist_time},
+    stdlist_area=#{stdlist_area}, stdlist_dow=#{stdlist_dow},
+    stdlist_tot_num=#{stdlist_tot_num},
+    stdlist_content=#{stdlist_content}
+    WHERE stdlist_no=#{stdlist_no}
+  </update>
+
+  <!-- 스터디모집내용을 삭제한다. -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM studylist
+    WHERE
+    stdlist_no = #{stdlist_no}
+  </delete>
+
+  <!-- 스터디모집글과 회원정보를 조회한다. -->
+  <select id="read" resultType="StudyList_MemberVO"
+    parameterType="StudyList_MemberVO">
+    select stdlist_no, stdlist_title, stdlist_email,
+    stdlist_topic,
+    stdlist_time, stdlist_area, stdlist_dow,
+    stdlist_tot_num,
+    stdlist_curr_num, stdlist_goodcnt, stdlist_content,
+    stdlist_cnt,
+    stdlist_date,
+    member.memberno, mememail, memname,
+    memgender,
+    memphone, memsns, memphoto_t
+    from studylist, member
+    where
+    studylist.memberno = member.memberno
+    and stdlist_no = #{stdlist_no}
+    and studylist.memberno = #{memberno}
+  </select>
+
+  <!--체크박스를 이용한 검색 -->
+  <select id='search_list1' resultType="StudyListVO"
+    parameterType="Hashmap">
+    select stdlist_no, stdlist_title, stdlist_email, stdlist_topic,
+    stdlist_time, stdlist_area, stdlist_dow, stdlist_tot_num,
+    stdlist_curr_num, stdlist_content, stdlist_cnt, stdlist_goodcnt,
+    stdlist_date, memberno
+    from studylist
+    <choose>
+      <when test="stdlist_topic == null or stdlist_topic == ''"> <!-- 지역하고 요일만 검색하는 경우 -->
+        where stdlist_area like '%' || #{stdlist_area} || '%' and
+        stdlist_dow like '%' || #{stdlist_dow} || '%'
+      </when>
+      <when test="stdlist_area == null or stdlist_area == ''"> <!-- 분야하고 요일만 검색하는 경우 -->
+        where stdlist_topic like '%' || #{stdlist_topic} || '%' and
+        stdlist_dow like '%' || #{stdlist_dow} || '%'
+      </when>
+      <when test="stdlist_dow == null or stdlist_dow == ''"> <!-- 분야하고 지역만 검색하는 경우 -->
+        where stdlist_topic like '%' || #{stdlist_topic} || '%' and
+        stdlist_area like '%' || #{stdlist_area} || '%'
+      </when>
+      <when
+        test="(stdlist_dow == null or stdlist_dow == '') and (stdlist_topic == null or stdlist_topic == '')"> <!-- 지역만 검색하는 경우 -->
+        where stdlist_area like '%' || #{stdlist_area} || '%'
+      </when>
+      <when
+        test="(stdlist_area == null or stdlist_area == '') and (stdlist_topic == null or stdlist_topic == '')"> <!-- 요일만 검색하는 경우 -->
+        where stdlist_dow like '%' || #{stdlist_dow} || '%'
+      </when>
+      <when
+        test="(stdlist_dow == null or (stdlist_dow == '') and (stdlist_area == null or stdlist_area == '')"> <!-- 분야만 검색하는 경우 -->
+        where stdlist_topic like '%' || #{stdlist_topic} || '%'
+      </when>
+      <when
+        test="(stdlist_topic == null or stdlist_topic == '') and (stdlist_dow == null or (stdlist_dow == '') and (stdlist_area == null or stdlist_area == '')"> <!-- 검색하지 않는 경우 -->
+        order by stdlist_no desc
+      </when>
+      <otherwise> <!--다 검색하는 경우 -->
+        where stdlist_topic like '%' || #{stdlist_topic} || '%' and
+        stdlist_area like '%' || #{stdlist_area} || '%' and stdlist_dow
+        like '%' || #{stdlist_dow} || '%'
+      </otherwise>
+    </choose>
+  </select>
+
+  <!--select option를 이용한 검색 -->
+  <select id='search_list2' resultType="StudyListVO"
+    parameterType="Hashmap">
+    select stdlist_no, stdlist_title, stdlist_email, stdlist_topic,
+    stdlist_time, stdlist_area, stdlist_dow, stdlist_tot_num,
+    stdlist_curr_num, stdlist_content, stdlist_cnt, stdlist_date,
+    memberno
+    from studylist
+    <choose>
+      <when test="(word == null or word =='')"> <!--검색어가 입력되지 않을때 ,, select option으로 검색할때 -->
+        where stdlist_topic like '%' || #{topic} || '%'
+        order by
+        stdlist_no desc
+      </when>
+      <when test="(topic == null or topic =='')"> <!--topic이 null 이나 공백이 들어올때 -->
+        <choose>
+          <when test="search.equals('stdlist_title')">  <!-- 검색어 select option이 제목 -->
+            where stdlist_title like '%' || #{word} || '%'
+          </when>
+          <when test="search.equals('stdlist_area')"> <!-- 검색어 select option이 지역 -->
+            where stdlist_area like '%' || #{word} || '%'
+          </when>
+          <when test="search.equals('stdlist_topic')"> <!-- 검색어 select option이 분야 -->
+            where stdlist_topic like '%' || #{word} || '%'
+          </when>
+          <when test="search.equals('stdlist_dow')"> <!-- 검색어 select option이 요일 -->
+            where stdlist_dow like '%' || #{word} || '%'
+          </when>
+          <when test="search.equals('stdlist_time')"> <!-- 검색어 select option이 시간 -->
+            where stdlist_time like '%' || #{word} || '%'
+          </when>
+        </choose>
+        order by stdlist_no desc
+      </when>
+      <when
+        test="(topic == null or topic =='') and (word == null or word =='')"> <!--selected_topic 옵션이 선택될때 -->
+        order by stdlist_no desc
+      </when>
+    </choose>
+  </select>
+
+
+  <!--select option를 이용한 검색 + ajax 페이징 -->
+  <select id='search_list3' resultType="StudyListVO"
+    parameterType="Hashmap">
+
+    select stdlist_no, stdlist_title, stdlist_email, stdlist_topic,
+    stdlist_time, stdlist_area, stdlist_dow, stdlist_tot_num,
+    stdlist_curr_num, stdlist_goodcnt, stdlist_content, stdlist_cnt,
+    stdlist_date, memberno, r
+    from(
+          select stdlist_no,
+          stdlist_title, stdlist_email, stdlist_topic,
+          stdlist_time,
+          stdlist_area, stdlist_dow, stdlist_tot_num,
+          stdlist_curr_num,
+          stdlist_goodcnt, stdlist_content, stdlist_cnt,
+          stdlist_date,
+          memberno, rownum as r
+          from (
+                  select stdlist_no, stdlist_title,
+                  stdlist_email, stdlist_topic,
+                  stdlist_time, stdlist_area,
+                  stdlist_dow, stdlist_tot_num,
+                  stdlist_curr_num, stdlist_goodcnt,
+                  stdlist_content, stdlist_cnt,
+                  stdlist_date, memberno
+                  from studylist
+                <choose>
+                  <when test="(word == null or word =='')"> <!--검색어가 입력되지 않을때 ,, select option으로 검색할때 -->
+                    where stdlist_topic like '%' || #{topic} || '%'
+                    order by
+                    stdlist_goodcnt desc
+                  </when>
+                  <when test="(topic == null or topic =='')"> <!--topic이 null 이나 공백이 들어올때 -->
+                    <choose>
+                      <when test="search.equals('stdlist_title')">  <!-- 검색어 select option이 제목 -->
+                        where stdlist_title like '%' || #{word} || '%'
+                      </when>
+                      <when test="search.equals('stdlist_area')"> <!-- 검색어 select option이 지역 -->
+                        where stdlist_area like '%' || #{word} || '%'
+                      </when>
+                      <when test="search.equals('stdlist_topic')"> <!-- 검색어 select option이 분야 -->
+                        where stdlist_topic like '%' || #{word} || '%'
+                      </when>
+                      <when test="search.equals('stdlist_dow')"> <!-- 검색어 select option이 요일 -->
+                        where stdlist_dow like '%' || #{word} || '%'
+                      </when>
+                      <when test="search.equals('stdlist_time')"> <!-- 검색어 select option이 시간 -->
+                        where stdlist_time like '%' || #{word} || '%'
+                      </when>
+                    </choose>
+                    order by stdlist_goodcnt desc
+                  </when>
+                  <when
+                    test="(topic == null or topic =='') and (word == null or word =='')"> <!--selected_topic 옵션이 선택될때 -->
+                    order by stdlist_goodcnt desc
+                  </when>
+                </choose>
+             )
+        )
+          WHERE <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]>
+
+  </select>
+
+  <!--select option 검색으로 검색된 개수 -->
+  <select id='search_count' resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as cnt
+    FROM studylist
+    <choose>
+      <when test="(word == null or word =='')"> <!--검색어가 입력되지 않을때 ,, select option으로 검색할때 -->
+        where stdlist_topic like '%' || #{topic} || '%'
+        order by
+        stdlist_no desc
+      </when>
+      <when test="(topic == null or topic =='')"> <!--topic이 null 이나 공백이 들어올때 -->
+        <choose>
+          <when test="search.equals('stdlist_title')">  <!-- 검색어 select option이 제목 -->
+            where stdlist_title like '%' || #{word} || '%'
+          </when>
+          <when test="search.equals('stdlist_area')"> <!-- 검색어 select option이 지역 -->
+            where stdlist_area like '%' || #{word} || '%'
+          </when>
+          <when test="search.equals('stdlist_topic')"> <!-- 검색어 select option이 분야 -->
+            where stdlist_topic like '%' || #{word} || '%'
+          </when>
+          <when test="search.equals('stdlist_dow')"> <!-- 검색어 select option이 요일 -->
+            where stdlist_dow like '%' || #{word} || '%'
+          </when>
+          <when test="search.equals('stdlist_time')"> <!-- 검색어 select option이 시간 -->
+            where stdlist_time like '%' || #{word} || '%'
+          </when>
+        </choose>
+        order by stdlist_no desc
+      </when>
+      <when
+        test="(topic == null or topic =='') and (word == null or word =='')"> <!--selected_topic 옵션이 선택될때 -->
+        order by stdlist_no desc
+      </when>
+    </choose>
+  </select>
+
+
+  <!-- /팀장이 회원 승인 신청을 하게 되면 현재인원수 +1 -->
+  <update id="up_currnum" parameterType="int">
+    UPDATE studylist
+    SET
+    stdlist_curr_num = stdlist_curr_num+1
+    WHERE stdlist_no= #{stdlist_no}
+  </update>
+
+  <!-- // 조회수 +1 -->
+  <update id="up_cnt" parameterType="int">
+    UPDATE studylist
+    SET
+    stdlist_cnt = stdlist_cnt+1
+    WHERE stdlist_no = #{stdlist_no}
+  </update>
+
+  <!-- 스터디리스트의 번호 조회 -->
+  <select id="stdlist_no" resultType="int">
+    SELECT NVL(MAX(stdlist_no),
+    0) as stdlist_no FROM studylist
+  </select>
+
+  <!-- 스터디그룹별 좋아요수 증가 -->
+  <update id="goodcnt_up" parameterType="int">
+    update studylist
+    set
+    stdlist_goodcnt = stdlist_goodcnt +1
+    WHERE stdlist_no = #{stdlist_no}
+  </update>
+
+  <!-- 스터디그룹별 좋아요수 감소 -->
+  <update id="goodcnt_down" parameterType="int">
+    update studylist
+    set
+    stdlist_goodcnt = stdlist_goodcnt -1
+    WHERE stdlist_no = #{stdlist_no}
+  </update>
+
+  <!-- 스터디그룹 리스트 좋아요수별로 rank 5  -->
+  <select id='rank_top5' resultType="StudyListVO">
+    select stdlist_no, stdlist_title, stdlist_email, stdlist_goodcnt, rank 
+    from(
+          select stdlist_no, stdlist_title, stdlist_email, stdlist_goodcnt, rank() over (order by stdlist_goodcnt desc) rank 
+          from STUDYLIST
+          )
+            where <![CDATA[ rank <= 5 ]]>      
+  </select>
+
+</mapper>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 부분은 테이블명을 명시 -->
+<mapper namespace="notice_reply">
+
+ <insert id="nrep_create" parameterType="NrepVO">
+  insert into notice_reply(nrepno, nrepcont, nrepdate, nrepname, memberno, noticeno) 
+  values((SELECT NVL(MAX(nrepno), 0)+1 as nrepno FROM notice_reply), #{nrepcont}, sysdate, #{nrepname}, #{memberno}, #{noticeno})
+ </insert>
+
+  
+<!-- 공지사항 글별 댓글 리스트 페이징 -->
+  <select id="nrep_list" resultType="NrepVO" parameterType="HashMap">
+  
+  select NREPNO, NREPCONT, NREPDATE, NREPNAME, memberno, NOTICENO, r
+  from(
+        select NREPNO, NREPCONT, NREPDATE, NREPNAME, memberno, NOTICENO, rownum as r
+          from(
+                select NREPNO, NREPCONT, NREPDATE, NREPNAME, memberno, NOTICENO
+                from notice_reply
+                where NOTICENO = #{noticeno}
+                order by NREPNO desc
+              )
+      )
+      WHERE <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]>
+  </select>
+  
+  
+  <!--  공지사항 글별 댓글 개수  -->
+  <select id = 'search_count' resultType="int" parameterType="int">
+    SELECT COUNT(*) as cnt
+    FROM notice_reply
+    where NOTICENO = #{noticeno}
+  </select>
+  
+  <!-- 공지사항 글별 댓글 중 하나의 댓글 리드 -->
+  <select id="nrep_read" resultType="NrepVO"  parameterType="HashMap">
+    select NREPNO, NREPCONT, NREPDATE, NREPNAME, memberno, NOTICENO
+    from notice_reply
+    where NOTICENO = #{noticeno}
+    and NREPNO = #{nrepno}
+  </select>
+  
+  <!-- 댓글 수정 -->
+  <update id="nrep_update" parameterType="NrepVO">
+    update notice_reply
+    set NREPCONT = #{nrepcont}, NREPDATE = sysdate
+    where NOTICENO = #{noticeno}
+    and NREPNO = #{nrepno}
+  </update>
+  
+  <!-- 하나의 댓글 삭제 -->
+  <delete id="nrep_delete" parameterType="HashMap">
+    DELETE FROM notice_reply
+    where NOTICENO = #{noticeno}
+    and NREPNO = #{nrepno}
+  </delete>
+  
+  <!-- 공지사항 글에 해당하는 모든 댓글 삭제 -->
+  <delete id="nrep_deleteAll" parameterType="int">
+    DELETE FROM notice_reply
+    where NOTICENO = #{noticeno}
+  </delete>
+
+  <!--댓글을 쓴 사람이 본인이 맞는지 검사 -->
+  <select id= "nrep_ck_memberno" resultType="int" parameterType="HashMap">
+  select count(memberno)
+  from notice_reply
+  where memberno = #{memberno}
+  and NOTICENO = #{noticeno}
+  and NREPNO = #{nrepno}
+  </select>
+
+</mapper>

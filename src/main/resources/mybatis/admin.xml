@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 부분은 테이블명을 명시 -->
+<mapper namespace="admin">
+
+<select id="check_master"  resultType="int" parameterType="String">
+  SELECT COUNT(adminno) as cnt
+  FROM admin
+  WHERE admauth = 'M'
+</select>
+
+<insert id="admin_create" parameterType="AdminVO">
+  INSERT INTO admin(adminno, admid, admemail, admpasswd, admname, admconfirm, admauth, admdate)
+  VALUES((SELECT NVL(MAX(adminno), 0)+1 as adminno FROM admin), #{admid}, #{admemail}, 
+  #{admpasswd}, #{admname}, #{admconfirm}, #{admauth}, sysdate)
+</insert>
+
+<select id="check_admid" resultType="int" parameterType="String">
+  SELECT COUNT(admid) as cnt
+  FROM admin
+  WHERE admid = #{admid}
+</select>
+
+<select id="check_admemail" resultType="int" parameterType="String">
+  SELECT COUNT(admemail) as cnt
+  FROM admin
+  WHERE admemail = #{admemail}
+</select>
+
+<!-- 
+<select id="admin_list" resultType="AdminVO">
+  SELECT adminno, admid, admemail, admpasswd, admname, admconfirm, admauth, admdate
+  FROM admin
+  ORDER BY adminno DESC
+</select>
+ -->
+ 
+<select id="admin_list" resultType="AdminVO" parameterType="HashMap">
+  SELECT adminno, admid, admemail, admpasswd, admname, admconfirm, admauth, admdate, r
+  FROM (
+            SELECT adminno, admid, admemail, admpasswd, admname, admconfirm, admauth, admdate, rownum as r
+            FROM(
+                    SELECT adminno, admid, admemail, admpasswd, admname, admconfirm, admauth, admdate
+                    FROM admin        
+                    <choose>
+                      <when test="(word == null or word == '')">
+                      </when> 
+                      <when test="search.equals('adminno')">  <!-- 회원번호별 검색 -->
+                        where adminno like '%' || #{word} || '%' 
+                      </when>
+                      <when test="search.equals('admid')"> <!-- 회원아이디별 검색  -->
+                        where admid like '%' || #{word} || '%' 
+                      </when>
+                      <when test="search.equals('admname')"> <!-- 회원이름별 검색 -->
+                        where admname like '%' || #{word} || '%' 
+                      </when>  
+                    </choose>
+                    ORDER BY adminno DESC
+          )
+  )
+  WHERE <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]>    
+</select>
+
+<!-- 검색된 레코드 개수 -->
+<select id="search_count" resultType="int" parameterType="HashMap">
+  SELECT COUNT(*) as cnt
+  FROM admin
+  <choose>
+    <when test="(word == null or word == '')">
+    </when> 
+    <when test="search.equals('adminno')">  <!-- 회원번호별 검색 -->
+      where adminno like '%' || #{word} || '%' 
+    </when>
+    <when test="search.equals('admid')"> <!-- 회원아이디별 검색  -->
+      where admid like '%' || #{word} || '%' 
+    </when>
+    <when test="search.equals('admname')"> <!-- 회원이름별 검색 -->
+      where admname like '%' || #{word} || '%' 
+    </when>  
+  </choose>    
+</select>
+
+<select id="admin_read" resultType="AdminVO" parameterType="int">
+  SELECT adminno, admid, admemail, admpasswd, admname, admconfirm, admauth, admdate
+  FROM admin
+  WHERE adminno = #{adminno}
+</select>
+
+<select id="admin_read_id" resultType="AdminVO" parameterType="String">
+  SELECT  adminno, admid, admemail, admpasswd, admname, admconfirm, admauth, admdate
+  FROM admin
+  WHERE admid = #{admid}
+</select>
+
+<update id="admin_update" parameterType="AdminVO">
+  UPDATE admin
+  SET  admemail=#{admemail}, admpasswd=#{admpasswd}, 
+  admname=#{admname}, admconfirm=#{admconfirm}, admauth=#{admauth}
+  where adminno = #{adminno}
+</update>
+
+<select id="admin_login"  resultType="int" parameterType="HashMap">
+  SELECT COUNT(adminno) as cnt
+  FROM admin
+  WHERE admid=#{admid, jdbcType=VARCHAR} AND admpasswd=#{admpasswd, jdbcType=VARCHAR}
+</select>
+
+<select id="find_admid" resultType="String" parameterType="HashMap">
+  SELECT admid
+  FROM admin
+  WHERE admname = #{admname} AND admemail = #{admemail}
+</select>
+
+<select id="find_admpasswd" resultType="String" parameterType="HashMap">
+  SELECT adminno
+  FROM admin
+  WHERE admname = #{admname} AND admemail = #{admemail} AND admid = #{admid} 
+</select>
+
+<update id="admpasswd_change" parameterType="AdminVO">
+  UPDATE admin
+  SET admpasswd = #{admpasswd}
+  WHERE adminno = #{adminno}
+</update>
+
+
+
+</mapper>

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace = "contest">
+
+  <insert id = "create" parameterType="ContestVO">
+    INSERT INTO contest(conNo, adminno, conHost, conTitle, conStart, conEnd, conRemain_s, conRemain_e, conCont,
+                        conUrl, conYou, conFile1, conSize1, conThumb, conFile2, conSize2, 
+                        conFile3, conSize3, conGood, conCnt, cdate, conWord)
+    VALUES ((SELECT NVL(MAX(conNo), 0) + 1 as conNo FROM contest), #{adminno}, #{conHost}, #{conTitle}, #{conStart}, #{conEnd}, 0, 0, #{conCont}, 
+                   #{conUrl}, #{conYou}, #{conFile1}, #{conSize1}, #{conThumb}, #{conFile2}, #{conSize2},
+                   #{conFile3}, #{conSize3}, 0, 0, sysdate, #{conWord})
+  </insert>
+  
+  <select id="list_all_contest" resultType="ContestVO" parameterType="HashMap">
+    SELECT conNo, adminno, memberno, conHost, conTitle, conStart, conEnd, conCont, conRemain_s, conRemain_e,
+           conUrl, conYou, conFile1, conSize1, conThumb, conFile2, conSize2, 
+           conFile3, conSize3, conGood, conCnt, cdate, conWord, r
+    FROM (
+          SELECT conNo, adminno, memberno, conHost, conTitle, conStart, conEnd, conCont, conRemain_s, conRemain_e,
+                 conUrl, conYou, conFile1, conSize1, conThumb, conFile2, conSize2, 
+                 conFile3, conSize3, conGood, conCnt, cdate, conWord, rownum as r
+          FROM (
+                SELECT conNo, adminno, memberno, conHost, conTitle, conStart, conEnd, conCont, conRemain_s, conRemain_e,
+                conUrl, conYou, conFile1, conSize1, conThumb, conFile2, conSize2, 
+                conFile3, conSize3, conGood, conCnt, cdate, conWord
+                FROM contest  
+                <choose>
+                  <when test="conWord == null or conWord == ''">
+                  </when>
+                  <otherwise>
+                    WHERE conWord LIKE '%' || #{conWord} || '%'
+                  </otherwise>
+                </choose>     
+                ORDER BY conNo DESC               
+          )
+    )
+    <!-- WHERE <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]> -->
+    WHERE r &gt;= #{startNum} AND r &lt; = #{endNum} 
+  </select>
+  
+  <select id="list_by_count" resultType="ContestVO">
+    SELECT conNo, adminno, memberno, conHost, conTitle, conStart, conEnd, conCont, conRemain_s, conRemain_e,
+           conUrl, conYou, conFile1, conSize1, conThumb, conFile2, conSize2, 
+           conFile3, conSize3, conGood, conCnt, cdate, conWord, r
+    FROM (
+          SELECT conNo, adminno, memberno, conHost, conTitle, conStart, conEnd, conCont, conRemain_s, conRemain_e,
+                 conUrl, conYou, conFile1, conSize1, conThumb, conFile2, conSize2, 
+                 conFile3, conSize3, conGood, conCnt, cdate, conWord, rownum as r
+          FROM (
+                SELECT conNo, adminno, memberno, conHost, conTitle, conStart, conEnd, conCont, conRemain_s, conRemain_e,
+                conUrl, conYou, conFile1, conSize1, conThumb, conFile2, conSize2, 
+                conFile3, conSize3, conGood, conCnt, cdate, conWord
+                FROM contest  
+                <choose>
+                  <when test="conWord == null or conWord == ''">
+                  </when>
+                  <otherwise>
+                    WHERE conWord LIKE '%' || #{conWord} || '%'
+                  </otherwise>
+                </choose>     
+                ORDER BY conCnt DESC               
+          )
+    )
+    WHERE <![CDATA[ r >= 1 AND r <= 4 ]]> 
+  </select>
+  
+  <select id="list_by_good" resultType="ContestVO">
+    SELECT conNo, adminno, memberno, conHost, conTitle, conStart, conEnd, conCont, conRemain_s, conRemain_e,
+           conUrl, conYou, conFile1, conSize1, conThumb, conFile2, conSize2, 
+           conFile3, conSize3, conGood, conCnt, cdate, conWord, r
+    FROM (
+          SELECT conNo, adminno, memberno, conHost, conTitle, conStart, conEnd, conCont, conRemain_s, conRemain_e,
+                 conUrl, conYou, conFile1, conSize1, conThumb, conFile2, conSize2, 
+                 conFile3, conSize3, conGood, conCnt, cdate, conWord, rownum as r
+          FROM (
+                SELECT conNo, adminno, memberno, conHost, conTitle, conStart, conEnd, conCont, conRemain_s, conRemain_e,
+                conUrl, conYou, conFile1, conSize1, conThumb, conFile2, conSize2, 
+                conFile3, conSize3, conGood, conCnt, cdate, conWord
+                FROM contest  
+                <choose>
+                  <when test="conWord == null or conWord == ''">
+                  </when>
+                  <otherwise>
+                    WHERE conWord LIKE '%' || #{conWord} || '%'
+                  </otherwise>
+                </choose>     
+                ORDER BY conGood DESC               
+          )
+    )
+    WHERE <![CDATA[ r >= 1 AND r <= 4 ]]>
+  </select>
+  
+  <select id="min" resultType="int">
+    SELECT NVL(MIN(conNo), 0) as conNo
+    FROM contest
+  </select>
+  
+  <select id="max" resultType="int">
+    SELECT NVL(MAX(conNo), 0) as conNo
+    FROM contest
+  </select>
+  
+  <update id="increaseCnt" parameterType="int">
+    UPDATE contest
+    SET conCnt = conCnt + 1
+    WHERE conNo = #{conNo}
+  </update>
+  
+  <select id="total_count" resultType="int">
+    SELECT COUNT(*) as count
+    FROM contest
+  </select>
+  
+  <select id="day_count" resultType="int">
+    SELECT COUNT(*) as count
+    FROM contest
+    WHERE <![CDATA[conRemain_s <= 0 AND conRemain_e >= 0]]>
+  </select>
+  
+  <select id="search_count" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as count
+    FROM contest
+    <choose>
+      <when test="conWord == null or conWord == ''"> <!-- 검색하지 않는 경우 -->
+      </when>
+      <otherwise>
+        WHERE conWord LIKE '%' || #{conWord} || '%'  
+      </otherwise>
+    </choose>
+  </select>
+  
+  <select id="read" resultType="ContestVO" parameterType="int">
+    SELECT conNo, adminno, conHost, conTitle, conStart, conEnd, conRemain_s, conRemain_e, conCont,
+           conUrl, conYou, conFile1, conSize1, conThumb, conFile2, conSize2, 
+           conFile3, conSize3, conGood, conCnt, cdate, conWord
+    FROM contest
+    WHERE conNo = #{conNo}
+  </select>
+  
+  <update id="update" parameterType="ContestVO">
+    UPDATE contest
+    SET conHost = #{conHost}, conTitle = #{conTitle}, conStart = #{conStart}, conEnd = #{conEnd}, 
+        conRemain_e = #{conRemain_e}, conRemain_s = #{conRemain_s}, conCont = #{conCont}, 
+        conUrl = #{conUrl}, conYou = #{conYou}, conWord = #{conWord}
+    WHERE conNo = #{conNo}
+  </update>
+  
+  <update id="update_thumb" parameterType="ContestVO">
+    UPDATE contest
+    SET conFile1 = #{conFile1}, conSize1 = #{conSize1}, conThumb = #{conThumb}
+    WHERE conNo = #{conNo}
+  </update>
+  
+  <update id="update_img" parameterType="ContestVO">
+    UPDATE contest
+    SET conFile2 = #{conFile2}, conSize2 = #{conSize2}, conFstor2 = #{conFstor2}
+    WHERE conNo = #{conNo}
+  </update>
+  
+  <update id="update_file" parameterType="ContestVO">
+    UPDATE contest
+    SET conFile3 = #{conFile3}, conSize3 = #{conSize3}, conFstor3 = #{conFstor3}
+    WHERE conNo = #{conNo}
+  </update>
+  
+  <delete id="delete" parameterType="int">
+    DELETE FROM contest
+    WHERE conNo = #{conNo}
+  </delete>
+  
+  <update id="goodcnt_up" parameterType="int">
+    UPDATE contest
+    SET conGood = conGood + 1
+    WHERE conNo = #{conNo}
+  </update>
+  
+  <update id="goodcnt_down" parameterType="int">
+    UPDATE contest
+    SET conGood = conGood - 1
+    WHERE conNo = #{conNo}
+  </update>
+  
+</mapper>

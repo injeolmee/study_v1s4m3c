@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="qnareply">
+  
+  <!-- 댓글 등록 -->
+  <insert id="create" parameterType="QnareplyVO">
+    INSERT INTO qnareply(qrno, qrcont, qrname, qrdate, qnano, memberno)
+    VALUES ((SELECT NVL(MAX(qrno), 0) + 1 as qrno FROM qnareply), #{qrcont}, #{qrname}, sysdate, #{qnano}, #{memberno})
+  </insert>
+
+  <!-- 목록 + 페이징 -->
+  <select id="list_all_qnareply" resultType="QnareplyVO" parameterType="HashMap">
+    SELECT qrno, qrcont, qrname, qrdate, qnano, memberno, r
+    FROM (
+          SELECT qrno, qrcont, qrname, qrdate, qnano, memberno, rownum as r
+          FROM (
+                SELECT qrno, qrcont, qrname, qrdate, qnano, memberno
+                FROM qnareply
+                WHERE qnano = #{qnano}
+                ORDER BY qrno ASC
+          )
+    )
+    WHERE <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]>
+  </select>
+  
+  <!-- 총 레코드 갯수 산출 -->
+  <select id="search_count" resultType="int" parameterType="int">
+    SELECT COUNT(qrno) as cnt
+    FROM qnareply
+    WHERE qnano = #{qnano}
+  </select>
+  
+  <!-- 특정 댓글 조회 -->
+  <select id="read" resultType="QnareplyVO" parameterType="int">
+    SELECT qrno, qrcont, qrname, qrdate, qnano, memberno
+    FROM qnareply
+    WHERE qrno = #{qrno}
+    ORDER BY qrno ASC
+  </select>
+  
+  <!-- 댓글 수정 -->
+  <update id="update" parameterType="QnareplyVO">
+    UPDATE qnareply
+    SET qrcont = #{qrcont}, qrdate = sysdate
+    WHERE qrno = #{qrno}
+  </update>
+  
+  <!-- 댓글 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM qnareply
+    WHERE qrno = #{qrno}
+  </delete>
+  
+  <!-- 게시글 삭제시 댓글 전체 삭제 -->
+  <delete id="delete_all" parameterType="int">
+    DELETE FROM qnareply
+    WHERE qnano = #{qnano}
+  </delete>
+  
+</mapper>

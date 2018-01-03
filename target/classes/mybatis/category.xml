@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 부분은 테이블명을 명시 -->
+<mapper namespace="category">
+
+  <!-- 등록 -->
+  <insert id="cate_create" parameterType="CategoryVO">    
+    INSERT INTO category(cateno, catename, cateseqno, catevisible, grpno)
+    VALUES((SELECT NVL(MAX(cateno), 0)+1 as cateno FROM category), #{catename}, #{cateseqno}, #{catevisible}, #{grpno})
+  </insert>
+
+  <!-- 목록 -->
+  <select id="cate_list" resultType="CategoryVO" parameterType="int">
+    SELECT cateno, catename, cateseqno, catevisible, grpno
+    FROM category 
+    WHERE grpno = #{grpno}
+    ORDER BY cateseqno ASC
+  </select>
+  
+  <!-- 카테그룹 카테고리 목록 -->
+  <select id="grp_cate_list" resultType="Categrp_CategoryVO">
+    SELECT g.grpno, g.grpname, g.grpseqno,
+          t.cateno, t.grpno, t.catename, t.cateseqno, t.catevisible
+    FROM categrp g, category t  
+    WHERE g.grpno = t.grpno(+)
+    ORDER BY g.grpno ASC, t.cateseqno ASC
+  </select> 
+  
+  <!-- 조회 -->
+  <select id="cate_read" resultType="CategoryVO" parameterType="HashMap">
+    SELECT cateno, catename, cateseqno, catevisible, grpno
+    FROM category
+    WHERE cateno = #{cateno} and grpno = #{grpno}
+  </select>
+  
+  <!-- 수정 -->
+  <update id ="cate_update" parameterType="CategoryVO">
+    UPDATE category
+    SET cateno=#{cateno}, catename=#{catename}, cateseqno=#{cateseqno}, 
+    catevisible=#{catevisible}, grpno=#{grpno}
+    WHERE cateno = #{cateno} and  grpno = #{grpno}
+  </update>
+  
+    <!-- 삭제 -->
+  <delete id="cate_delete" parameterType= "HashMap">
+    DELETE FROM category
+    WHERE cateno = #{cateno} and grpno = #{grpno}
+  </delete>
+  
+  <!-- 우선순위 높임 10 -> 1 -->
+  <update id ="cateseqno_up" parameterType= "HashMap">
+    UPDATE category 
+    SET cateseqno = cateseqno - 1 
+    WHERE cateno = #{cateno} and grpno = #{grpno}
+  </update>
+  
+  <!-- 우선순위 낮춤 1 -> 10 -->
+  <update id ="cateseqno_down" parameterType= "HashMap">
+    UPDATE category 
+    SET cateseqno = cateseqno + 1 
+    WHERE cateno = #{cateno} and grpno = #{grpno}
+  </update>
+
+  
+
+
+
+</mapper>

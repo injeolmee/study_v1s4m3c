@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="free">
+
+  <!-- 자유게시판 글 등록 -->
+  <insert id="create" parameterType="FreeVO">
+    INSERT INTO free(freeno, freetitle, freecontent, freename, freedate, freecnt, freelike, 
+                          memberno)
+    VALUES ((SELECT NVL(MAX(freeno), 0)+1 as freeno FROM free), 
+    #{freetitle}, #{freecontent}, #{freename}, sysdate, 0, 0, #{memberno})
+  </insert>
+  
+
+  <!-- 자유게시판 목록 + 검색 + 페이징 -->
+  <select id="list" resultType="FreeVO" parameterType="HashMap">
+    SELECT freeno, freetitle, freecontent, freename, freedate, freecnt, freelike, 
+             memberno, r
+    FROM(
+             SELECT freeno, freetitle, freecontent, freename, freedate, freecnt, freelike, 
+                       memberno, rownum as r
+             FROM (
+                       SELECT freeno, freetitle, freecontent, freename, freedate, freecnt, freelike, 
+                                memberno
+                       FROM free
+                      <choose> 
+                         <when test="search.equals('freetn')"> <!-- 제목 및 작성자 -->
+                           WHERE freetitle LIKE '%' || #{word} || '%' or freename LIKE '%' || #{word} || '%' 
+                         </when>
+                         <when test="search.equals('freetitle')"> <!-- 제목 -->
+                            WHERE freetitle LIKE '%' || #{word} || '%'
+                         </when>
+                         <when test="search.equals('freename')"> <!-- 이름 -->
+                            WHERE freename LIKE '%' || #{word} || '%'
+                         </when>
+                         <when test="search.equals('freecontent')"> <!-- 내용 -->
+                            WHERE freecontent LIKE '%' || #{word} || '%'
+                        </when>
+                      </choose>
+                       ORDER BY freeno DESC
+             )
+    )
+    WHERE <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]>
+  </select>
+
+  <!-- 자유게시판 검색된 레코드 갯수 -->
+  <select id="search_count" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as cnt
+    FROM free
+    <choose>
+      <when test="search.equals('freetn')"> <!-- 제목 및 작성자 -->
+        WHERE freetitle LIKE '%' || #{word} || '%' or freename LIKE '%'
+        || #{word} || '%'
+      </when>
+      <when test="search.equals('freetitle')"> <!-- 제목 -->
+        WHERE freetitle LIKE '%' || #{word} || '%'
+      </when>
+      <when test="search.equals('freename')"> <!-- 이름 -->
+        WHERE freename LIKE '%' || #{word} || '%'
+      </when>
+      <when test="search.equals('freecontent')"> <!-- 내용 -->
+        WHERE freecontent LIKE '%' || #{word} || '%'
+      </when>
+    </choose>
+  </select>
+  
+  <!-- 게시글 이전글 조회 -->
+  <select id="read_pre" resultType="int" parameterType="int">
+    SELECT NVL(MAX(freeno), #{freeno}) as freeno
+    FROM free
+    WHERE <![CDATA[ freeno < #{freeno}]]> 
+  </select>
+  
+  <!-- 게시글 다음글 조회 -->
+  <select id="read_post" resultType="int" parameterType="int">
+    SELECT NVL(MIN(freeno), #{freeno}) as freeno
+    FROM free
+    WHERE <![CDATA[ freeno > #{freeno}]]> 
+  </select>
+
+  <!-- 자유게시판 글 조회 -->
+  <select id="read" resultType="FreeVO" parameterType="int" >
+    SELECT freeno, freetitle, freecontent, freename, freedate, freecnt, freelike, memberno
+    FROM free
+    WHERE freeno = #{freeno}
+    ORDER BY freeno DESC
+  </select>
+  
+  <!-- 조회수 상승 -->
+  <update id="increaseCnt" parameterType="int">
+    UPDATE free
+    SET freecnt = freecnt + 1 
+    WHERE freeno = #{freeno}
+  </update>
+  
+  <!-- 자유게시판 글 수정 -->
+  <update id="update" parameterType="FreeVO">
+    UPDATE free
+    SET freetitle = #{freetitle}, freecontent = #{freecontent}, freedate = sysdate
+    WHERE freeno = #{freeno}  
+  </update>
+  
+  <!-- 패스워드 검사 -->
+  <select id="passwd_check" resultType="int" parameterType="HashMap">
+    SELECT COUNT(freeno) as cnt
+    FROM free
+    WHERE freeno = #{freeno}  AND freepasswd = #{freepasswd}
+  </select>
+  
+  <!-- ID 검사 -->
+  <select id="member_check" resultType="int" parameterType="HashMap">
+    SELECT COUNT(freeno) as cnt
+    FROM free
+    WHERE freeno = #{freeno}  AND memberno = #{memberno}
+  </select>
+  
+  <!-- 자유게시판 글 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM free
+    WHERE freeno = #{freeno}
+  </delete>
+  
+  <!-- 추천수 최상위 3개 출력 -->
+  <select id="list_like" resultType="FreeVO" parameterType="HashMap">
+    SELECT freeno, freetitle, freecontent, freename, freedate, freecnt, freelike, 
+             memberno, r 
+    FROM(
+             SELECT freeno, freetitle, freecontent, freename, freedate, freecnt, freelike, 
+                       memberno, rownum as r
+             FROM (
+                       SELECT freeno, freetitle, freecontent, freename, freedate, freecnt, freelike, 
+                                 memberno
+                       FROM free
+                       ORDER BY freelike DESC
+             )
+    )
+    WHERE <![CDATA[ r >= #{sNum} AND r <= #{eNum} ]]>
+  </select>
+  
+  <!-- 조회수 최상위 3개 출력 -->
+  <select id="list_cnt" resultType="FreeVO" parameterType="HashMap">
+    SELECT freeno, freetitle, freecontent, freename, freedate, freecnt, freelike, 
+             memberno, r 
+    FROM(
+             SELECT freeno, freetitle, freecontent, freename, freedate, freecnt, freelike, 
+                       memberno, rownum as r
+             FROM (
+                       SELECT freeno, freetitle, freecontent, freename, freedate, freecnt, freelike, 
+                                memberno
+                       FROM free
+                       ORDER BY freecnt DESC
+             )
+    )
+    WHERE <![CDATA[ r >= #{sNum} AND r <= #{eNum} ]]>
+  </select>
+  
+  <!-- 좋아요가 0에서 1로 변경 -->
+  <update id="increaseLike" parameterType="int">
+    UPDATE free
+    SET freelike = freelike + 1
+    WHERE freeno = #{freeno}
+  </update>
+  
+  <!-- 좋아요가 1에서 0으로 변경 -->
+  <update id="decreaseLike" parameterType="int">
+    UPDATE free
+    SET freelike = freelike - 1
+    WHERE freeno = #{freeno}
+  </update>
+   
+</mapper>

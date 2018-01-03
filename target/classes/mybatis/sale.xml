@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="sale">
+
+  <!-- 등록 -->
+  <insert id="create" parameterType="SaleVO">
+    INSERT INTO sale (saleno, saletitle, salecontent, saletname, salename, saledate, salecnt, saleprice, saleaddress, 
+                           saletel, saleemail, salefile, salefstor, saletum, salesize, saleseqno, memberno)
+    VALUES ((SELECT NVL(MAX(saleno), 0) + 1 as saleno from sale), #{saletitle}, #{salecontent}, #{saletname}, #{salename},
+                sysdate, 0, #{saleprice}, #{saleaddress}, #{saletel}, #{saleemail}, #{salefile}, 
+                #{salefstor}, #{saletum}, #{salesize}, #{saleseqno}, #{memberno})
+  </insert>
+  
+  <!-- 조회 -->
+  <select id="read" resultType="SaleVO" parameterType="int">
+    SELECT saleno, saletitle, salecontent, saletname, salename, saledate, salecnt, saleprice, saleaddress, 
+              saletel, saleemail, salefile, salefstor, saletum, salesize, saleseqno, memberno
+    FROM sale
+    WHERE saleno = #{saleno}
+    ORDER BY saleno DESC
+  </select>
+  
+  <!-- 목록 -->
+  <select id="list" resultType="SaleVO">
+    SELECT saleno, saletitle, salecontent, saletname, salename, saledate, salecnt, saleprice, saleaddress, 
+             saletel, saleemail, salefile, salefstor, saletum, salesize, saleseqno, memberno
+    FROM sale
+    ORDER BY saleno DESC
+  </select>
+  
+  <!-- 목록 + 검색 + 페이징 -->
+  <select id="list_search" resultType="SaleVO" parameterType="HashMap">
+    SELECT saleno, saletitle, salecontent, saletname, salename, saledate, salecnt, saleprice,
+                   saleaddress, saletel, saleemail, salefile, saletum,
+                   salesize, saleseqno, memberno, r
+    FROM( 
+            SELECT saleno, saletitle, salecontent, saletname, salename, saledate, salecnt, saleprice,
+                      saleaddress, saletel, saleemail, salefile, saletum,
+                      salesize, saleseqno, memberno, rownum as r
+            FROM ( 
+                      SELECT saleno, saletitle, salecontent, saletname, salename, saledate, salecnt, saleprice,
+                                saleaddress, saletel, saleemail, salefile, saletum,
+                                salesize, saleseqno, memberno
+                      FROM sale
+                       <choose>
+                         <when test = "search.equals('saletn')"> <!-- 제목 및 작성자 -->
+                           WHERE saletitle LIKE '%' || #{word} || '%' OR salename LIKE '%' || #{word} || '%'
+                         </when>
+                         <when test = "search.equals('saletitle')"> <!-- 제목-->
+                           WHERE saletitle LIKE '%' || #{word} || '%'
+                         </when>
+                         <when test = "search.equals('salename')"> <!-- 작성자 -->
+                           WHERE salename LIKE '%' || #{word} || '%'
+                         </when>
+                         <when test = "search.equals('salecontent')"> <!-- 내용 -->
+                           WHERE salecontent LIKE '%' || #{word} || '%'
+                         </when>                   
+                       </choose>
+                      ORDER BY saleno DESC
+             )
+    )
+    WHERE <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]>
+  </select>
+  
+  <!-- 검색레코드 갯수 산출 -->
+  <select id="search_count" resultType="int" parameterType="HashMap">
+    SELECT COUNT(saleno) as cnt
+    FROM sale
+    <choose>
+      <when test = "search.equals('saletn')"> <!-- 제목 및 작성자 -->
+        WHERE saletitle LIKE '%' || #{word} || '%' OR salename LIKE '%' || #{word} || '%'
+      </when>
+      <when test = "search.equals('saletitle')"> <!-- 제목-->
+        WHERE saletitle LIKE '%' || #{word} || '%'
+      </when>
+      <when test = "search.equals('salename')"> <!-- 작성자 -->
+        WHERE salename LIKE '%' || #{word} || '%'
+      </when>
+      <when test = "search.equals('salecontent')"> <!-- 내용 -->
+        WHERE salecontent LIKE '%' || #{word} || '%'
+      </when>                   
+    </choose>
+  </select>
+  
+  <!-- 게시글 이전글 조회 -->
+  <select id="read_pre" resultType="int" parameterType="int">
+    SELECT NVL(MAX(saleno), #{saleno}) as saleno
+    FROM sale
+    WHERE <![CDATA[ saleno < #{saleno}]]>
+  </select>
+  
+  <!-- 게시글 다음글 조회 -->
+  <select id="read_post" resultType="int" parameterType="int">
+    SELECT NVL(MIN(saleno), #{saleno}) as saleno
+    FROM sale
+    WHERE <![CDATA[ saleno > #{saleno}]]>
+  </select>
+  
+  <!-- 조회수 상승 --> 
+  <update id="increaseCnt" parameterType="int">
+    UPDATE sale
+    SET salecnt = salecnt + 1
+    WHERE saleno = #{saleno}
+  </update>
+  
+  <!-- 패스워드 검사 -->
+  <select id="passwd_check" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as salecnt
+    FROM sale
+    WHERE salepasswd = #{salepasswd} AND saleno = #{saleno}
+  </select>
+  
+  <!-- 아이디 검사 -->
+  <select id="member_check" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as salecnt
+    FROM sale
+    WHERE memberno = #{memberno} AND saleno = #{saleno}
+  </select>
+  
+  <!-- 수정 -->
+  <update id="update" parameterType="SaleVO">
+    UPDATE sale
+    SET saletitle = #{saletitle}, salecontent = #{salecontent}, saletname=#{saletname}, salename = #{salename}, saleprice = #{saleprice},
+         saleaddress = #{saleaddress}, saletel = #{saletel}, saleemail=#{saleemail}, salefile = #{salefile}, salefstor = #{salefstor},
+         saletum = #{saletum}, salesize = #{salesize}, saleseqno = #{check_seqno}, saledate = sysdate
+    WHERE saleno = #{saleno}
+  </update>
+  
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="int">
+    delete FROM sale 
+    WHERE saleno = #{saleno}
+  </delete>
+  
+
+</mapper>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace = "job">
+
+  <insert id="create" parameterType="JobVO">
+    INSERT INTO jobinfo(jobNo, adminno, memberno, comName, bossName, labCnt, jobStatus, 
+                        comAddr, homepage, career, edu, jobLocal, jcity, jgu, jdong, jobPay, payLow, payHigh, 
+                        jobEmploy, jobWork, jobStart, jobEnd, jobRemain_s, jobRemain_e, jobCont, 
+                        jobFile1, jobSize1, jobThumb, jobFile2, jobSize2, jobFstor2, jobCnt, jobWord, jdate)
+    VALUES ((SELECT NVL(MAX(jobNo), 0) + 1 as jobNo FROM jobinfo), 1, 1, #{comName}, #{bossName}, #{labCnt}, #{jobStatus}, #{comAddr}, 
+            #{homepage}, #{career}, #{edu}, #{jobLocal}, #{jcity}, #{jgu}, #{jdong}, #{jobPay}, #{payLow}, #{payHigh}, #{jobEmploy}, #{jobWork}, #{jobStart}, #{jobEnd},
+            #{jobRemain_s}, #{jobRemain_e}, #{jobCont}, #{jobFile1}, #{jobSize1}, #{jobThumb}, #{jobFile2}, #{jobSize2}, #{jobFstor2}, #{jobCnt}, #{jobWord}, sysdate)
+  </insert>
+  
+  <select id="list_all_jobinfo" resultType="JobVO" parameterType="HashMap">
+    SELECT jobNo, adminno, memberno, comName, bossName, labCnt, jobStatus, 
+           comAddr, homepage, career, edu, jobLocal, jcity, jgu, jdong, jobPay, payLow, payHigh, 
+           jobEmploy, jobWork, jobStart, jobEnd, jobRemain_s, jobRemain_e, jobCont, 
+           jobFile1, jobSize1, jobThumb, jobFile2, jobSize2, jobFstor2, jobCnt, jobWord, jdate, r
+    FROM (
+          SELECT jobNo, adminno, memberno, comName, bossName, labCnt, jobStatus, 
+                 comAddr, homepage, career, edu, jobLocal, jcity, jgu, jdong, jobPay, payLow, payHigh, 
+                 jobEmploy, jobWork, jobStart, jobEnd, jobRemain_s, jobRemain_e, jobCont, 
+                 jobFile1, jobSize1, jobThumb, jobFile2, jobSize2, jobFstor2, jobCnt, jobWord, jdate, rownum as r
+          FROM (
+                SELECT jobNo, adminno, memberno, comName, bossName, labCnt, jobStatus, 
+                       comAddr, homepage, career, edu, jobLocal, jcity, jgu, jdong, jobPay, payLow, payHigh, 
+                       jobEmploy, jobWork, jobStart, jobEnd, jobRemain_s, jobRemain_e, jobCont, 
+                       jobFile1, jobSize1, jobThumb, jobFile2, jobSize2, jobFstor2, jobCnt, jobWord, jdate
+                FROM jobinfo
+                <choose>
+                  <when test="jobWord == null or jobWord == ''"></when>
+                  <otherwise>
+                    WHERE jobWord LIKE '%' || #{jobWord} || '%'
+                  </otherwise>
+                </choose>
+                ORDER BY jobNo DESC
+          )
+    )
+    WHERE r &gt;= #{startNum} AND r &lt; = #{endNum}
+  </select>
+  
+  <select id="list_by_count" resultType="JobVO">
+    SELECT jobNo, adminno, memberno, comName, bossName, labCnt, jobStatus, 
+           comAddr, homepage, career, edu, jobLocal, jcity, jgu, jdong, jobPay, payLow, payHigh, 
+           jobEmploy, jobWork, jobStart, jobEnd, jobRemain_s, jobRemain_e, jobCont, 
+           jobFile1, jobSize1, jobThumb, jobFile2, jobSize2, jobFstor2, jobCnt, jobWord, jdate, r
+    FROM (
+          SELECT jobNo, adminno, memberno, comName, bossName, labCnt, jobStatus, 
+                 comAddr, homepage, career, edu, jobLocal, jcity, jgu, jdong, jobPay, payLow, payHigh, 
+                 jobEmploy, jobWork, jobStart, jobEnd, jobRemain_s, jobRemain_e, jobCont, 
+                 jobFile1, jobSize1, jobThumb, jobFile2, jobSize2, jobFstor2, jobCnt, jobWord, jdate, rownum as r
+          FROM (
+                SELECT jobNo, adminno, memberno, comName, bossName, labCnt, jobStatus, 
+                       comAddr, homepage, career, edu, jobLocal, jcity, jgu, jdong, jobPay, payLow, payHigh, 
+                       jobEmploy, jobWork, jobStart, jobEnd, jobRemain_s, jobRemain_e, jobCont, 
+                       jobFile1, jobSize1, jobThumb, jobFile2, jobSize2, jobFstor2, jobCnt, jobWord, jdate
+                FROM jobinfo
+                <choose>
+                  <when test="jobWord == null or jobWord == ''"></when>
+                  <otherwise>
+                    WHERE jobWord LIKE '%' || #{jobWord} || '%'
+                  </otherwise>
+                </choose>
+                ORDER BY jobCnt DESC
+          )
+    )
+    WHERE <![CDATA[ r >= 1 AND r <= 4 ]]>
+  </select>
+  
+  <select id="read" resultType="JobVO" parameterType="int">
+    SELECT jobNo, adminno, memberno, comName, bossName, labCnt, jobStatus, 
+           comAddr, homepage, career, edu, jobLocal, jcity, jgu, jdong, jobPay, payLow, payHigh, 
+           jobEmploy, jobWork, jobStart, jobEnd, jobRemain_s, jobRemain_e, jobCont, 
+           jobFile1, jobSize1, jobThumb, jobFile2, jobSize2, jobFstor2, jobCnt, jobWord, jdate
+    FROM jobinfo
+    WHERE jobNo = #{jobNo}
+  </select>
+  
+  <select id="mini" resultType="int">
+    SELECT NVL(MIN(jobNo), 0) as jobNo
+    FROM jobinfo
+  </select>
+  
+  <select id="max" resultType="int">
+    SELECT NVL(MAX(jobNo), 0) as jobNo
+    FROM jobinfo
+  </select>
+  
+  <update id="increaseCnt" parameterType="int">
+    UPDATE jobinfo
+    SET jobCnt = jobCnt + 1
+    WHERE jobNo = #{jobNo}
+  </update>
+  
+  <select id="search_count" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as count
+    FROM jobinfo
+    <choose>
+      <when test="jobWord == null or jobWord == ''"> <!-- 검색하지 않는 경우 -->
+      </when>
+      <otherwise>
+        WHERE jobWord LIKE '%' || #{jobWord} || '%'  
+      </otherwise>
+    </choose>
+  </select>
+  
+  <update id="update" parameterType="JobVO">
+    UPDATE jobinfo
+    SET comName=#{comName}, bossName=#{bossName}, labCnt=#{labCnt}, jobStatus=#{jobStatus}, comAddr=#{comAddr},
+        homepage=#{homepage}, career=#{career}, edu=#{edu}, jobLocal=#{jobLocal}, jcity=#{jcity}, jgu=#{jgu}, jdong=#{jdong},
+        jobPay=#{jobPay}, payLow=#{payLow}, payHigh=#{payHigh}, jobEmploy=#{jobEmploy}, jobWork=#{jobWork}, jobStart=#{jobStart},
+        jobEnd=#{jobEnd}, jobRemain_s=#{jobRemain_s}, jobRemain_e=#{jobRemain_e}, jobCont=#{jobCont}, jobWord=#{jobWord}
+    WHERE jobNo = #{jobNo}
+  </update>
+  
+  <update id="update_thumb" parameterType="JobVO">
+    UPDATE jobinfo
+    SET jobFile1=#{jobFile1}, jobSize1=#{jobSize1}, jobThumb=#{jobThumb}
+    WHERE jobNo = #{jobNo}
+  </update>
+  
+  <update id="update_file" parameterType="JobVO">
+    UPDATE jobinfo
+    SET jobFile2=#{jobFile2}, jobSize2=#{jobSize2}, jobFstor2=#{jobFstor2}
+    WHERE jobNo = #{jobNo}
+  </update>
+  
+  <delete id="delete" parameterType="int">
+    DELETE FROM jobinfo
+    WHERE jobNo = #{jobNo}
+  </delete>
+  
+  
+  
+  
+  
+
+</mapper>

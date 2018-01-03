@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 회원 아이디, 이름 조회 -->
+<mapper namespace="memsearch">
+  <!-- 회원 번호로 아이디, 이름 조회 -->
+  <select id="search" parameterType="int" resultType="MemsearchVO">
+    SELECT memid, memname
+    FROM member
+    WHERE memberno=#{memberno}
+  </select>
+  
+  <!-- 회원 아이디로 존재 유무 검사 -->
+  <select id="exist_memid" parameterType="String" resultType="int">
+    SELECT COUNT(*) as cnt
+    FROM member
+    WHERE memid=#{memid}
+  </select> 
+  
+  <!-- 회원 아이디로 번호 검색 -->
+  <select id="search_memberno" parameterType="String" resultType="int">
+    SELECT memberno
+    FROM member
+    WHERE memid=#{memid}
+  </select>
+</mapper>

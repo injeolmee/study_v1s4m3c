@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace = "conlike">
+  
+  <insert id="create" parameterType="HashMap">
+    INSERT INTO conlike(goodNo, goodChk, conNo, memberno)
+    VALUES ((SELECT NVL(MAX(goodNo), 0) + 1 as goodNo FROM conlike), 0, #{conNo}, #{memberno})
+  </insert>
+  
+  <select id="good_chk" resultType="int" parameterType="HashMap">
+    SELECT count(goodNo)
+    FROM conlike
+    WHERE conNo = #{conNo} AND memberno = #{memberno}
+  </select>
+  
+  <select id="check" resultType="int" parameterType="HashMap">
+    SELECT goodChk
+    FROM conlike
+    WHERE conNo = #{conNo} AND memberno = #{memberno}
+  </select>
+  
+  <update id="good_chk_y" parameterType="HashMap">
+    UPDATE conlike
+    SET goodChk = 1
+    WHERE conNo = #{conNo} AND memberno = #{memberno}
+  </update>
+  
+  <update id="good_chk_n" parameterType="HashMap">
+    UPDATE conlike
+    SET goodChk = 0
+    WHERE conNo = #{conNo} AND memberno = #{memberno}
+  </update>
+  
+</mapper>

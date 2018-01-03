@@ -1,0 +1,57 @@
+*{
+color: #000000;
+}
+
+.li_center{
+   list-style: none; /* 블렛 기호 생략 */
+   text-align: center;
+   margin: 30px auto;
+}
+
+
+.li_none{
+    list-style: none; /* 블렛 기호 생략 */
+    margin: 10px 10px; /* 위아래 좌우 */
+}
+
+ .menu_line{
+    width: 50%;
+    border-bottom: dotted 1px #777777;
+    margin: 50px auto; /* top -> right -> bottom -> left */
+    text-align: center;
+  } 
+  
+    .fieldset_basic{
+    width: 100%; 
+    margin: 10px auto;
+    border-left: none;
+    border-right: none;
+  }
+  
+    .title_line{
+    color: #333333;
+    width: 20%; 
+    margin: 20px auto; 
+    padding: 3px;    
+    border-bottom: solid 2px #555555; 
+    text-align: center;
+  }
+  
+   .message {
+    width: 70%;
+    border: none;
+    margin: 0px auto;
+    text-align: center;
+    background-color: #EEEEFF;
+    padding: 30px;
+  }
+  
+    .div_grid_img{
+    background-color: #EEEEEE; 
+    float: left; 
+    position: relative; 
+    left: 0%; 
+    margin: 1%; 
+    width: 23%; 
+    height: 220px;
+  }

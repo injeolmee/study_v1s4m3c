@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!-- 쪽지 전송 -->
+<mapper namespace="message">
+  <!-- 쪽지 전송 -->
+  <insert id="msg_create" parameterType="HashMap"> 
+    INSERT INTO message( msg_no, memberno_send, memberno_recv, msg_title, <![CDATA[msg_content]]> , msg_confirm, msg_rev_date, msg_date)
+    VALUES((SELECT NVL(MAX(msg_no), 0) + 1 as msg_no FROM message), #{memberno_send}, #{memberno_recv},
+    #{msg_title}, #{msg_content}, 'N', '', sysdate) 
+  </insert>
+  
+  <!-- 전송한 회원 번호가 유효한지 검사 -->
+  <select id="member_count" parameterType="int" resultType="int">
+    SELECT COUNT(*) as member_count
+    FROM member
+    WHERE memberno=#{memberno}
+  </select>
+  
+  <!-- 가장 최근에 저장된 쪽지 번호 -->
+  <select id="serach_last_msg_no" resultType="int">
+    SELECT MAX(msg_no)
+    FROM message
+  </select>
+  
+  <!-- 전송 내역 저장 (전송자 입장에서의 데이터)-->
+  <insert id="msgsend_insert" parameterType="HashMap">
+    INSERT INTO msgsend(msend_no, memberno_send, msg_no)
+    VALUES ((SELECT NVL(MAX(msend_no), 0) + 1 as msend_no FROM msgsend), #{memberno_send}, #{msg_no})
+  </insert>
+  
+  <!-- 수신 내역 저장 (수신자 입장에서의 데이터)-->
+  <insert id="msgrecv_insert" parameterType="HashMap">
+    INSERT INTO msgrecv(mrecv_no, memberno_recv, msg_no)
+    VALUES ((SELECT NVL(MAX(mrecv_no), 0) + 1 as mrecv_no FROM msgrecv), #{memberno_recv}, #{msg_no})
+  </insert>
+  
+  <!-- 받은 쪽지함 -->
+  <select id="msg_list" resultType="messageVO" parameterType="HashMap">
+    SELECT msg_no, memberno_recv, memberno_send, msg_title, msg_confirm, msg_content, msg_rev_date, msg_date, r
+    FROM ( 
+      SELECT msg_no, memberno_recv, memberno_send, msg_title, msg_confirm, msg_content, msg_rev_date, msg_date, rownum as r
+      FROM (
+        SELECT m.msg_no, m.memberno_recv, m.memberno_send, msg_title, msg_confirm, msg_content, msg_rev_date, msg_date
+        FROM message m JOIN msgrecv mr 
+        ON m.msg_no = mr.msg_no
+        <choose>
+          <!-- 아이디로 검색하는 경우 -->
+          <!-- search_condition 도 HashMap으로 전달 받는다. -->
+          <when test="search_condition=='search_id'">
+            WHERE mr.memberno_recv=#{memberno_recv} AND m.memberno_send=#{memberno_send} AND m.memberno_send !=#{memberno_recv}
+          </when>
+          <!-- 제목으로 검색하는 경우 -->
+          <when test="search_condition=='msg_title'">
+            WHERE mr.memberno_recv=#{memberno_recv} AND msg_title LIKE '%' || #{msg_title} || '%' AND m.memberno_send !=#{memberno_recv}
+          </when>
+          <!-- 내용으로 검색하는 경우 --> 
+          <when test="search_condition=='msg_content'">
+            WHERE mr.memberno_recv=#{memberno_recv} AND msg_content LIKE '%' || #{msg_content} || '%' AND m.memberno_send !=#{memberno_recv}
+          </when>
+          <otherwise>
+            WHERE mr.memberno_recv=#{memberno_recv} AND m.memberno_send !=#{memberno_recv}
+          </otherwise>
+        </choose>
+        ORDER BY m.msg_no DESC
+      )
+    )
+    where <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]>
+    
+  </select>
+  
+  <!-- 보낸 쪽지함 (로그인 한 회원의 번호)-->
+  <select id="msg_send_list" resultType="messageVO" parameterType="HashMap"> 
+    SELECT msg_no, memberno_recv, memberno_send, msg_title, msg_content, msg_confirm, msg_rev_date, msg_date, r
+    FROM (
+      SELECT msg_no, memberno_recv, memberno_send, msg_title, msg_content, msg_confirm, msg_rev_date, msg_date, rownum as r
+      FROM(
+        SELECT m.msg_no, m.memberno_recv, m.memberno_send, msg_title, msg_content, msg_confirm, msg_rev_date, msg_date
+        FROM message m JOIN msgsend ms
+        ON m.msg_no = ms.msg_no
+        <choose> 
+          <when test="search_condition=='search_id'">
+            WHERE ms.memberno_send=#{memberno_send} AND m.memberno_recv=#{memberno_recv} AND m.memberno_recv !=#{memberno_send}
+          </when>
+          <!-- 제목으로 검색하는 경우 --> 
+          <when test="search_condition=='msg_title'">
+            WHERE ms.memberno_send=#{memberno_send} AND msg_title LIKE '%' || #{msg_title} || '%' AND m.memberno_recv !=#{memberno_send}
+          </when>
+          <!-- 내용으로 검색하는 경우 --> 
+          <when test="search_condition=='msg_content'">
+            WHERE ms.memberno_send=#{memberno_send} AND msg_content LIKE '%' || #{msg_content} || '%' AND m.memberno_recv !=#{memberno_send}
+          </when>
+          <otherwise>
+            WHERE ms.memberno_send=#{memberno_send} AND m.memberno_recv !=#{memberno_send}
+          </otherwise>
+        </choose> 
+        ORDER BY m.msg_no DESC
+      )
+    )
+    where <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]>
+  </select>
+  
+  <!-- 쪽지 보관함 -->
+  <select id="msg_repo_list" resultType="messageVO" parameterType="HashMap">
+    SELECT msg_no, memberno_recv, memberno_send, msg_title, msg_confirm, msg_content, msg_rev_date, msg_date, r
+    FROM ( 
+      SELECT msg_no, memberno_recv, memberno_send, msg_title, msg_confirm, msg_content, msg_rev_date, msg_date, rownum as r
+      FROM (
+        SELECT m.msg_no, m.memberno_recv, m.memberno_send, msg_title, msg_confirm, msg_content, msg_rev_date, msg_date
+        FROM message m JOIN msg_repo mp
+        ON m.msg_no = mp.msg_no
+        <choose>
+          <!-- 아이디로 검색하는 경우 -->
+          <!-- search_condition 도 HashMap으로 전달 받는다. -->
+          <when test="search_condition=='search_id'"> 
+            WHERE mp.memberno=#{memberno} AND m.memberno_send=#{memberno_send}
+          </when>
+          <!-- 제목으로 검색하는 경우 -->
+          <when test="search_condition=='msg_title'">
+            WHERE mp.memberno=#{memberno} AND m.msg_title LIKE '%' || #{msg_title} || '%'
+          </when>
+          <!-- 내용으로 검색하는 경우 --> 
+          <when test="search_condition=='msg_content'">
+            WHERE mp.memberno=#{memberno} AND m.msg_content LIKE '%' || #{msg_content} || '%'
+          </when>
+          <otherwise>
+            WHERE mp.memberno=#{memberno}
+          </otherwise>
+        </choose>
+        ORDER BY m.msg_no DESC
+      ) 
+    )
+    where <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]>
+  </select>
+  
+  <!-- 내게쓴 쪽지함 (로그인 한 회원의 번호)--> 
+  <!-- 보낸 사람도 '나'이며 받는 사람도 '나'인 것들. -->
+  <select id="msg_self_list" resultType="messageVO" parameterType="HashMap"> 
+    SELECT msg_no, memberno_recv, memberno_send, msg_title, msg_content, msg_confirm, msg_rev_date, msg_date, r
+    FROM (
+      SELECT msg_no, memberno_recv, memberno_send, msg_title, msg_content, msg_confirm, msg_rev_date, msg_date, rownum as r
+      FROM(
+        SELECT m.msg_no, m.memberno_recv, m.memberno_send, msg_title, msg_content, msg_confirm, msg_rev_date, msg_date
+        FROM message m JOIN msgrecv mr 
+        ON m.msg_no = mr.msg_no
+        <choose>  
+          <when test="search_condition=='search_id'">
+            WHERE (m.memberno_send=#{memberno_send} AND m.memberno_recv=#{memberno_recv}) AND m.memberno_send=#{memberno_recv}
+          </when>
+          <!-- 제목으로 검색하는 경우 --> 
+          <when test="search_condition=='msg_title'">
+            WHERE (m.memberno_send=#{memberno_send} AND m.memberno_recv=#{memberno_recv}) AND msg_title LIKE '%' || #{msg_title} || '%'
+          </when>
+          <!-- 내용으로 검색하는 경우 -->
+          <when test="search_condition=='msg_content'">
+            WHERE (m.memberno_send=#{memberno_send} AND m.memberno_recv=#{memberno_recv}) AND msg_content LIKE '%' || #{msg_content} || '%'
+          </when>
+          <otherwise>
+            WHERE m.memberno_send=#{memberno_send} AND m.memberno_recv=#{memberno_recv}
+          </otherwise>
+        </choose>
+        ORDER BY m.msg_no DESC
+      )
+    )
+    where <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]>
+  </select>
+  
+  <!-- 받은 쪽지함에서 검색한 쪽지 갯수 -->
+  <select id="recv_search_count" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as cnt 
+    FROM message m JOIN msgrecv mr
+    ON m.msg_no = mr.msg_no
+    <choose>
+      <!-- 아이디로 검색하는 경우 -->
+      <!-- search_condition 도 HashMap으로 전달 받는다. -->
+      <when test="search_condition=='search_id'">
+        WHERE mr.memberno_recv=#{memberno_recv} AND m.memberno_send=#{memberno_send} AND m.memberno_send !=#{memberno_recv}
+      </when>
+      <!-- 제목으로 검색하는 경우 -->
+      <when test="search_condition=='msg_title'">
+        WHERE mr.memberno_recv=#{memberno_recv} AND msg_title LIKE '%' || #{msg_title} || '%' AND m.memberno_send !=#{memberno_recv}
+      </when>
+      <!-- 내용으로 검색하는 경우 --> 
+      <when test="search_condition=='msg_content'">
+        WHERE mr.memberno_recv=#{memberno_recv} AND msg_content LIKE '%' || #{msg_content} || '%' AND m.memberno_send !=#{memberno_recv}
+      </when>
+      <otherwise> 
+        WHERE mr.memberno_recv=#{memberno_recv} AND m.memberno_send !=#{memberno_recv}
+      </otherwise>
+    </choose>
+  </select>
+  
+  <!-- 받은 쪽지함 모든 갯수 -->
+  <select id="msg_recv_all_count" resultType="int" parameterType="int">
+    SELECT COUNT(*) as recv_all_count
+    FROM msgrecv mr JOIN message m
+    ON m.msg_no = mr.msg_no
+    WHERE mr.memberno_recv=#{memberno_recv} AND m.memberno_send !=#{memberno_recv}
+    <!-- memberno_recv == 받는 회원 번호가 '나'인 튜플 -->
+  </select>
+  
+  <!-- 보낸 쪽지함 모든 갯수 -->
+  <select id="msg_send_all_count" resultType="int" parameterType="int">
+    SELECT COUNT(*) as send_all_count
+    FROM msgsend ms JOIN message m
+    ON ms.msg_no=m.msg_no
+    WHERE ms.memberno_send=#{memberno_send} AND m.memberno_recv !=#{memberno_send}
+  </select>
+  
+  <!-- 쪽지 보관함 모든 갯수 -->
+  <select id="msg_repo_all_count" resultType="int" parameterType="int">
+    SELECT COUNT(*) as repo_all_count
+    FROM msg_repo 
+    WHERE memberno=#{memberno}
+  </select>
+  
+  <!-- 내게 쓴 쪽지함 모든 갯수 -->
+  <select id="msg_self_all_count" resultType="int" parameterType="int">
+    SELECT COUNT(*) as self_all_count
+    FROM message m JOIN msgrecv mr 
+    ON m.msg_no = mr.msg_no 
+    WHERE m.memberno_send=#{memberno_send} AND mr.memberno_recv=#{memberno_send}
+    
+  </select>
+  
+  <!-- 보낸 쪽지함 검색 갯수-->
+  <select id="send_search_count" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as cnt
+    FROM message m JOIN msgsend ms
+    ON m.msg_no = ms.msg_no
+    <choose>
+      <when test="search_condition=='search_id'">
+        WHERE ms.memberno_send=#{memberno_send} AND m.memberno_recv=#{memberno_recv} AND m.memberno_recv !=#{memberno_send}
+      </when>
+      <when test="search_condition=='msg_title'">
+        WHERE ms.memberno_send=#{memberno_send} AND msg_title LIKE '%' || #{msg_title} || '%' AND m.memberno_recv !=#{memberno_send}
+      </when>
+      <when test="search_condition=='msg_content'">
+        WHERE ms.memberno_send=#{memberno_send} AND msg_content LIKE '%' || #{msg_content} || '%' AND m.memberno_recv !=#{memberno_send}
+      </when>
+      <otherwise>
+        WHERE ms.memberno_send=#{memberno_send} AND m.memberno_recv !=#{memberno_send}
+      </otherwise>
+    </choose>
+  </select>
+  
+  <!-- 내게 쓴 쪽지함에서 검색한 쪽지 갯수 -->
+  <select id="self_search_count" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as cnt 
+    FROM message m JOIN msgsend ms
+    ON m.msg_no = ms.msg_no
+    <choose>
+      <!-- 아이디로 검색하는 경우 -->
+      <!-- search_condition 도 HashMap으로 전달 받는다. -->
+      <when test="search_condition=='search_id'">
+        WHERE (ms.memberno_send=#{memberno_send} AND m.memberno_recv=#{memberno_recv}) AND m.memberno_send=#{memberno_send}
+      </when>
+      <!-- 제목으로 검색하는 경우 -->
+      <when test="search_condition=='msg_title'">
+        WHERE (ms.memberno_send=#{memberno_send} AND m.memberno_recv=#{memberno_recv}) AND msg_title LIKE '%' || #{msg_title} || '%'
+      </when>
+      <!-- 내용으로 검색하는 경우 --> 
+      <when test="search_condition=='msg_content'">
+        WHERE (ms.memberno_send=#{memberno_send} AND m.memberno_recv=#{memberno_recv}) AND msg_content LIKE '%' || #{msg_content} || '%'
+      </when>
+      <otherwise>
+        WHERE ms.memberno_send=#{memberno_send} AND m.memberno_recv=#{memberno_recv}
+      </otherwise>
+    </choose>
+  </select>
+  
+  <!-- 쪽지 보관함 검색 갯수-->
+  <select id="repo_search_count" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as cnt
+    FROM message m JOIN msg_repo mp
+    ON m.msg_no = mp.msg_no
+   <choose> 
+      <when test="search_condition=='search_id'"> 
+        WHERE mp.memberno=#{memberno} AND m.memberno_send=#{memberno_send}
+      </when>
+      <when test="search_condition=='msg_title'">
+        WHERE mp.memberno=#{memberno} AND m.msg_title LIKE '%' || #{msg_title} || '%'
+      </when>
+      <when test="search_condition=='msg_content'">
+        WHERE mp.memberno=#{memberno} AND m.msg_content LIKE '%' || #{msg_content} || '%'
+      </when>
+      <otherwise>
+        WHERE mp.memberno=#{memberno}
+      </otherwise>
+    </choose>
+  </select>
+  
+  <!-- 쪽지 보관함 이동 -->
+  <insert id="move_repo" parameterType="HashMap">
+    INSERT INTO msg_repo(msg_repono, memberno, msg_no)
+    VALUES((SELECT NVL(MAX(msg_repono), 0) + 1 as msg_repono FROM msg_repo), #{memberno }, #{msg_no })
+  </insert>
+  
+  <!-- 받은 쪽지함 삭제 -->
+  <delete id="recv_del" parameterType="int">
+    DELETE
+    FROM msgrecv
+    WHERE msg_no=#{msg_no}
+  </delete>
+  
+  <!-- 보낸 쪽지 삭제(수신 확인하였으면 상대에게는 미삭제, 안했으면 둘다 삭제) -->
+  <delete id="send_del">
+    DELETE
+    FROM msgsend
+    where msg_no=#{msg_no}
+  </delete>
+  
+  <!-- 쪽지 보관함 삭제 (해당 회원의 msg_no에 따라 삭제 진행) -->
+  <delete id="repo_del" parameterType="HashMap">
+    DELETE
+    FROM msg_repo
+    where msg_no=#{msg_no}
+  </delete>
+  <!--  AND memberno=#{memberno}  -->
+  
+  <!-- 내게 쓴 쪽지함 삭제 -->
+  <!-- <delete id="self_del" parameterMap="HashMap">
+    DELETE
+    FROM msgrecv mr JOIN msgsend ms
+    ON mr.msg_no=ms.msg_no
+    WHERE msg_no=#{msg_no }
+  </delete> --> 
+  
+  <!-- 쪽지 읽기 (보낸, 받은 공통) -->
+  <select id="read_msg" parameterType="int" resultType="MessageVO">
+    SELECT msg_no, memberno_send, memberno_recv, msg_title, msg_content, msg_confirm, msg_rev_date, msg_date
+    FROM message
+    WHERE msg_no=#{msg_no }
+  </select>
+  
+  <!-- 쪽지 읽기 후 confirm 변경 및 읽은 시간 등록 -->
+  <update id="confirm" parameterType="int">
+    UPDATE message
+    SET msg_confirm='Y', msg_rev_date=sysdate
+    WHERE msg_no=#{msg_no }
+  </update>
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 부분은 테이블명을 명시 -->
+<mapper namespace="visit">
+
+<insert id="setVisitTotalCount">
+  INSERT INTO visit (vdate) VALUES (sysdate)
+</insert>
+
+<select id="getVisitTodayCount" resultType="int">
+  SELECT COUNT(*) AS count 
+  FROM visit
+  WHERE to_date(vdate, 'YYYY-MM-DD') = to_date(sysdate, 'YYYY-MM-DD')
+</select>
+
+<select id="getVisitTotalCount" resultType="int">
+  SELECT COUNT(*) AS count from visit
+</select>
+
+</mapper>

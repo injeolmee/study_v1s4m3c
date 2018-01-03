@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 부분은 테이블명을 명시 -->
+<mapper namespace="categrp">
+
+  <!-- 등록 -->
+  <insert id="grp_create" parameterType="CategrpVO">    
+    INSERT INTO categrp(grpno, grpname, grpseqno, grpvisible)
+    VALUES(#{grpno}, #{grpname}, #{grpseqno}, #{grpvisible})
+  </insert>
+
+  <!-- 목록 -->
+  <select id="grp_list" resultType="CategrpVO">
+    SELECT grpno, grpname, grpseqno, grpvisible
+    FROM categrp 
+    ORDER BY grpseqno ASC
+  </select>
+  
+  <!-- 조회 -->
+  <select id="grp_read" resultType="CategrpVO" parameterType="int">
+    SELECT grpno, grpname, grpseqno, grpvisible
+    FROM categrp
+    WHERE grpno = #{grpno}
+  </select>
+  
+  <!-- 수정 -->
+  <update id ="grp_update" parameterType= "CategrpVO">
+    UPDATE categrp
+    SET grpno=#{grpno}, grpname=#{grpname}, grpseqno=#{grpseqno}, grpvisible=#{grpvisible}
+    WHERE grpno = #{grpno}
+  </update>
+  
+    <!-- 삭제 -->
+  <delete id="grp_delete" parameterType= "int">
+    DELETE FROM categrp
+    WHERE grpno = #{grpno}
+  </delete>
+  
+  <!-- 우선순위 높임 10 -> 1 -->
+  <update id ="grpseqno_up" parameterType= "int">
+    UPDATE categrp 
+    SET grpseqno = grpseqno - 1 
+    WHERE grpno = #{grpno}
+  </update>
+  
+  <!-- 우선순위 낮춤 1 -> 10 -->
+  <update id ="grpseqno_down" parameterType= "int">
+    UPDATE categrp 
+    SET grpseqno = grpseqno + 1 
+    WHERE grpno = #{grpno}
+  </update>
+  
+  <select id="grpno_check" resultType="int"  parameterType = "int">
+    SELECT COUNT(grpno) as cnt
+    FROM categrp
+    WHERE grpno = #{grpno}  
+  </select>
+  
+
+
+
+</mapper>

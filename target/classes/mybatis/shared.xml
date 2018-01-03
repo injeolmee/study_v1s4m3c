@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="shared">
+
+  <!-- 게시글 등록 -->
+  <insert id="create" parameterType="SharedVO">
+    INSERT INTO shared (sharedno, sharedtitle, sharedcontent, sharedname, sharedyoutube, sharedseqno, sharedfile, sharedfstor, sharedtum, 
+                           sharedsize, shareddate, sharedcnt, sharedlike, memberno) 
+    VALUES ((SELECT NVL(MAX(sharedno), 0)+1 as sharedno FROM shared),
+            #{sharedtitle} , #{sharedcontent}, #{sharedname}, #{sharedyoutube}, 
+            0, #{sharedfile}, #{sharedfstor},  #{sharedtum}, #{sharedsize}, sysdate, 0, 0, #{memberno})
+  </insert>
+  
+  <!-- 게시판 목록 -->
+  <select id="list" resultType="SharedVO">
+    SELECT sharedno, sharedtitle, sharedcontent, sharedname, sharedyoutube, sharedseqno,
+          sharedfile, sharedfstor, sharedtum, sharedsize, shareddate, sharedcnt, sharedlike, memberno
+    FROM shared
+    ORDER BY sharedno DESC
+  </select>
+  
+  <!-- 게시판 목록 + 검색 + 페이징 -->
+  <select id="list_search" resultType="SharedVO" parameterType="HashMap">
+    SELECT sharedno, sharedtitle, sharedcontent, sharedname, sharedyoutube, sharedseqno,
+          sharedfile, sharedfstor, sharedtum, sharedsize, shareddate, sharedcnt, sharedlike, memberno, r
+    FROM( 
+             SELECT sharedno, sharedtitle, sharedcontent, sharedname, sharedyoutube, sharedseqno,
+                      sharedfile, sharedfstor, sharedtum, sharedsize, shareddate, sharedcnt, sharedlike, memberno, rownum as r
+             FROM (
+                       SELECT sharedno, sharedtitle, sharedcontent, sharedname, sharedyoutube, sharedseqno,
+                                sharedfile, sharedfstor, sharedtum, sharedsize, shareddate, sharedcnt, sharedlike, memberno
+                       FROM shared
+                       <choose>
+                         <when test = "search.equals('sharedtn')"> <!-- 제목 및 작성자 -->
+                           WHERE sharedtitle LIKE '%' || #{word} || '%' OR sharedname LIKE '%' || #{word} || '%'
+                         </when>
+                         <when test = "search.equals('sharedtitle')"> <!-- 제목-->
+                           WHERE sharedtitle LIKE '%' || #{word} || '%'
+                         </when>
+                         <when test = "search.equals('sharedname')"> <!-- 작성자 -->
+                           WHERE sharedname LIKE '%' || #{word} || '%'
+                         </when>
+                         <when test = "search.equals('sharedcontent')"> <!-- 내용 -->
+                           WHERE sharedcontent LIKE '%' || #{word} || '%'
+                         </when>                   
+                       </choose>
+                       ORDER BY sharedno DESC
+             )
+    )  
+    WHERE <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]>
+  </select>
+  
+  <!-- 자료게시판 검색된 레코드 갯수 -->
+  <select id="search_count" resultType="int" parameterType="HashMap">
+    SELECT COUNT(sharedno) as cnt
+    FROM shared
+    <choose>
+      <when test="search.equals('sharedtn')"> <!-- 제목 및 작성자 -->
+        WHERE sharedtitle LIKE '%' || #{word} || '%' OR sharedname LIKE '%' || #{word} || '%'
+      </when>
+      <when test="search.equals('sharedtitle')"> <!-- 제목 -->
+        WHERE sharedtitle LIKE '%' || #{word} || '%'
+      </when>
+      <when test="search.equals('sharedname')"> <!-- 작성자 -->
+        WHERE sharedname LIKE '%' || #{word} || '%'
+      </when>
+      <when test="search.equals('sharedcontent')"> <!-- 내용 -->
+        WHERE sharedcontent LIKE '%' || #{word} || '%'
+      </when>
+    </choose>
+  </select>
+  
+  <!-- 게시글 조회 -->
+  <select id="read" resultType="SharedVO" parameterType="int">
+    SELECT sharedno, sharedtitle, sharedcontent, sharedname, sharedyoutube, sharedseqno,
+          sharedfile, sharedfstor, sharedtum, sharedsize, shareddate, sharedcnt, sharedlike, memberno
+    FROM shared
+    WHERE sharedno = #{sharedno}
+  </select>
+  
+  <!-- 게시글 이전글 조회 -->
+  <select id="read_pre" resultType="int" parameterType="int">
+    SELECT NVL(MAX(sharedno), #{sharedno}) as sharedno
+    FROM shared
+    WHERE <![CDATA[ sharedno < #{sharedno}]]>
+  </select>
+  
+  <!-- 게시글 다음글 조회 -->
+  <select id="read_post" resultType="int" parameterType="int">
+    SELECT NVL(MIN(sharedno), #{sharedno}) as sharedno
+    FROM shared
+    WHERE <![CDATA[ sharedno > #{sharedno}]]>
+  </select>
+  
+  <!-- 조회수 상승 --> 
+  <update id="increaseCnt" parameterType="int">
+    UPDATE shared
+    SET sharedcnt = sharedcnt + 1
+    WHERE sharedno = #{sharedno}
+  </update>
+  
+  <!-- 추천수 상승 -->
+  <update id="increaseLike" parameterType="int">
+    UPDATE shared
+    SET sharedlike = sharedlike + 1
+    WHERE sharedno = #{sharedno}
+  </update>
+  
+  <!-- 패스워드 검사 -->
+  <select id="passwd_check" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as sharedcnt 
+    FROM shared
+    WHERE sharedno = #{sharedno} AND sharedpasswd = #{sharedpasswd}
+  </select>
+  
+  <!-- 아이디 검사 -->
+  <select id="member_check" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as sharedcnt 
+    FROM shared
+    WHERE sharedno = #{sharedno} AND memberno = #{memberno}
+  </select>
+  
+  <!-- 수정 -->
+  <update id="update" parameterType="SharedVO">
+    UPDATE shared
+    SET sharedtitle = #{sharedtitle}, sharedcontent = #{sharedcontent}, sharedyoutube = #{sharedyoutube}, 
+         sharedfile= #{sharedfile}, sharedfstor= #{sharedfstor}, sharedsize = #{sharedsize}, sharedtum = #{sharedtum}, shareddate = sysdate
+    WHERE sharedno = #{sharedno}
+  </update>
+  
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM shared
+    WHERE sharedno = #{sharedno}
+  </delete>
+  
+
+</mapper>

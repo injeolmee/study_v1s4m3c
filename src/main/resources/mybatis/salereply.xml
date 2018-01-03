@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="salereply">
+
+   <!-- 댓글 등록 -->
+  <insert id="create" parameterType="SalereplyVO" >
+    INSERT INTO salereply (sreplyno, sreplycontent, sreplyname, sreplydate, sreplygrpno, 
+                             sreplyindent, sreplyansnum, saleno, MEMBERNO, seqno) 
+    VALUES ((SELECT NVL(MAX(sreplyno), 0) + 1 as sreplyno from salereply), #{sreplycontent}, #{sreplyname}, sysdate, 
+                (SELECT NVL(MAX(sreplygrpno), 0) + 1 as sreplygrpno FROM salereply), 
+                0, 0, #{saleno}, #{memberno}, 1)
+  </insert>
+  
+  <!-- 댓글 목록 (원본) -->
+  <select id="list_reply" resultType="SalereplyVO" parameterType="int">
+    SELECT sreplyno, sreplycontent, sreplyname, sreplydate, sreplygrpno, 
+          sreplyindent, sreplyansnum, saleno, MEMBERNO, seqno
+    FROM salereply
+    WHERE saleno = #{saleno}
+    ORDER BY sreplyno ASC, sreplyansnum ASC
+  </select>
+  
+  <!-- 댓글 목록 + 페이징 -->
+  <select id="total_list_reply" resultType="SalereplyVO" parameterType="HashMap">
+    SELECT sreplyno, sreplycontent, sreplyname, sreplydate, sreplygrpno, 
+             sreplyindent, sreplyansnum, saleno, MEMBERNO, seqno, r
+    FROM (SELECT sreplyno, sreplycontent, sreplyname, sreplydate, sreplygrpno, 
+                       sreplyindent, sreplyansnum, saleno, MEMBERNO, seqno, rownum as r
+             FROM (SELECT sreplyno, sreplycontent, sreplyname, sreplydate, sreplygrpno, 
+                                sreplyindent, sreplyansnum, saleno, MEMBERNO, seqno
+                       FROM salereply
+                      WHERE saleno = #{saleno}
+                      ORDER BY sreplygrpno ASC, sreplyindent ASC, sreplyansnum DESC
+            )
+    )
+    WHERE <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]>
+  </select>
+  
+  <!-- 댓글의 총 레코드 갯수 산출 -->
+  <select id="search_count" resultType="int" parameterType="int">
+    SELECT COUNT(sreplyno) as cnt
+    FROM salereply
+    WHERE saleno = #{saleno}
+  </select>
+  
+  <!-- 특정 댓글 조회 -->
+  <select id="read" parameterType="int" resultType="SalereplyVO">
+    SELECT sreplyno, sreplycontent, sreplyname, sreplydate, sreplygrpno, 
+              sreplyindent, sreplyansnum, saleno, memberno, seqno
+    FROM salereply
+    WHERE sreplyno = #{sreplyno}
+    ORDER BY sreplyno ASC
+  </select>
+  
+  <!-- ******************** 대댓글(답변) 관련 시작 ******************** -->
+  
+  <!-- 신규 답변을 최우선으로 출력하기위한 답변 순서 조절 -->
+  <update id='updateAnsnum' parameterType="SalereplyVO">  
+    UPDATE salereply
+    SET sreplyansnum = sreplyansnum + 1
+    WHERE sreplygrpno = #{sreplygrpno} AND sreplyansnum > #{sreplyansnum}
+  </update>  
+   
+  <!-- 댓글의 답변(대댓글) 등록 --> 
+  <insert id="reply" parameterType="SalereplyVO">
+    INSERT INTO salereply(sreplyno, sreplycontent, sreplyname, sreplydate, sreplygrpno, 
+                             sreplyindent, sreplyansnum, saleno, MEMBERNO, seqno)   
+     VALUES ((SELECT NVL(MAX(sreplyno), 0) + 1 as sreplyno from salereply), #{sreplycontent}, #{sreplyname}, sysdate, 
+                #{sreplygrpno}, #{sreplyindent}, #{sreplyansnum}, #{saleno}, #{memberno}, #{seqno})
+  </insert>
+
+  <!-- ******************** 대댓글(답변) 관련 종료 ******************** -->
+  
+  <!-- 댓글 수정 -->
+  <update id="update" parameterType="SalereplyVO">
+    UPDATE salereply
+    SET sreplycontent = #{sreplycontent}, sreplydate = sysdate
+    WHERE sreplyno = #{sreplyno}
+  </update>
+  
+  <!-- 댓글 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM salereply
+    WHERE sreplyno = #{sreplyno}
+  </delete>
+  
+  <!-- 부모 댓글의 seqno 변경 -->
+  <update id="update_seqno" parameterType="int">
+    UPDATE salereply
+    SET seqno = 0
+    WHERE sreplyno = #{sreplyno}
+  </update>
+  
+  <!-- 부모글 (seqno=0) 일경우 delete 처리를 update로 처리 -->
+  <update id="update_parent" parameterType="int">
+    UPDATE salereply
+    SET sreplycontent = '삭제된 댓글입니다.', seqno = 3
+    WHERE sreplyno = #{sreplyno}
+  </update>
+  
+  <!-- 게시글 삭제시 댓글 전체 삭제 -->
+  <delete id="delete_all" parameterType="int">
+    DELETE FROM salereply
+    WHERE saleno = #{saleno}
+  </delete>
+
+</mapper>

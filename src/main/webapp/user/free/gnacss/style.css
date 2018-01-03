@@ -1,0 +1,406 @@
+/************************************************************
+ 자유 게시판 CSS 
+************************************************************/
+
+/* 모든 태그에 적용 */
+* {
+  font-family: Malgun Gothic;
+  font-size: 14px;
+  margin: 0px;
+  padding: 0px;
+  color: #555555;
+}
+
+/* 메뉴 밑에 있는 "모든 내용"에 적용되는 것! ( + 모든 프로젝트에 적용된다! ) */
+.content {
+  width: 100%;
+  margin: 0px auto;
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+/* class = 'focus1' */
+.focus1 {
+  font-weight: bold;
+  font-size: 32px;
+  color: #00FF00;
+  background-color: #FFFF00;
+}
+
+/* 특정 단어 강조 */
+.focus2 {
+  font-weight: bold;
+  font-size: 32px;
+  color: #FFFFFF;
+  background-color: #FF0000;
+}
+
+/* A 태그 방문전 상태 */
+A:link { 
+  text-decoration: none; /* 밑줄 삭제 */
+  color: #333333;
+}
+
+/* A 태그 방문후 상태 */
+A:visited { 
+  text-decoration: none; /* 밑줄 삭제 */
+  color: #333333;
+}
+
+ /* A 태그에 마우스가 올라간 상태 */
+A:hover {
+  text-decoration: underline; /* 밑줄 출력 */
+  color: #5555FF;
+}
+
+/* A 태그를 클릭한 상태 */
+A:active { 
+  text-decoration: underline; /* 밑줄 출력 */
+  color: #5555FF;
+}
+
+/* label 기본 속성 */
+.label_basic {
+  color: #555555;
+  font-weight: bold;
+}
+
+ /* title 박스 생성 */
+.title_box {
+  width: 30%;
+  margin: 20px auto;
+  padding: 3px;
+  background-color: #EEEEFF;
+  border: dotted 2px #555555;
+  text-align: center;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+/* title 밑줄 선 생성*/
+.title_line { /* 박스 생성 class */
+  color: #333333;
+  width: 20%;
+  margin: 20px auto;
+  padding: 3px;
+  padding-bottom: 5px;
+  border-bottom: solid 2px #555555;
+  text-align: center;
+  font-size: 18px;
+}
+
+/* table 기본 속성 */
+.table_basic { 
+  margin: 20px auto;
+  border: solid 1px #CCCCCC;
+  width: 80%;
+  border-collapse: collapse;
+  font-size: 18px;
+}
+
+/* TH 기본 속성 */
+.th_basic { 
+  border: solid 1px #CCCCCC;
+  background-color: #EEEEFF;
+  font-size: 18px;
+}
+
+
+/* TD 기본 속성 */
+.td_basic { 
+  border: solid 1px #CCCCCC;
+  background-color: #FFFFFF;
+  text-align: center;
+  padding-left: 10px; /* 왼쪽 앞에 조금 여백을 추가 */
+  padding-right: 10px; /* 오른쪽에 조금 여백을 추가 (=> 왼쪽, 오른쪽을 동일하게 주는것이 좋다) */
+  font-size: 18px;
+}
+
+/* TD 왼쪽 배열 속성  */
+.td_left {
+  border: solid 1px #CCCCCC;
+  background-color: #FFFFFF;
+  text-align: left;
+  padding-left: 10px; /* 왼쪽 앞에 조금 여백을 추가 */
+  padding-right: 10px; /* 오른쪽에 조금 여백을 추가 (=> 왼쪽, 오른쪽을 동일하게 주는것이 좋다) */
+  font-size: 18px;
+}
+
+ /* TD 이미지 속성  */
+.td_img {
+  border: solid 1px #CCCCCC;
+  background-color: #FFFFFF;
+  text-align: center;
+  font-size: 18px;
+}
+
+/* top 메뉴 속성 */
+.top_menu1 { 
+  color: #CCCCCC;
+}
+
+/* bottom 메뉴 기본 속성 */
+.bottom_menu { 
+  margin: 30px auto;
+  text-align: center;
+  clear: both;
+}
+
+/* fieldset 기본 속성 */
+.fieldset_basic {
+  width: 100%;
+  margin: 0px auto;
+  padding: 15px 15px 15px 15px;
+  border-left: none;
+  border-right: none;
+  
+}
+
+/* 메인 화면 fieldset 속성 */
+.fieldset_home { 
+  width: 90%;
+  margin: 10px auto;
+  border-left: none;
+  border-right: none;
+}
+
+ /* fieldset 밑줄 표시 none */
+.fieldset_no_line {
+  border: none;
+}
+
+/* 메인 화면 legend 속성*/
+.legend_home { 
+  margin: 2%;
+  border: none;
+  padding: 5px;
+}
+
+ /* legend 기본 속성 */
+.legend_basic {
+  margin: 0px 30px;
+  border: solid 1px #AAAAAA;
+  background-color: #e6e6ff;
+  padding: 2px;
+}
+
+/* li의 블렛 기호 생략 */
+.li_none { 
+  list-style: none; /* 블렛 기호(●) 생략 */
+  margin: 10px 10px; /* 위 아래 좌 우 */
+}
+
+/* li 메인화면 속성 */
+.li_home {
+  background: url(./images/bu4.gif) left center no-repeat;
+  line-height: 20px;
+  padding-left: 15px;
+  list-style: none;
+  font-size: 13px;
+}
+
+/* li 가운데 정렬 */
+.li_center { 
+  text-align: center;
+  list-style: none;
+  margin: 20px auto;
+}
+
+/* li 오른쪽 정렬 */
+.li_right { 
+  text-align: right;
+  list-style: none;
+  margin: 10px 10px auto;
+}
+
+/******************************************Memu 시작******************************************/
+
+/* <DIV id='top_menu', 페이지에서 1번만 사용됨  */
+#top_menu {
+  margin-top: 0px;
+  width: 100%;
+  height: 150px;
+}
+
+.top_menu_label {
+  position: relative; /* 속해 있는 부모 태그 기준 좌표 이동*/
+  top: 0%;
+  left: 0%;
+  color: #333333;
+}
+
+.top_menu_list {
+  position: relative; /* 속해 있는 부모 태그 기준 좌표 이동*/
+  top: 80%; /* 100%는 보이지않고 적당한 조절이 필요함! list의 위치를 조절해줌 */
+  left: 0%;
+  background-color: rgba(0, 0, 255, 0.2); /* 0.2: Alpha 값 투명도 */
+  color: white;
+}
+
+/* 의사 클래스(pseudo-class) 를 이용한 CSS 적용, <A class='menu_link'  */
+.menu_link:link {
+  color: white;
+  text-decoration: none;
+}
+
+ /* 메뉴 링크 방문 후 상태 */
+.menu_link:visited {
+  color: white;
+  text-decoration: none; /* 밑줄 삭제 */
+}
+
+/* 메뉴 링크에 마우스가 올라간 상태 */
+.menu_link:hover { 
+  color: white;
+  font-weight: bold;
+  text-decoration: none; /* 밑줄 삭제 */
+}
+
+/* 메뉴 링크를 클릭한 상태*/
+.menu_link:active {
+  color: white;
+  text-decoration: none; /* 밑줄 삭제 */
+}
+
+/******************************************Memu 종료******************************************/
+
+/******************************************ASIDE 서브메뉴의 시작******************************************/
+
+ /* 서브 메뉴 기본 속성 */
+.aside_menu {
+  width: 100%;
+  border: none;
+  margin: 10px auto;
+}
+
+/* 서브메뉴 밑줄 속성 */
+.menu_line {
+  width: 100%;
+  border-bottom: dotted 1px #777777;
+  margin: 20px 0px 10px 0px; /* top / right / bottom / left */
+}
+
+/* 서브메뉴 세로 구분선 */
+.menu_divide {
+  color: #777777;
+  font-size: 0.8em; /* 주변에비해 글자를 80% 크기로 출력 */
+}
+
+/******************************************ASIDE 서브메뉴의 종료******************************************/
+
+/* input 기본 속성 */
+.input_basic {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+
+/* 메세지 알림 출력 */
+.message {
+  width: 70%;
+  border: none;
+  margin: 0px auto;
+  text-align: center;
+  background-color: #f9e6ff;
+  padding: 30px;
+}
+
+/* 안내메세지 속성 */
+.span_info {
+  color: #FFFFFF;
+  background-color: rgba(0, 255, 0, 0.4);
+  font-weight: bold;
+}
+
+/* 일반메세지 속성 */
+.span_alert {
+  color: #FFFFFF;
+  background-color: rgba(0, 0, 200, 0.4);
+  font-weight: bold;
+}
+
+/* 경고메세지 속성 */
+.span_warning {
+  color: #FFFFFF;
+  background-color: rgba(255, 0, 0, 0.4);
+  font-weight: bold;
+}
+
+.hr_dotted {
+  width: 100%;
+  clear: both;
+  height: 1px;
+  border-top: dotted 1px #AAAAAA;
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+  margin: 10px auto;
+  '>
+}
+
+.div_grid_img {
+  background-color: #EEEEEE;
+  float: left;
+  position: relative;
+  left: 0%;
+  margin: 1%;
+  width: 23%;
+  height: 220px;
+}
+
+/* 팝업 윈도우 속성 */
+.popup1 {
+  margin-top: 20px;
+  margin-bottom : 20px;
+  padding: 5px;
+  position: absolute;
+  top: 38%;
+  left: 35%;
+  width: 50%;
+  height: 80%;
+  background-color: #333333;
+  opacity: 0.8;
+  text-align: center;
+  color: #FFFFFF;
+}
+
+/* 팝업 윈도우 A 태그 속성 */
+.popup1 A {
+  color: #00FF00;
+}
+
+/* SPAN 태그를 버튼으로 생성해주는 기능*/
+.box1 {
+  border: solid 1px #555555;
+  padding: 0px 3px 0px 3px; /* 시계방향 */
+  background-color: #00AA00;
+  color: #FFFFFF;
+}
+
+/* <span class='box1'>[<A href=''] */
+.box1 A:link { /* 방문전 상태 */
+  color: #FFFFFF;
+  text-decoration: none; /* 밑줄 삭제 */
+}
+
+.box1 A:visited { /* 방문후 상태 */
+  color: #FFFFFF;
+  text-decoration: none; /* 밑줄 삭제 */
+}
+
+.box1 A:hover { /* A 태그에 마우스가 올라간 상태 */
+  color: #FFFFFF;
+  text-decoration: none; /* 밑줄 삭제 */
+}
+
+.box1 A:active { /* A 태그를 클릭한 상태 */
+  color: #AAAAAA;
+  text-decoration: none; /* 밑줄 삭제 */
+}
+
+.line_filter { /* | 구분선 속성 */
+  padding: 0 4px 0 1px;
+  color: #666;
+}
