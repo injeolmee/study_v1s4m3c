@@ -13,6 +13,7 @@
 <!---------------------------------------------------------------------->
 <link href="${pageContext.request.contextPath}/user/shared/gnacss/style.css" rel="Stylesheet" type="text/css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/ckeditor/ckeditor.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
  
 <script type="text/JavaScript">
   window.onload=function(){
@@ -151,7 +152,7 @@
 </head>
 <body>
 <jsp:include page="/menu/top.jsp" flush="false" />
-<div class="container">
+<div class="container" style='margin-bottom: 100px;'>
 <DIV class='content' style='width: 60%; margin: 0px auto; '>  
 
   <DIV class="title_line"> 게시글 수정 </DIV>

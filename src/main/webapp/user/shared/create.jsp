@@ -13,6 +13,7 @@
 <!---------------------------------------------------------------------->
 <link href="${pageContext.request.contextPath}/user/shared/gnacss/style.css" rel="Stylesheet" type="text/css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/ckeditor/ckeditor.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script type="text/JavaScript">
   window.onload=function(){
     CKEDITOR.replace('sharedcontent');  // <TEXTAREA>태그 id 값을 받아와 ckeditor 형식으로 변환
@@ -118,7 +119,7 @@
 </head>
 <body>
 <jsp:include page="/menu/top.jsp" flush="false" />
-<div class="container">
+<div class="container" style='margin-bottom: 100px;'>
 <DIV class='content' style='width: 60%; margin: 0px auto; '>  
 
   <DIV class="title_line"> 게시글 등록 </DIV>
@@ -132,7 +133,7 @@
        <div class="form-group">   
          <div class="col-md-10" style="width: 100%; margin-top: 30px;">
          <label for="title" class="control-label" style="margin-right: 30px;">제목</label>
-         <input type='text' class="form-control input-md" name='sharedtitle' id='sharedtitle' value='TEST 자료입니다.' 
+         <input type='text' class="form-control input-md" name='sharedtitle' id='sharedtitle' value='' 
                   required="required" style='width: 60%;'>
          </div>
        </div>
