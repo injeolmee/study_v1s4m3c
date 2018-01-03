@@ -14,7 +14,7 @@
 <link href="${pageContext.request.contextPath}/user/sale/gnacss/style.css" rel="Stylesheet" type="text/css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/ckeditor/ckeditor.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
- 
+  
 <script type="text/JavaScript">
   window.onload=function(){
     CKEDITOR.replace('salecontent');  // <TEXTAREA>태그 id 값을 받아와 ckeditor 형식으로 변환
