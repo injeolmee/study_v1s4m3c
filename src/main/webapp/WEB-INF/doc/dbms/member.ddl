@@ -11,7 +11,7 @@ CREATE TABLE member(
     memberno                          NUMBER(10)     PRIMARY KEY,
     memid                               VARCHAR2(50)     NOT NULL,
     mememail                          VARCHAR2(100)     NOT NULL,
-    mempasswd                         VARCHAR2(50)     NOT NULL,
+    mempasswd                         VARCHAR2(100)     NOT NULL,
     memname                           VARCHAR2(20)     NOT NULL,
     memconfirm                        VARCHAR2(5)    DEFAULT 'N'     NOT NULL,
     memauth                           VARCHAR2(5)    DEFAULT 'B'     NOT NULL,
@@ -60,28 +60,29 @@ COMMENT ON COLUMN member.mintrovb is '회원자기소개출력여부';
 COMMENT ON COLUMN member.mphotovb is '회원사진출력여부';
 COMMENT ON COLUMN member.memdate is '회원가입일';
 
+alter table member modify(mempasswd varchar2(100));
 
 1. INSERT    
 1) 등록
 INSERT INTO member(memberno, memid, mememail, mempasswd, memname, memconfirm, memauth, membirth, memgender, memaddress, memphone, 
 memsns, memintro, memphoto, memphoto_t, memsize, mbirthvb, mgendervb, maddressvb, mphonevb, msnsvb, mintrovb, mphotovb, memdate)
-VALUES((SELECT NVL(MAX(memberno), 0)+1 as memberno FROM member), 'test1', 'test1@gmail.com', '123456', '지나',
+VALUES((SELECT NVL(MAX(memberno), 0)+1 as memberno FROM member), 'test1', 'test1@gmail.com', 'swKDQnsp/We4EtkPl/YE7g==', '지나',
 'Y', 'U', '19891025', '여', '서울 강북구', '01012345678', '인스타그램', '안녕하세요', 'myphoto.jpg', 'myphoto_t.jpg', 0, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', sysdate);
 INSERT INTO member(memberno, memid, mememail, mempasswd, memname, memconfirm, memauth, membirth, memgender, memaddress, memphone, 
 memsns, memintro, memphoto, memphoto_t, memsize, mbirthvb, mgendervb, maddressvb, mphonevb, msnsvb, mintrovb, mphotovb, memdate)
-VALUES((SELECT NVL(MAX(memberno), 0)+1 as memberno FROM member), 'test2', 'test2@gmail.com', '123456', '지나2',
+VALUES((SELECT NVL(MAX(memberno), 0)+1 as memberno FROM member), 'test2', 'test2@gmail.com', 'swKDQnsp/We4EtkPl/YE7g==', '지나2',
 'Y', 'B', '19891025', '남', '서울 강북구', '01012345678', '인스타그램', '안녕하세요', 'myphoto.jpg', 'myphoto_t.jpg', 0, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', sysdate);
 INSERT INTO member(memberno, memid, mememail, mempasswd, memname, memconfirm, memauth, membirth, memgender, memaddress, memphone, 
 memsns, memintro, memphoto, memphoto_t, memsize, mbirthvb, mgendervb, maddressvb, mphonevb, msnsvb, mintrovb, mphotovb, memdate)
-VALUES((SELECT NVL(MAX(memberno), 0)+1 as memberno FROM member), 'test3', 'test3@gmail.com', '123456', '인절미',
+VALUES((SELECT NVL(MAX(memberno), 0)+1 as memberno FROM member), 'test3', 'test3@gmail.com', 'swKDQnsp/We4EtkPl/YE7g==', '인절미',
 'Y', 'U', '19891025', '남', '서울 강북구', '01012345678', '인스타그램', '안녕하세요', 'myphoto.jpg', 'myphoto_t.jpg', 0, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', sysdate);
 INSERT INTO member(memberno, memid, mememail, mempasswd, memname, memconfirm, memauth, membirth, memgender, memaddress, memphone, 
 memsns, memintro, memphoto, memphoto_t, memsize, mbirthvb, mgendervb, maddressvb, mphonevb, msnsvb, mintrovb, mphotovb, memdate)
-VALUES((SELECT NVL(MAX(memberno), 0)+1 as memberno FROM member), 'test4', 'test4@gmail.com', '123456', '인절미2',
+VALUES((SELECT NVL(MAX(memberno), 0)+1 as memberno FROM member), 'test4', 'test4@gmail.com', 'swKDQnsp/We4EtkPl/YE7g==', '인절미2',
 'Y', 'U', '19891025', '여', '서울 강북구', '01012345678', '인스타그램', '안녕하세요', 'myphoto.jpg', 'myphoto_t.jpg', 0, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', sysdate);
 INSERT INTO member(memberno, memid, mememail, mempasswd, memname, memconfirm, memauth, membirth, memgender, memaddress, memphone, 
 memsns, memintro, memphoto, memphoto_t, memsize, mbirthvb, mgendervb, maddressvb, mphonevb, msnsvb, mintrovb, mphotovb, memdate)
-VALUES((SELECT NVL(MAX(memberno), 0)+1 as memberno FROM member), 'test5', 'test5@gmail.com', '123456', '찹쌀',
+VALUES((SELECT NVL(MAX(memberno), 0)+1 as memberno FROM member), 'test5', 'test5@gmail.com', 'swKDQnsp/We4EtkPl/YE7g==', '찹쌀',
 'Y', 'U', '19891025', '여', '서울 강북구', '01012345678', '인스타그램', '안녕하세요', 'myphoto.jpg', 'myphoto_t.jpg', 0, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', sysdate);
 INSERT INTO member(memberno, memid, mememail, mempasswd, memname, memconfirm, memauth, membirth, memgender, memaddress, memphone, 
 memsns, memintro, memphoto, memphoto_t, memsize, mbirthvb, mgendervb, maddressvb, mphonevb, msnsvb, mintrovb, mphotovb, memdate)
@@ -134,7 +135,7 @@ VALUES((SELECT NVL(MAX(memberno), 0)+1 as memberno FROM member), 'test6', 'test6
   1) 회원 정보 수정
   UPDATE member
   SET mempasswd='swKDQnsp/We4EtkPl/YE7g=='
-  WHERE memberno = 2;
+  WHERE memberno = 7;
   
   2) 패스워드 변경
   - 기존 패스워드 검사
@@ -156,7 +157,7 @@ VALUES((SELECT NVL(MAX(memberno), 0)+1 as memberno FROM member), 'test6', 'test6
   
   2) 특정 회원 삭제
   DELETE FROM member
-  WHERE memberno = 1;
+  WHERE memberno = 8;
   
   
   5. 로그인 관련 SQL 

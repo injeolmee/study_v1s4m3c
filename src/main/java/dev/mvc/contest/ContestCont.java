@@ -37,13 +37,13 @@ public class ContestCont {
   private ConlikeProcInter conlikeProc = null;
 
   public ContestCont() {
-    // System.out.println("--> ContestCont() Created.");
+    //System.out.println("--> ContestCont() Created.");
   }
   
   // http://localhost:9090/study/contest/create.do
   @RequestMapping(value = "/admin/contest/create.do", method = RequestMethod.GET)
   public ModelAndView create() {
-    System.out.println("--> create() GET Executed.");
+    //System.out.println("--> create() GET Executed.");
     ModelAndView mav = new ModelAndView();
     mav.setViewName("/admin/contest/create");
     
@@ -52,7 +52,7 @@ public class ContestCont {
   
   @RequestMapping(value="/admin/contest/create.do", method = RequestMethod.POST)
   public ModelAndView create(HttpServletRequest request, ContestVO contestVO) {
-    System.out.println("--> create() POST Executed.");
+    //System.out.println("--> create() POST Executed.");
     ModelAndView mav = new ModelAndView();
     mav.setViewName("/admin/contest/message");
     
@@ -106,17 +106,18 @@ public class ContestCont {
     // -------------------- 파일전송 코드 종료 --------------------
     
     if (contestProc.create(contestVO) == 1) {
-      msgs.add("공모전 정보 등록 성공<br>");
+      // msgs.add("공모전 정보 등록 성공<br>");
+      mav.setViewName("redirect:/nonuser/contest/list_all_contest.do");
       // categoryProc.increaseCnt(contestVO.getCateno());
-    } else {
+    } /*else {
       msgs.add("공모전 정보 등록 실패<br>");
       msgs.add("다시 시도 --> 운영팀<br>");
       links.add("<button type= 'button' onclick=\"history.back()\">다시 시도</button>");
     }
     
-    links.add("<button type= 'button' onclick=\"location.href='/study/admin/contest/list_all_contest.do'\">목록</button>");
+    links.add("<button type= 'button' onclick=\"location.href='/study/nonuser/contest/list_all_contest.do'\">목록</button>");
     mav.addObject("msgs", msgs);
-    mav.addObject("links", links);
+    mav.addObject("links", links);*/
     
     return mav;
   }
@@ -201,7 +202,7 @@ public class ContestCont {
  public ModelAndView update(int conNo) throws Exception {
    // System.out.println("--> update() GET executed");
    ModelAndView mav = new ModelAndView();
-   mav.setViewName("/study/admin/contest/update"); // webapp/contest/update.jsp
+   mav.setViewName("/admin/contest/update"); // webapp/contest/update.jsp
 
    ContestVO contestVO = contestProc.read(conNo);
    mav.addObject("contestVO", contestVO);
@@ -214,7 +215,7 @@ public class ContestCont {
  public ModelAndView update(HttpServletRequest request, ContestVO contestVO) throws Exception {
    // System.out.println("--> update() GET executed");
    ModelAndView mav = new ModelAndView();
-   mav.setViewName("/study/admin/contest/message"); // webapp/contest/update.jsp
+   mav.setViewName("/admin/contest/message"); // webapp/contest/update.jsp
 
    ArrayList<String> msgs = new ArrayList<String>();
    ArrayList<String> links = new ArrayList<String>();
@@ -242,8 +243,8 @@ public class ContestCont {
    long conRemain_e = diff_e / (24 * 60 * 60 * 1000);
    long conRemain_s = diff_s / (24 * 60 * 60 * 1000);
    
-   System.out.println("conRemain_e ---> " + conRemain_e);
-   System.out.println("conRemain_s ---> " + conRemain_s);
+   //System.out.println("conRemain_e ---> " + conRemain_e);
+   //System.out.println("conRemain_s ---> " + conRemain_s);
    
    contestVO.setConRemain_e(conRemain_e);
    contestVO.setConRemain_s(conRemain_s);
@@ -255,17 +256,11 @@ public class ContestCont {
    String root = request.getContextPath();
 
    if (contestProc.update(contestVO) == 1) {
-     msgs.add("게시글 변경 성공<br>");
-     links.add("<button type='button' onclick=\"location.href='/study/admin/contest/read.do?conNo=" + contestVO.getConNo() + "&cateno=" + contestVO.getCateno() +"'\">변경 확인</button>");
-   } else {
-     msgs.add("블로그 변경 실패<br>");
-     msgs.add("다시 시도 -> 운영팀<br>");
-     links.add("<button type= 'button' onclick=\"history.back()\">다시 시도</button>");
-   }
-
-   links.add("<button type= 'button' onclick=\"location.href='/study/admin/contest/list_all_contest.do?conNo=" + contestVO.getConNo() + "'\">목록</button>");
-   mav.addObject("msgs", msgs);
-   mav.addObject("links", links);
+     /*msgs.add("게시글 변경 성공<br>");
+     links.add("<button type='button' onclick=\"location.href='/study/nonuser/contest/read.do?conNo=" + contestVO.getConNo() + "'\">변경 확인</button>");
+     */
+     mav.setViewName("redirect:/nonuser/contest/read.do?conNo=" + contestVO.getConNo());
+   } 
 
    return mav;
  }
@@ -298,9 +293,9 @@ public class ContestCont {
    MultipartFile file1MF = contestVO.getFile1MF();
    
    
-   System.out.println("conNo ---> " + contestVO.getConNo());
-   System.out.println("cateno ---> " + contestVO.getCateno());
-   System.out.println("file1MF ---> " + file1MF);
+   //System.out.println("conNo ---> " + contestVO.getConNo());
+   //System.out.println("cateno ---> " + contestVO.getCateno());
+   //System.out.println("file1MF ---> " + file1MF);
    
    String conFile1 = "";
    long conSize1 = file1MF.getSize();
@@ -331,7 +326,7 @@ public class ContestCont {
    
    if (contestProc.update_thumb(contestVO) == 1) {
      mav.setViewName("redirect:/study/admin/contest/update.do?conNo=" + contestVO.getConNo());
-     System.out.println("파일이 바뀌었습니다.");
+     //System.out.println("파일이 바뀌었습니다.");
      /*links.add("<button type='button' onclick=\"location.href='./update.do?conNo=" + contestVO.getConNo() + "&cateno=" + contestVO.getCateno() +"'\">업데이트 계속</button>");*/
    } 
    
@@ -394,7 +389,7 @@ public class ContestCont {
    
    if (contestProc.update_img(contestVO) == 1) {
      mav.setViewName("redirect:/study/admin/contest/update.do?conNo=" + contestVO.getConNo());
-     System.out.println("파일이 바뀌었습니다.");
+     //System.out.println("파일이 바뀌었습니다.");
    }
 
    return mav;
@@ -458,7 +453,7 @@ public class ContestCont {
    
    if (contestProc.update_file(contestVO) == 1) {
      mav.setViewName("redirect:/study/admin/contest/update.do?conNo=" + contestVO.getConNo());
-     System.out.println("파일이 바뀌었습니다.");
+     //System.out.println("파일이 바뀌었습니다.");
    }
 
    return mav;
@@ -505,16 +500,8 @@ public class ContestCont {
    
    if (contestProc.delete(contestVO.getConNo()) == 1) {
      // msgs.add("공모전 글 삭제 성공<br>");
-     mav.setViewName("redirect:/study/admin/contest/list_all_contest.do");
-   } else {
-     msgs.add("공모전 글 삭제 실패<br>");
-     msgs.add("다시 시도 -> 운영팀<br>");
-     links.add("<button type= 'button' onclick=\"history.back()\">다시 시도</button>");
-   }
-   
-   links.add("<button type= 'button' onclick=\"location.href='/study/admin/contest/list_all_contest.do'\">목록</button>");
-   mav.addObject("msgs", msgs);  
-   mav.addObject("links", links);
+     mav.setViewName("redirect:/nonuser/contest/list_all_contest.do");
+   } 
    
    return mav;
  }

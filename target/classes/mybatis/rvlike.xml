@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace = "rvlike">
+  
+  <insert id="create" parameterType="HashMap">
+    INSERT INTO rvlike(rvlikeno, rvlikechk, rvno, memberno)
+    VALUES ((SELECT NVL(MAX(rvlikeno), 0) + 1 as rvlikeno FROM rvlike), 0, #{rvno}, #{memberno})
+  </insert>
+  
+  <select id="like_chk" resultType="int" parameterType="HashMap">
+    SELECT count(rvlikeno)
+    FROM rvlike
+    WHERE rvno = #{rvno} AND memberno = #{memberno}
+  </select>
+  
+  <select id="check" resultType="int" parameterType="HashMap">
+    SELECT rvlikechk
+    FROM rvlike
+    WHERE rvno = #{rvno} AND memberno = #{memberno}
+  </select>
+  
+  <update id="like_chk_y" parameterType="HashMap">
+    UPDATE rvlike
+    SET rvlikechk = 1
+    WHERE rvno = #{rvno} AND memberno = #{memberno}
+  </update>
+  
+  <update id="like_chk_n" parameterType="HashMap">
+    UPDATE rvlike
+    SET rvlikechk = 0
+    WHERE rvno = #{rvno} AND memberno = #{memberno}
+  </update>
+  
+</mapper>

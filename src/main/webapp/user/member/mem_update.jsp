@@ -29,6 +29,17 @@ String root = request.getContextPath();
 var msg = "";
 
 $(function(){ 
+  var auth = '${sessionScope.admauth}';
+  var memberno_session = '${sessionScope.memberno}';
+  var memberno_VO = '${memberVO.memberno}';
+  if(memberno_session != memberno_VO) {
+    if(auth == 'M' || auth == 'A') {
+    } else {
+      alert("유효한 접근이 아닙니다.");
+      location.href ='<%=root %>/main/index.do';
+    }
+  }
+  
   $.cookie('check_email', 'KEEP');
   $.cookie('code_send', 'KEEP');
   $.cookie('code_confirm', 'KEEP');
@@ -44,12 +55,12 @@ $(function(){
   
   var memauth = "${memberVO.memauth}";
   $("input[name='memauth']").each(function(){
-    if(memauth == "N"){
-      $('#N').prop("checked", true);
+    if(memauth == "B"){
+      $('#B').prop("checked", true);
       $('#U').prop("checked", false);
     } else {
       $('#U').prop("checked", true);
-      $('#N').prop("checked", false);
+      $('#B').prop("checked", false);
       }
   }); 
   
@@ -566,12 +577,14 @@ $(function(){
     
     
   $('#update').click(function(){  
+    // alert("업데이트 클릭!");
     var mempasswd = $('#mempasswd').val();
     var mempasswd_c = $('#mempasswd_c').val();
+    var memid = $('#memid').val();
     var mememail = $('#mememail').val();
     var memname = $('#memname').val();
     var membirth = $('#membirth').val();
-    var memgender = $('input:radio[name=memgender]:checked').val();
+    memgender = $('input:radio[name=memgender]:checked').val();
     var memphone = $('#memphone').val();
     var memsns = $('#memsns').val();
     var memintro = $('#memintro').val(); 
@@ -602,35 +615,47 @@ $(function(){
       return false;    
     }
     
-    if (mempasswd == "" || mempasswd == null) {
-      alert('패스워드를 입력하세요');
-      focus.mempasswd;
-      return false;
-    }    
+    var auth = '${sessionScope.admauth}';
+    var formData = new FormData();
     
-    if(limitpw.test(mempasswd) == false) {
-      alert("비밀번호는 영어나 숫자 조합 6-12자리 입니다.");   
-      focus.mempasswd;
-      return false;
-    }     
-    
-    if(/(\w)\1\1\1/.test(mempasswd)) {
-      alert("같은문자를 4번 이상 사용하실 수 없습니다.");  
-      focus.mempasswd;
-      return false;
-    }     
-    
-    if (mempasswd_c == "" || mempasswd_c == null) {
-      alert('패스워드 확인을 입력하세요');
-      focus.mempasswd_c;
-      return false;
+    if(auth == 'M' || auth == 'A') { 
+      alert("auth: " + auth);
+      memauth = $('input:radio[name=memauth]:checked').val();
+      formData.append("memauth", memauth);
+      alert("memauth: " + memauth);
+    } else {
+
+      if (mempasswd == "" || mempasswd == null) {
+        alert('패스워드를 입력하세요');
+        focus.mempasswd;
+        return false;
+      }    
+      
+      if(limitpw.test(mempasswd) == false) {
+        alert("비밀번호는 영어나 숫자 조합 6-12자리 입니다.");   
+        focus.mempasswd;
+        return false;
+      }     
+      
+      if(/(\w)\1\1\1/.test(mempasswd)) {
+        alert("같은문자를 4번 이상 사용하실 수 없습니다.");  
+        focus.mempasswd;
+        return false;
+      }     
+      
+      if (mempasswd_c == "" || mempasswd_c == null) {
+        alert('패스워드 확인을 입력하세요');
+        focus.mempasswd_c;
+        return false;
+      }
+      
+      if (mempasswd != mempasswd_c) {
+        alert('패스워드와 패스워드 확인란이 다릅니다');
+        focus.mempasswd_c;
+        return false;
+      }
     }
     
-    if (mempasswd != mempasswd_c) {
-      alert('패스워드와 패스워드 확인란이 다릅니다');
-      focus.mempasswd_c;
-      return false;
-    }
     
     if (memname == '' || memname == null) {
       alert('이름을 입력하세요');
@@ -689,8 +714,83 @@ $(function(){
       $('#panel_confirm').show();
       return false;
     } 
+    // alert("패스워드: " + $("input[name=mempasswd]").val());
     
-  return true;  
+    /* formData.append("memauth", $("input[name=memauth]").val()); */
+    formData.append("memberno", $("input[name=memberno]").val());
+    formData.append("memid", $("input[name=memid]").val());
+    formData.append("mememail", $("input[name=mememail]").val());
+    formData.append("mempasswd", $("input[name=mempasswd]").val());
+    formData.append("memname", $("input[name=memname]").val());
+    formData.append("memconfirm", $("input[name=memconfirm]").val());
+    formData.append("membirth", $("input[name=membirth]").val());
+    formData.append("memgender", $("input[name=memgender]:checked").val());
+    formData.append("area", $("select[name=area]").val());
+    formData.append("selected_area", $("select[name=selected_area]").val());
+    formData.append("memphone", $("input[name=memphone]").val());
+    formData.append("memsns", $("input[name=memsns]").val());
+    formData.append("memintro", $("textarea[name=memintro]").val());
+    /* formData.append("file1MF", $("input[name=file1MF")[0].files[0]); */
+    
+    if($("input[name='mbirthvb']:checked").val()){
+      formData.append("mbirthvb", $("input[name=mbirthvb]").val());
+    }
+    if($("input[name='mgendervb']:checked").val()){
+      formData.append("mgendervb", $("input[name=mgendervb]").val());
+    }
+    if($("input[name='maddressvb']:checked").val()){
+      formData.append("maddressvb", $("input[name=maddressvb]").val());
+    }
+    if($("input[name='mphonevb']:checked").val()){
+      formData.append("mphonevb", $("input[name=mphonevb]").val());
+    }
+    if($("input[name='msnsvb']:checked").val()){
+      formData.append("msnsvb", $("input[name=msnsvb]").val());
+    }
+    if($("input[name='mintrovb']:checked").val()){
+      formData.append("mintrovb", $("input[name=mintrovb]").val());
+    }
+    if($("input[name='mphotovb']:checked").val()){
+      formData.append("mphotovb", $("input[name=mphotovb]").val());
+    }
+    
+    if($("input[name=file1MF")[0].files[0] != null) { 
+      formData.append("file1MF", $("input[name=file1MF")[0].files[0]); // 파일 업로드까지 추가
+    } 
+    
+    // alert($("input[name=mempasswd]").val());
+    
+     $.ajax({
+       url : '/study/user/member/mem_update.do',
+       type: "POST",
+       data : formData, 
+       processData: false,
+       contentType: false,
+       /* enctype: "multipart/form-data", */
+       dataType : 'JSON',
+       success : function(data){
+         if(data.update_cnt==1){
+           alert("회원수정이 완료되었습니다.");
+           location.href ='<%=root %>/user/member/mem_read.do?memberno=${memberVO.memberno}';
+         } else {
+           alert("회원수정이 실패했습니다.\n다시 시도해주세요.");
+         }
+        },
+     // 통신 에러, 요청 실패, 200 아닌 경우, dataType이 다른경우
+        error: function (request, status, error){  
+          var msg = "에러가 발생했습니다. <br><br>";
+          msg += "다시 시도해주세요.<br><br>";
+          msg += "request.status: " + request.status + "<br>";
+          msg += "request.responseText: " + request.responseText + "<br>";
+          msg += "status: " + status + "<br>";
+          msg += "error: " + error;
+
+          $('#modal_title').html("에러");   
+          $('#modal_content').html(msg); 
+          $('#modal_panel').modal(); 
+        }
+      });
+    
   });
   
 }); // function 끝
@@ -733,19 +833,30 @@ $(function(){
   <div class="logmod__tab-wrapper">
   <div class="logmod__tab lgm-1">
     <div class="logmod__form">
-      <FORM name='frm_join' id='frm_join' method='POST' action='./mem_update.do' enctype="multipart/form-data" class="simform">  
+      <FORM name='frm_update' id='frm_update' method='POST'  enctype="multipart/form-data" class="simform">  
         <input type="hidden" id="memberno" name="memberno" value="${memberVO.memberno }">
         <input type="hidden" id="memid" name="memid" value="${memberVO.memid }">
         <input type="hidden" id="memconfirm" name="memconfirm" value="Y">
-        <input type="hidden" id="memauth" name="memauth" value="${memberVO.memauth }">
+<%--       <c:choose>
+        <c:when test="${sessionScope.memauth == 'U'}">
+          <input type="hidden" id="memauth" name="memauth" value="">
+         </c:when>
+        <c:otherwise>
+        </c:otherwise>
+      </c:choose>  --%>
         
         <div class="sminputs">        
           <div class="input full">
             <label class="string optional" for="user-name">* ID</label>
-            <input class="string optional" style='margin-bottom: 0px; width: 45%;' maxlength="255" id="memid" name="memid" value="${memberVO.memid }"  type="text" size="50" disabled="disabled"/>
+            <input class="string optional" style='margin-bottom: 0px; width: 45%;' maxlength="255" value="${memberVO.memid }"  type="text" size="50" disabled="disabled"/>
           </div> 
         </div>
         
+      <c:choose>
+        <c:when test="${sessionScope.admauth == 'A' || sessionScope.admauth == 'M'}">
+          <input type="hidden" id="mempasswd" name="mempasswd" value="">
+        </c:when>
+        <c:otherwise> 
         <div class="sminputs">        
           <div class="input full">
             <label class="string optional" for="user-name">* PASSWORD</label>
@@ -761,6 +872,8 @@ $(function(){
             <span class="hide-password">Show</span>
           </div> 
         </div>
+        </c:otherwise>
+      </c:choose> 
 
         <div class="sminputs">
           <div class="input full">
@@ -794,26 +907,22 @@ $(function(){
             <input class="string optional" maxlength="255" id="memname" name="memname" value="${memberVO.memname }" placeholder="이름" type="text" size="50" />
           </div>
         </div>
-        
-        <div class="sminputs">
-          <div class="input full">
-            <label class="string optional" for="user-pw">* AUTHORITY</label>
-            <label class="string optional">
-            <c:choose>
-              <c:when test="${sessionScope.admauth == 'A' || sessionScope.admauth == 'M'}">
-                <input type="radio" name="memauth" id="N" value="N" style= 'width: 10%;'> <span style='font-size: 15px;'>대기</span>
-                <input type="radio" name="memauth" id="U" value="U" style= 'width: 10%;'> <span style='font-size: 15px;'>회원</span>
-                <div style='float: right; width: 15%;'>
-                  <input type="checkbox" id="mgendervb" name="mgendervb" value="N" style='width: 20%; margin: 5px;'><strong style='font-size: 14px;'>비공개</strong>
-                </div>
-              </c:when>
-              <c:otherwise>
-                <input class="string optional" maxlength="255" id="memauth" name="memauth" value="${memberVO.memauth }" type="text" size="50" disabled="disabled"/>
-              </c:otherwise>
-            </c:choose>
-            </label>
-          </div>
-        </div>
+ 
+        <c:choose>
+          <c:when test="${sessionScope.admauth == 'A' || sessionScope.admauth == 'M'}">       
+            <div class="sminputs">
+              <div class="input full">
+                <label class="string optional" for="user-pw">* AUTHORITY</label>
+                <label class="string optional">
+                    <input type="radio" name="memauth" id="B" value="B" style= 'width: 10%;'> <span style='font-size: 15px;'>대기</span>
+                    <input type="radio" name="memauth" id="U" value="U" style= 'width: 10%;'> <span style='font-size: 15px;'>회원</span>
+                </label>
+              </div>
+            </div>
+          </c:when>
+          <c:otherwise>
+          </c:otherwise>
+        </c:choose>
   
         <div class="sminputs">
           <div class="input full">
@@ -917,20 +1026,20 @@ $(function(){
           </div>
         </div>  
      
-        <div class="sminputs" style='height: 180px;'>
+        <div class="sminputs" style='height: 220px;'>
           <div class="input full">
             <label class="string optional" for="user-pw">PHOTO</label>
-            <div>
+            <div class="" id="image_preview" style='padding: 5px 0px 5px 10px; text-align:left;'>
               <c:set var='image_preview' value="${fn:toLowerCase(memberVO.memphoto_t)}" /> 
                 <c:choose>                               
                   <c:when test="${fn:endsWith(image_preview, '.jpg')}">
-                    <IMG id='image_preview' src='<%=root %>/nonuser/login/storage/${memberVO.memphoto_t}' >
+                    <IMG id='image_preview' src='<%=root %>/nonuser/login/storage/${memberVO.memphoto_t}' style='width: 110px; height:120px;'>
                   </c:when>
                   <c:when test="${fn:endsWith(image_preview, '.gif')}">
-                    <IMG id='image_preview'  src='<%=root %>/nonuser/login/storage/${memberVO.memphoto_t}' >
+                    <IMG id='image_preview'  src='<%=root %>/nonuser/login/storage/${memberVO.memphoto_t}' style='width: 110px; height:120px;'>
                   </c:when>
                   <c:when test="${fn:endsWith(image_preview, '.png')}">
-                    <IMG id='image_preview'  src='<%=root %>/nonuser/login/storage/${memberVO.memphoto_t}'>
+                    <IMG id='image_preview'  src='<%=root %>/nonuser/login/storage/${memberVO.memphoto_t}' style='width: 110px; height:120px;'>
                   </c:when>
                   <c:otherwise>
                     <div style='width:110px; height:120px;'>          
@@ -938,13 +1047,13 @@ $(function(){
                     </div>         
                   </c:otherwise>
                 </c:choose>
-                <button type="button" class="btn" id="file_remove" style='margin-left: 40px;'><strong>REMOVE</strong></button>
+                <button type="button" class="btn" id="file_remove" style='margin: 10px;'><strong>REMOVE</strong></button>
             </div>
           </div>
         </div>  
   
         <div class="simform__actions">
-          <input class="sumbit" name="commit" id="update" name="update" type="submit" value="UPDATE" />
+          <input class="sumbit" id="update" name="update" type="button" value="UPDATE" />
         </div>  
 
       </FORM>

@@ -17,7 +17,7 @@ public class RecruitProc implements RecruitProcInter{
   private RecruitDAOInter recruitDAO = null;
   
   public RecruitProc(){
-    System.out.println("--> RecruitProc created.");
+    // System.out.println("--> RecruitProc created.");
   }
 
   /**
@@ -97,6 +97,11 @@ public class RecruitProc implements RecruitProcInter{
   public int delete(int stdlist_no) {
     
     return recruitDAO.delete(stdlist_no);
+  }
+  
+  @Override
+  public String check_leader(HashMap<String, Object> hashMap) {
+    return recruitDAO.check_leader(hashMap); 
   }
 
 

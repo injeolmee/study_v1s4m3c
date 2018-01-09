@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="my_pds">
+
+  <!-- 글 등록 -->
+  <insert id="insert" parameterType="My_pdsVO">
+    INSERT INTO my_pds(pdsno, pdstitle, pdspasswd, pdscontent, pdsfile1, pdsfilesize, pdsthumb,
+    pdsword, pdslike, pdscnt, pdsdate, memberno, mylistno)
+    VALUES( (SELECT NVL(MAX(pdsno), 0) + 1 as pdsno FROM my_pds),
+    #{pdstitle}, #{pdspasswd}, #{pdscontent}, #{pdsfile1}, #{pdsfilesize}, #{pdsthumb}, #{pdsword}, 0, 0, sysdate, #{memberno}, #{mylistno})
+  </insert>
+  
+  <!-- 모든 글 조회 + 검색 기능 추가 -->
+  <select id="list" parameterType="HashMap" resultType="My_pdsVO">
+  select pdsno, pdstitle, pdscontent, pdslike, pdscnt, memberno, pdsdate, pdsfile1, pdsthumb, r
+  from(
+    select pdsno, pdstitle, pdscontent, pdslike, pdscnt, memberno, pdsdate, pdsfile1, pdsthumb, rownum as r
+    from(
+      select pdsno, pdstitle, pdscontent, pdslike, pdscnt, memberno, pdsdate, pdsfile1, pdsthumb
+      from my_pds
+      <choose>
+        <when test="pdsword == null or pdsword == ''"> <!-- 검색하지 않는 경우 -->
+          WHERE mylistno=#{mylistno}
+        </when>
+        <otherwise>
+          WHERE mylistno=#{mylistno} AND pdsword LIKE '%' || #{pdsword} || '%'  
+        </otherwise>
+      </choose>
+      ORDER BY pdsno DESC
+    )
+  )
+  where <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]>
+  </select>
+  
+  <!-- 조회된 글 수 -->
+  <select id="search_count" parameterType="HashMap" resultType="int">
+  select count(*) as search_count
+  from my_pds
+  <choose>
+    <when test="pdsword == null or pdsword == ''"> <!-- 검색하지 않는 경우 -->
+      WHERE mylistno=#{mylistno}
+    </when> 
+    <otherwise>
+      WHERE mylistno=#{mylistno} AND pdsword LIKE '%' || #{pdsword} || '%'  
+    </otherwise>
+  </choose>
+  ORDER BY pdsno DESC
+  </select>
+  
+  <!-- stdlist_no, cateno를 통해 mylistno를 조회 -->
+  <select id="search_mylistno" parameterType="HashMap" resultType="My_std_catelistVO">
+    SELECT mylistno, stdlist_no, cateno
+    FROM my_std_catelist
+    WHERE stdlist_no=#{stdlist_no} AND cateno=#{cateno}
+  </select>
+  
+  <!-- mylistno를 통해 stdlist_no, cateno를 조회 -->
+  <select id="search_cateno/stdlist_no" parameterType="int" resultType="My_std_catelistVO">
+    SELECT mylistno, stdlist_no, cateno
+    FROM my_std_catelist
+    WHERE mylistno=#{mylistno}
+  </select>
+  
+  <!-- 회원 번호를 통한 회원이름 조회 -->
+  <select id="search_memname" parameterType="int" resultType="String">
+    SELECT memname
+    FROM member
+    WHERE memberno=#{memberno}
+  </select>
+  
+  <!-- 글 내용 조회 -->
+  <select id="read" parameterType="int" resultType="My_pdsVO">
+    SELECT pdsno, pdstitle, pdspasswd, pdscontent, pdsfile1, pdsfilesize, pdsthumb,
+    pdsword, pdslike, pdscnt, pdsdate, memberno, mylistno
+    FROM my_pds
+    WHERE pdsno=#{pdsno}
+  </select>
+  
+  <!-- 글 수정 -->
+  <update id="update" parameterType="My_pdsVO">
+    UPDATE my_pds
+    SET pdstitle = #{pdstitle},
+        pdscontent = #{pdscontent},
+        pdsfile1=#{pdsfile1},
+        pdsfilesize=#{pdsfilesize},
+        pdsthumb=#{pdsthumb},
+        pdsword=#{pdsword}
+    WHERE pdsno = #{pdsno}
+  </update>
+  
+  <!-- 패스워드 검사 -->
+  <select id="check_passwd" parameterType="HashMap" resultType="int">
+    SELECT COUNT(*) as cnt
+    FROM my_pds
+    WHERE pdsno=#{pdsno} AND pdspasswd=#{pdspasswd}
+  </select>
+  
+  <delete id="delete" parameterType="int">
+    DELETE my_pds
+    WHERE pdsno=#{pdsno}
+  </delete>
+  
+  <!-- 조회수 증가 -->
+  <update id="inc_cnt" parameterType="int">
+    UPDATE my_pds
+    SET pdscnt=pdscnt+1
+    WHERE pdsno=#{pdsno}
+  </update>
+  
+  <!-- 추천수 증가 -->
+  <update id="inc_like" parameterType="int">
+    UPDATE my_pds
+    SET pdslike=pdslike+1
+    WHERE pdsno=#{pdsno}
+  </update>
+  
+  <!-- 가장 최근에 추가된 pdsno 조회 -->
+  <select id="lastest_pdsno" resultType="int">
+    SELECT MAX(pdsno) as pdsno
+    FROM my_pds
+  </select>
+  
+  <!-- 파일명, 썸네일 명을 DB에서 삭제한다. -->
+  <update id="del_file" parameterType="int">
+    UPDATE my_pds
+    SET pdsfile1='', pdsthumb=''
+    WHERE pdsno=#{pdsno}
+  </update>
+  
+</mapper>

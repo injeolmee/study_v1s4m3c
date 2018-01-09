@@ -14,7 +14,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     #{freetitle}, #{freecontent}, #{freename}, sysdate, 0, 0, #{memberno})
   </insert>
   
-
+  <!-- 관리자 게시글 등록 -->
+  <insert id="create_admin" parameterType="FreeVO">
+    INSERT INTO free(freeno, freetitle, freecontent, freename, freedate, freecnt, freelike, 
+                          adminno)
+    VALUES ((SELECT NVL(MAX(freeno), 0)+1 as freeno FROM free), 
+    #{freetitle}, #{freecontent}, #{freename}, sysdate, 0, 0, #{adminno})
+  </insert>
+  
   <!-- 자유게시판 목록 + 검색 + 페이징 -->
   <select id="list" resultType="FreeVO" parameterType="HashMap">
     SELECT freeno, freetitle, freecontent, freename, freedate, freecnt, freelike, 
@@ -96,20 +103,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     WHERE freeno = #{freeno}
   </update>
   
-  <!-- 자유게시판 글 수정 -->
-  <update id="update" parameterType="FreeVO">
-    UPDATE free
-    SET freetitle = #{freetitle}, freecontent = #{freecontent}, freedate = sysdate
-    WHERE freeno = #{freeno}  
-  </update>
-  
-  <!-- 패스워드 검사 -->
-  <select id="passwd_check" resultType="int" parameterType="HashMap">
-    SELECT COUNT(freeno) as cnt
-    FROM free
-    WHERE freeno = #{freeno}  AND freepasswd = #{freepasswd}
-  </select>
-  
   <!-- ID 검사 -->
   <select id="member_check" resultType="int" parameterType="HashMap">
     SELECT COUNT(freeno) as cnt
@@ -117,7 +110,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     WHERE freeno = #{freeno}  AND memberno = #{memberno}
   </select>
   
-  <!-- 자유게시판 글 삭제 -->
+  <!-- 수정 -->
+  <update id="update" parameterType="FreeVO">
+    UPDATE free
+    SET freetitle = #{freetitle}, freecontent = #{freecontent}, freedate = sysdate
+    WHERE freeno = #{freeno}  
+  </update>
+  
+  <!-- 삭제 -->
   <delete id="delete" parameterType="int">
     DELETE FROM free
     WHERE freeno = #{freeno}

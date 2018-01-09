@@ -30,7 +30,7 @@ public class ReplyCont {
   private MemberProcInter memberProc;
 
   public ReplyCont() {
-    System.out.println("-->ReplyCont created");
+    // System.out.println("-->ReplyCont created");
   }
 
   /**

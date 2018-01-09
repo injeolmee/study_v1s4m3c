@@ -40,4 +40,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     WHERE freeno = #{freeno} AND memberno = #{memberno}
   </update>
   
+  <!-- 게시글 삭제시 좋아요 삭제 -->
+  <delete id="like_delete" parameterType="int">
+    DELETE FROM freelike
+    WHERE freeno = #{freeno}
+  </delete>
+  
 </mapper>

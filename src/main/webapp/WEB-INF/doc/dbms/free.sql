@@ -13,8 +13,8 @@ CREATE TABLE free(
     freedate                          DATE     NOT NULL,
     freecnt                           NUMBER(6)    DEFAULT 0     NOT NULL,
     freelike                          NUMBER(6)    DEFAULT 0     NOT NULL,
-    freepasswd                        VARCHAR2(50)     NULL ,
-    MEMBERNO                          NUMBER(10)     NULL 
+    MEMBERNO                          NUMBER(10)     NULL ,
+    ADMINNO                           NUMBER(10)     NULL 
 );
 
 COMMENT ON TABLE free is '자유 게시판';
@@ -25,11 +25,14 @@ COMMENT ON COLUMN free.freename is '이름';
 COMMENT ON COLUMN free.freedate is '등록일';
 COMMENT ON COLUMN free.freecnt is '조회수';
 COMMENT ON COLUMN free.freelike is '추천수';
-COMMENT ON COLUMN free.freepasswd is '패스워드';
 COMMENT ON COLUMN free.MEMBERNO is '회원번호';
+COMMENT ON COLUMN free.ADMINNO is '관리자번호';
+
 
 ALTER TABLE free ADD CONSTRAINT IDX_free_PK PRIMARY KEY (freeno);
 ALTER TABLE free ADD CONSTRAINT IDX_free_FK0 FOREIGN KEY (MEMBERNO) REFERENCES MEMBER (MEMBERNO);
+ALTER TABLE free ADD CONSTRAINT IDX_free_FK1 FOREIGN KEY (ADMINNO) REFERENCES ADMIN (ADMINNO);
+
 
 1. 등록 (INSERT)
 
@@ -48,7 +51,7 @@ VALUES ((SELECT NVL(MAX(freeno), 0)+1 as freeno FROM free),
 2. 조회
 
 1) 전체 목록 조회
-SELECT freeno, freetitle, freecontent, freename, freedate, freecnt, freelike, freepasswd, memberno
+SELECT freeno, freetitle, freecontent, freename, freedate, freecnt, freelike, memberno, adminno
 FROM free
 ORDER BY freeno DESC;
 

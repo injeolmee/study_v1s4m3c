@@ -17,8 +17,8 @@ CREATE TABLE shared(
     shareddate                        DATE     NOT NULL,
     sharedcnt                         NUMBER(6)    DEFAULT 0     NOT NULL,
     sharedlike                        NUMBER(6)    DEFAULT 0     NOT NULL,
-    sharedpasswd                      VARCHAR2(50)     NULL ,
-    MEMBERNO                          NUMBER(10)     NULL 
+    MEMBERNO                          NUMBER(10)     NULL ,
+    ADMINNO                           NUMBER(10)     NULL 
 );
 
 COMMENT ON TABLE shared is '자료실';
@@ -35,13 +35,13 @@ COMMENT ON COLUMN shared.sharedsize is '파일 크기';
 COMMENT ON COLUMN shared.shareddate is '등록일';
 COMMENT ON COLUMN shared.sharedcnt is '조회수';
 COMMENT ON COLUMN shared.sharedlike is '추천수';
-COMMENT ON COLUMN shared.sharedpasswd is '패스워드';
 COMMENT ON COLUMN shared.MEMBERNO is '회원번호';
+COMMENT ON COLUMN shared.ADMINNO is '관리자번호';
 
 
 ALTER TABLE shared ADD CONSTRAINT IDX_shared_PK PRIMARY KEY (sharedno);
 ALTER TABLE shared ADD CONSTRAINT IDX_shared_FK0 FOREIGN KEY (MEMBERNO) REFERENCES MEMBER (MEMBERNO);
-
+ALTER TABLE shared ADD CONSTRAINT IDX_shared_FK1 FOREIGN KEY (ADMINNO) REFERENCES ADMIN (ADMINNO);
 
 select * from shared
 

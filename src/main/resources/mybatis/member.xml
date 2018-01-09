@@ -129,6 +129,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     WHERE memberno = #{memberno}
   </update>
   
+  <update id="mem_delete" parameterType="MemberVO">
+    UPDATE member
+    SET mememail = #{mememail}, memauth= #{memauth}
+    WHERE memberno = #{memberno}
+  </update>
+  
                    
 
 </mapper>

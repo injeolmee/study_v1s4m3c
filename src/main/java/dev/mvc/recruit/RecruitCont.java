@@ -42,7 +42,7 @@ public class RecruitCont {
   @ResponseBody
   @RequestMapping(value = "/user/recruit/join.do", method = RequestMethod.GET, produces = "application/text; charset=utf8")
   public String join(HttpSession session, RecruitVO recruitVO) {
-    System.out.println("--> create() POST executed");
+    // System.out.println("--> create() POST executed");
     
     JSONObject obj = new JSONObject();
     
@@ -65,7 +65,7 @@ public class RecruitCont {
   // http://localhost:9090/blog/studylist/list.do
   @RequestMapping(value = "/user/recruit/recruit_list.do", method = RequestMethod.GET)
   public ModelAndView list(int stdlist_no) {
-    System.out.println("--> list() GET executed");
+    // System.out.println("--> list() GET executed");
     ModelAndView mav = new ModelAndView();
     mav.setViewName("/user/recruit/recruit_list"); // studylist/study_list.jsp
     
@@ -86,7 +86,7 @@ public class RecruitCont {
   @RequestMapping(value = "/user/recruit/check_memberno.do", method = RequestMethod.GET, produces = "application/text; charset=utf8")
   public String check_memberno(HttpSession session, RecruitVO recruitVO) {
     
-    System.out.println("--> check_memberno() GET executed");
+    // System.out.println("--> check_memberno() GET executed");
     
     //session을 통해 id의 memberno값을 가져오기.
     int memberno =  (Integer) session.getAttribute("memberno");
@@ -96,8 +96,8 @@ public class RecruitCont {
     
     HashMap hashmap = new HashMap();
     
-    System.out.println("memberno:"+memberno);
-    System.out.println("stdlist_no:"+stdlist_no);
+/*    System.out.println("memberno:"+memberno);
+    System.out.println("stdlist_no:"+stdlist_no);*/
     
     hashmap.put("memberno", memberno);
     hashmap.put("stdlist_no", stdlist_no);
@@ -106,7 +106,7 @@ public class RecruitCont {
    
     int count =  recruitProc.check_memberno(hashmap);
     
-    System.out.println("count:"+count);
+    // System.out.println("count:"+count);
      
     obj.put("count", count);
     obj.put("stdlist_no", stdlist_no);
@@ -124,7 +124,7 @@ public class RecruitCont {
   @RequestMapping(value = "/user/recruit/confirm_Y.do", method = RequestMethod.GET, produces = "application/text; charset=utf8")
   public String confirm_Y(RecruitVO recruitVO) {
     
-    System.out.println("--> confirm_Y() GET executed");
+    // System.out.println("--> confirm_Y() GET executed");
     
     JSONObject obj = new JSONObject();
     
@@ -140,7 +140,7 @@ public class RecruitCont {
 
     StudyListProc.up_currnum(stdlist_no);
     
-    System.out.println("count :"+count);
+    // System.out.println("count :"+count);
     
     obj.put("count", count);
     obj.put("stdlist_no", stdlist_no);
@@ -157,14 +157,14 @@ public class RecruitCont {
   @RequestMapping(value = "/user/recruit/confirm_N.do", method = RequestMethod.GET, produces = "application/text; charset=utf8")
   public String confirm_N(RecruitVO recruitVO) {
     
-    System.out.println("--> confirm_N() GET executed");
+    // System.out.println("--> confirm_N() GET executed");
     
     JSONObject obj = new JSONObject();
     
     int stdlist_no = recruitVO.getStdlist_no();
     int memberno = recruitVO.getMemberno();
     
-    System.out.println("memberno:"+memberno);
+    // System.out.println("memberno:"+memberno);
     
     HashMap hashmap = new HashMap();
     
@@ -173,7 +173,7 @@ public class RecruitCont {
     
     int count = recruitProc.confirm_N(hashmap);
     
-    System.out.println("count :"+count);
+    // System.out.println("count :"+count);
     
     obj.put("count", count);
     obj.put("stdlist_no", stdlist_no);

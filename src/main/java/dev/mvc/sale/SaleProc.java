@@ -30,13 +30,6 @@ public class SaleProc implements SaleProcInter {
     return count;
   }
 
-  /* 목록 */
-  @Override
-  public List<SaleVO> list() {
-    List<SaleVO> list = saleDAO.list();
-    return list;
-  }
-
   /* 목록 + 검색 + 페이징 */
   @Override
   public List<SaleVO> list_search(HashMap hashMap) {
@@ -273,24 +266,10 @@ public class SaleProc implements SaleProcInter {
     return count;
   }
 
-  /* 추천수 상승 */
+  /* 조회수 상승 */
   @Override
   public int increaseCnt(int saleno) {
     int count = saleDAO.increaseCnt(saleno);
-    return count;
-  }
-
-  /* 패스워드 검사 */
-  @Override
-  public int passwd_check(SaleVO saleVO) {
-
-    HashMap<String, Object> hashMap = new HashMap<String, Object>();
-
-    hashMap.put("saleno", saleVO.getSaleno());
-    hashMap.put("salepasswd", saleVO.getSalepasswd());
-
-    int count = saleDAO.passwd_check(hashMap);
-
     return count;
   }
 
@@ -318,6 +297,12 @@ public class SaleProc implements SaleProcInter {
 
     int count = saleDAO.member_check(hashMap);
     return count;
+  }
+
+  /* 관리자 게시글 등록 */
+  @Override
+  public int create_admin(SaleVO saleVO) {
+    return saleDAO.create_admin(saleVO);
   }
 
 }

@@ -45,6 +45,9 @@
   <context:component-scan base-package="dev.mvc.message" /> 
   <context:component-scan base-package="dev.mvc.memsearch" />
   <context:component-scan base-package="dev.mvc.msg_socket"/>
+  <context:component-scan base-package="dev.mvc.mystudy" />
+  <context:component-scan base-package="dev.mvc.my_std_catelist" />
+  <context:component-scan base-package="dev.mvc.my_pds" />
   
   
   <!-- 안희홍  -->
@@ -70,6 +73,12 @@
    <context:component-scan base-package="dev.mvc.sharedreply" />
    <context:component-scan base-package="dev.mvc.freereply" />
    <context:component-scan base-package="dev.mvc.freelike" />
+   
+   
+   <!-- 하이디-->
+   <context:component-scan base-package="dev.mvc.room" />
+   <context:component-scan base-package="dev.mvc.rvlike" />
+   <context:component-scan base-package="dev.mvc.review" />
   
   
   

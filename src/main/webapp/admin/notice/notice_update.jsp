@@ -15,6 +15,7 @@ String root = request.getContextPath();
 <link href="./jecss/style.css" rel="Stylesheet" type="text/css">
  
 <script type="text/javascript" src="<%=root %>/ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/ckfinder/ckfinder.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
  
 <script type="text/javascript">

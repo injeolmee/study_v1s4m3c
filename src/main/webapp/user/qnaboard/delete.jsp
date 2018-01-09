@@ -31,7 +31,7 @@ String root = request.getContextPath();
   <DIV style='width: 100%;'>
     <FORM name='frm' method='POST' action='/study/user/qnaboard/delete.do'
                onsubmit = 'return send();' class="form-horizontal" style='text-align: center; margin: 0px auto; width: 80%;'>
-      <input type='hidden' name='conNo' id='conNo' value='${param.conNo}'>
+      <input type='hidden' name='qnano' id='qnano' value='${param.qnano}'>
     
       <div class="form-group">   
         <div class="col-md-12" style='text-align: center; margin: 30px;'>

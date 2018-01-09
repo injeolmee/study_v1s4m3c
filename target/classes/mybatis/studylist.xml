@@ -320,5 +320,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           )
             where <![CDATA[ rank <= 5 ]]>      
   </select>
+  
+  <!-- 스터디그룹을 등록한 id 가 맞는지 검사  -->
+  <select id="check_stdno" resultType="int" parameterType="Hashmap">
+    select count(memberno)
+    from STUDYLIST
+    where stdlist_no = #{stdlist_no}
+    and memberno = #{memberno}
+  </select>
 
 </mapper>

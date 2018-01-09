@@ -15,8 +15,8 @@ String root = request.getContextPath();
 <!-------------------------- Web Logo Part -------------------------->
 <link rel="shortcut icon" href="<%=root%>/menu/images/ico/Short Logo.png">
 <!---------------------------------------------------------------------->
-<link href="./jecss/login.css" rel="Stylesheet" type="text/css">
-<link href="./jecss/login.scss" rel="Stylesheet" type="text/css">
+<link href="<%=root%>/nonuser/login/jecss/login.css" rel="Stylesheet" type="text/css">
+<link href="<%=root%>/nonuser/login/jecss/login.scss" rel="Stylesheet" type="text/css">
 <style>
 
 </style>
@@ -189,7 +189,7 @@ $(function(){
            // alert("data.code: " + data.code); 
           if(data.codesend == "성공") {                       
             copy_code = data.code;
-            // alert("copy_code: " + copy_code); 
+            alert("copy_code: " + copy_code); 
             msg = "<span style='color:green;'>이메일에 코드가 전송되었습니다.</span>";
             $('#panel_code').html(msg); 
             $('#panel_code').show();
@@ -371,7 +371,42 @@ $(function(){
       return false;
     } 
     
-  return true;  
+    var frm_join = $("#frm_join").serialize();
+    // alert(frm_join);
+    
+    $.ajax({
+      url : '/study/nonuser/login/admin_create.do',
+      type: "POST",
+      data : frm_join, 
+      dataType : 'JSON',
+      success : function(data){
+        if(data.cnt_id != 0) {
+          alert("중복된 아이디가 있습니다.");
+        }
+        if(data.cnt_email != 0) {
+          alert("중복된 이메일이 있습니다.");
+        }
+        if(data.join_cnt==1){
+          alert("회원가입이 완료되었습니다.\n가입해주셔서 감사합니다.");
+          location.href ='<%=root %>/nonuser/login/login.do';
+        } else {
+          alert("회원가입이 실패했습니다.\n다시 시도해주세요.");
+        }
+       },
+    // 통신 에러, 요청 실패, 200 아닌 경우, dataType이 다른경우
+       error: function (request, status, error){  
+         var msg = "에러가 발생했습니다. <br><br>";
+         msg += "다시 시도해주세요.<br><br>";
+         msg += "request.status: " + request.status + "<br>";
+         msg += "request.responseText: " + request.responseText + "<br>";
+         msg += "status: " + status + "<br>";
+         msg += "error: " + error;
+
+         $('#modal_title').html("에러");   
+         $('#modal_content').html(msg); 
+         $('#modal_panel').modal(); 
+       }
+     });
   });
     
   
@@ -415,7 +450,7 @@ $(function(){
   <div class="logmod__tab-wrapper">
   <div class="logmod__tab lgm-1">
     <div class="logmod__form">
-    <FORM name='frm_join' id='frm_join' method='POST' action='./admin_create.do' enctype="multipart/form-data" class="simform">
+    <FORM name='frm_join' id='frm_join' method='POST' enctype="multipart/form-data" class="simform">
       <input type="hidden" id="admconfirm" name="admconfirm" value="Y">
       <input type="hidden" id="admauth" name="admauth" value="N">
       
@@ -424,7 +459,7 @@ $(function(){
           <label class="string optional" for="user-name">* ID</label>
           <input class="string optional" style='margin-bottom: 0px; width: 45%;' maxlength="255" id="adminid" name="admid" value='' placeholder="영어 대소문자, 숫자, _ , - 가능합니다" type="text" size="50" />
           <button type="button" class="btn" id="id_btn" style='margin-left: 10px; padding: 0px;'><strong>중복 검사</strong></button>
-          <span id="panel_id" style='font-size: 15px;'>사용가능한 아이디입니다.</span>
+          <span id="panel_id" style='font-size: 15px;'></span>
         </div> 
       </div>
       
@@ -478,7 +513,7 @@ $(function(){
       </div>
   
       <div class="simform__actions">
-        <input class="sumbit" name="commit" id="join" name="join" type="submit" value="JOIN" />
+        <input class="sumbit" name="commit" id="join" name="join" type="button" value="JOIN" />
         <span class="simform__actions-sidetext"><a class="special" role="link" href="<%=root%>/nonuser/login/memberjoin.do">회원 전용 가입<br>Click here</a></span>
       </div> 
 

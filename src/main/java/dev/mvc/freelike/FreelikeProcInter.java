@@ -55,4 +55,14 @@ public interface FreelikeProcInter {
    */
   public int good_chk_n(HashMap hashMap);
   
+  /**
+   * <XMP>
+   * 게시글 작성자가 게시글을 삭제할 때 좋아요도 같이 삭제
+   * <delete id="like_delete" parameterType="int">
+   * </XMP>
+   * @param freeno
+   * @return int
+   */
+  public int like_delete(int freeno);
+  
 }

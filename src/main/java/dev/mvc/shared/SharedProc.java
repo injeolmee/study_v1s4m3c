@@ -28,22 +28,6 @@ public class SharedProc implements SharedProcInter {
     return count;
   }
 
-  /* 목록 */
-  @Override
-  public List<SharedVO> list() {
-    List <SharedVO> list = sharedDAO.list();
-    
-    Iterator<SharedVO> iter = list.iterator();
-    
-    while (iter.hasNext()) { // 제목이 길 경우 "..."로 처리하는 구문
-      SharedVO sharedVO = iter.next();
-      String sharedtitle = Tool.textLength(sharedVO.getSharedtitle(), 25);
-      sharedVO.setSharedtitle(sharedtitle);
-    }
-    
-    return list;
-  }
-  
   /* 목록 Grid형 */
   @Override
   public List<SharedVO> list_grid(HashMap hashMap) {
@@ -271,31 +255,11 @@ public class SharedProc implements SharedProcInter {
     int count = sharedDAO.increaseCnt(sharedno);
     return count;
   }
- 
-  /* 추천수 상승 */
-  @Override
-  public int increaseLike(int sharedno) {
-    int count = sharedDAO.increaseLike(sharedno);
-    return count;
-  }
 
   /* 수정 */
   @Override
   public int update(SharedVO sharedVO) {
     int count = sharedDAO.update(sharedVO);
-    return count;
-  }
-
-  /* 패스워드 검사 */
-  @Override
-  public int passwd_check(SharedVO sharedVO) {
-    HashMap<String, Object> hashMap = new HashMap<String, Object>(); 
-    
-    hashMap.put("sharedno", sharedVO.getSharedno());
-    hashMap.put("sharedpasswd", sharedVO.getSharedpasswd());
-    
-    int count = sharedDAO.passwd_check(hashMap);
-    
     return count;
   }
 
@@ -330,6 +294,12 @@ public class SharedProc implements SharedProcInter {
     
     int count = sharedDAO.member_check(hashMap);
     return count;
+  }
+
+  /* 관리자 게시글 등록 */
+  @Override
+  public int create_admin(SharedVO sharedVO) {
+    return sharedDAO.create_admin(sharedVO);
   }
 
 }

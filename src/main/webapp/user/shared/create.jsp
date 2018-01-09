@@ -13,7 +13,10 @@
 <!---------------------------------------------------------------------->
 <link href="${pageContext.request.contextPath}/user/shared/gnacss/style.css" rel="Stylesheet" type="text/css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/ckeditor/ckeditor.js"></script>
+<!--------------------------J Query Part ------------------------------>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<!---------------------------------------------------------------------->
+
 <script type="text/JavaScript">
   window.onload=function(){
     CKEDITOR.replace('sharedcontent');  // <TEXTAREA>태그 id 값을 받아와 ckeditor 형식으로 변환
@@ -27,7 +30,14 @@
     var ck_sharedcontent = CKEDITOR.instances.sharedcontent.getData(); // 전송을 위해 ck 데이터 내용을 가져옴
     // alert("ck 내용 출력: " + ck_sharedcontent);
     
-    formData.append("memberno", $("input[name=memberno]").val());
+    if ($("input[name=memberno]").val() != null) { // 회원일 경우
+      formData.append("memberno", $("input[name=memberno]").val());
+    }
+    
+    if ($("input[name=adminno]").val() != null) { // 관리자일 경우
+      formData.append("adminno", $("input[name=adminno]").val());
+    }
+    
     formData.append("sharedname", $("input[name=sharedname]").val());
     formData.append("sharedtitle", $("input[name=sharedtitle]").val());
     formData.append("sharedyoutube", $("textarea[name=sharedyoutube]").val());
@@ -119,7 +129,7 @@
 </head>
 <body>
 <jsp:include page="/menu/top.jsp" flush="false" />
-<div class="container" style='margin-bottom: 100px;'>
+<div class="container">
 <DIV class='content' style='width: 60%; margin: 0px auto; '>  
 
   <DIV class="title_line"> 게시글 등록 </DIV>
@@ -127,8 +137,14 @@
   <DIV style="text-align: center; width: 100%;">
   
     <FORM name='frm' id='frm' method='POST' action='' enctype="multipart/form-data" class="form-horizontal" style="text-align: left;">
-       <input type='hidden' name='memberno' id='memberno' value=${sessionScope.memberno }>
-       <input type='hidden' name='sharedname' id='sharedname' value=${sessionScope.memname }>
+       <c:if test="${sessionScope.memberno ne null}">
+         <input type='hidden' name='memberno' id='memberno' value=${sessionScope.memberno }>
+         <input type='hidden' name='sharedname' id='sharedname' value=${sessionScope.memname }>
+       </c:if>
+       <c:if test="${sessionScope.adminno ne null}">
+         <input type='hidden' name='adminno' id='adminno' value=${sessionScope.adminno }>
+         <input type='hidden' name='sharedname' id='sharedname' value=${sessionScope.admname }>
+       </c:if>
      
        <div class="form-group">   
          <div class="col-md-10" style="width: 100%; margin-top: 30px;">
@@ -145,7 +161,7 @@
        </div>
     
        <div class="form-group" style="width: 500px; display: flex;"> 
-         <label for="file1MF" class="col-md-2 control-label" style="width: 150px; padding-top: 2px;">업로드 파일  </label>
+         <label for="file1MF" class="col-md-2 control-label" style="width: 105px; padding-top: 2px; text-align: left;">업로드 파일  </label>
          <div class="col-md-10" style="text-align: center; width: 100%;">
            <input type="file" class="input-md" name='file1MF' id='file1MF' value="파일 선택" size='40' style="border: none;">
          </div>

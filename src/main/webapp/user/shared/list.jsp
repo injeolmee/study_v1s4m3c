@@ -40,10 +40,9 @@ $(function(){
       
       <colgroup style="text-align: center;">
         <col style="width: 10%;"></col>
-        <col style="width: 40%;"></col>
+        <col style="width: 50%;"></col>
         <col style="width: 15%;"></col>
         <col style="width: 15%;"></col>
-        <col style="width: 10%;"></col>
         <col style="width: 10%;"></col>
       </colgroup>
       
@@ -55,7 +54,6 @@ $(function(){
           <th>작성자</th>
           <th>등록일</th>
           <th>조회수</th>
-          <th>추천수</th>
         </tr>
       </thead>
       <!----------------- 게시판 상위 메뉴 종료 --------------------------->
@@ -90,7 +88,6 @@ $(function(){
           <td style='vertical-align: middle;'> ${sharedVO.sharedname}</td>
           <td style='vertical-align: middle;'> ${shareddate }</td>
           <td style='vertical-align: middle;'> ${sharedVO.sharedcnt } </td>
-          <td style='vertical-align: middle;'> ${sharedVO.sharedlike } </td>
         </tr>
         </c:forEach>
         <!--------------------------------- 게시판 목록 출력 종료 --------------------------------->

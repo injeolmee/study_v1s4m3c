@@ -193,6 +193,18 @@ public class QnaProc implements QnaProcInter {
   }
   
   @Override
+  public int member_check(QnaVO qnaVO) {
+    HashMap<String, Object> hashMap = new HashMap<String, Object>();
+    
+    hashMap.put("memberno", qnaVO.getMemberno());
+    hashMap.put("qnano", qnaVO.getQnano());
+    
+    int count = qnaDAO.member_check(hashMap);
+    
+    return count;
+  }
+
+  @Override
   public int pwdchk(String qnapwd) {
     return qnaDAO.pwdchk(qnapwd);
   }

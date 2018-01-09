@@ -73,7 +73,7 @@ function good(){
   var params = "conNo="+conNo;
   
   $.ajax({
-    url : '/study/conlike/good.do',
+    url : '/study/user/conlike/good.do',
     type: "GET",
     data : params,
     dataType : 'JSON',
@@ -83,9 +83,9 @@ function good(){
       /* alert(data.count); */
       
       if(data.count == 0){ //회원이 이 글에 대해서 체크를 안했다면
-          src = "<img id='good' onclick='good_y();' src='./images/star.png'>";
+          src = "<img id='good' onclick='good_y();' src='/study/nonuser/contest/images/star.png'>";
         }else if(data.count == 1 || data.count == 2){ //로그인을 하지 않았거나 체크를 했었다면
-          src = "<img id='good' onclick='good_y();' src='./images/yellow_star.png'>";
+          src = "<img id='good' onclick='good_y();' src='/study/nonuser/contest/images/yellow_star.png'>";
         }
        $("#good_").html(src);
       }
@@ -97,11 +97,11 @@ function good_y(){
  var str = good.attr('src');
  console.log(str); 
  
- if(str == './images/star.png'){
-   good.attr("src", "./images/yellow_star.png");
+ if(str == '/study/nonuser/contest/images/star.png'){
+   good.attr("src", "/study/nonuser/contest/images/yellow_star.png");
    good_up();
- }else if( str == './images/yellow_star.png'){
-   good.attr("src", "./images/star.png");
+ }else if( str == '/study/nonuser/contest/images/yellow_star.png'){
+   good.attr("src", "/study/nonuser/contest/images/star.png");
    good_down();
  }
 };
@@ -110,7 +110,7 @@ function good_up(){
   var conNo = ${contestVO.conNo};
   var params = "conNo="+conNo;
   $.ajax({
-    url : '/study/conlike/good_up.do',
+    url : '/study/user/conlike/good_up.do',
     type: "GET",
     data : params,
     dataType : 'JSON',
@@ -126,7 +126,7 @@ function good_down(){
   var conNo = ${contestVO.conNo};
   var params = "conNo="+conNo;
   $.ajax({
-    url : '/study/conlike/good_down.do',
+    url : '/study/user/conlike/good_down.do',
     type: "GET",
     data : params,
     dataType : 'JSON',
@@ -155,7 +155,7 @@ function good_down(){
       <DIV>
         <c:choose>
           <c:when test="${contestVO.conThumb != ''}">
-            <img id= 'conThumb' src= './storage/${contestVO.conThumb }' style= 'width: 100%; height: 123px; margin: 0px 0px 6px 0px;'> <!-- 이미지 파일명 출력 -->
+            <img id= 'conThumb' src= '/study/admin/contest/storage/${contestVO.conThumb }' style= 'width: 100%; height: 123px; margin: 0px 0px 6px 0px;'> <!-- 이미지 파일명 출력 -->
           </c:when>
           <%-- <c:when test="${contestVO.conFile1 != ''}">
           ${contestVO.conFile1 } <!-- 일반 파일명 출력 -->
@@ -250,13 +250,13 @@ function good_down(){
           <c:set var='file2' value="${fn:toLowerCase(contestVO.conFile2)}" />              
           <c:choose>
             <c:when test="${fn:endsWith(file2, '.jpg')}">
-              <IMG id='file2' src='./storage/${contestVO.conFile2}' >
+              <IMG id='file2' src='/study/admin/contest/storage/${contestVO.conFile2}' >
             </c:when>
             <c:when test="${fn:endsWith(file2, '.gif')}">
-              <IMG id='file2' src='./storage/${contestVO.conFile2}' >
+              <IMG id='file2' src='/study/admin/contest/storage/${contestVO.conFile2}' >
             </c:when>
             <c:when test="${fn:endsWith(file2, '.png')}">
-              <IMG id='file2' src='./storage/${contestVO.conFile2}'>
+              <IMG id='file2' src='/study/admin/contest/storage/${contestVO.conFile2}'>
             </c:when>
           </c:choose>
         </DIV>
@@ -283,7 +283,7 @@ function good_down(){
             </A> --%>
           </c:when>
           <c:otherwise>
-            <A href="./read.do?cateno=${contestVO.cateno }&conNo=${contestVO.conNo - 1}">
+            <A href="/study/nonuser/contest/read.do?conNo=${contestVO.conNo - 1}">
               <IMG src="./images/preview.png" alt="이전">
             </A>          
           </c:otherwise>
@@ -295,14 +295,14 @@ function good_down(){
             <script>alert("가장 마지막 게시물입니다.")</script>
           </c:when>
           <c:otherwise>
-            <A href="./read.do?cateno=${contestVO.cateno }&conNo=${contestVO.conNo + 1}">
+            <A href="/study/nonuser/contest/read.do?conNo=${contestVO.conNo + 1}">
               <IMG src="./images/next.png" alt="다음">
             </A> 
           </c:otherwise>
         </c:choose>
       </DIV>
       <DIV style="float: left; padding-right: 2px !important;">
-        <A href="./list_all_contest.do">
+        <A href="/study/nonuser/contest/list_all_contest.do">
           <IMG src="./images/list.png" alt="리스트">
         </A>
       </DIV>
@@ -318,7 +318,7 @@ function good_down(){
     <DIV style="display: block;">
       <c:choose>
           <c:when test="${contestVO.conThumb != ''}">
-            <img id= 'conThumb' src= './storage/${contestVO.conThumb }' style= 'width: 100%; height: 123px; margin: 0px 0px 6px 0px;'> <!-- 이미지 파일명 출력 -->
+            <img id= 'conThumb' src= '/study/admin/contest/storage/${contestVO.conThumb }' style= 'width: 100%; height: 123px; margin: 0px 0px 6px 0px;'> <!-- 이미지 파일명 출력 -->
           </c:when>
           <%-- <c:when test="${contestVO.conFile1 != ''}">
           ${contestVO.conFile1 } <!-- 일반 파일명 출력 -->

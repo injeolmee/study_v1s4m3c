@@ -14,16 +14,7 @@ public interface SharedProcInter {
    * @return 등록할 게시글 갯수
    */
   public int create(SharedVO sharedVO);
-  
-  /**
-   * <XMP>
-   * 게시판 목록
-   * <select id="list" resultType="SharedVO">
-   * </XMP>
-   * @return 게시판 목록
-   */
-  public List<SharedVO> list();
-  
+
   /**
    * <XMP>
    * 게시판 목록 Grid형
@@ -34,7 +25,7 @@ public interface SharedProcInter {
   
   /**
    * <XMP>
-   * 게시판 검색 기능
+   * 검색 + 목록 + 페이징
    * <select id="list" resultType="SharedVO" parameterType="HashMap">
    * </XMP>
    * @param hashMap
@@ -100,26 +91,6 @@ public interface SharedProcInter {
   
   /**
    * <XMP>
-   * 추천수 상승
-   * <update id="increaseLike" parameterType="int">
-   * </XMP>
-   * @param sharedno
-   * @return
-   */
-  public int increaseLike (int sharedno);
-  
-  /**
-   * <XMP>
-   * 패스워드 검사
-   * <select id="passwd_check" resultType="int" parameterType="HashMap">
-   * </XMP>
-   * @param hashMap
-   * @return
-   */
-  public int passwd_check (SharedVO sharedVO);
-  
-  /**
-   * <XMP>
    * 게시글 수정
    * <update id="update" parameterType="SharedVO">
    * </XMP>
@@ -167,6 +138,16 @@ public interface SharedProcInter {
    * @return
    */
   public int member_check (SharedVO sharedVO);
+  
+  /**
+   * <XMP>
+   * 관리자 게시글 등록
+   * <insert id="create_admin" parameterType="SharedVO">
+   * </XMP>
+   * @param sharedVO
+   * @return int
+   */
+  public int create_admin (SharedVO sharedVO);
   
   
 

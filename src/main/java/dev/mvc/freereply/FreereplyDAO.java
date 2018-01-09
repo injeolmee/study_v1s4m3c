@@ -94,6 +94,30 @@ public class FreereplyDAO implements FreereplyDAOInter {
     int count = mybatis.delete("freereply.delete_all", freeno);
     return count;
   }
+
+  /* 관리자 댓글 등록 */
+  @Override
+  public int create_admin(FreereplyVO freereplyVO) {
+    return mybatis.insert("freereply.create_admin", freereplyVO);
+  }
+
+  /* 관리자 대댓글 등록 */
+  @Override
+  public int reply_admin(FreereplyVO freereplyVO) {
+    return mybatis.insert("freereply.reply_admin", freereplyVO);
+  }
+
+  /* 부모 댓글일 경우 하위 댓글이 존재하는지 검사 */
+  @Override
+  public int parent_check(int freplygrpno) {
+    return mybatis.selectOne("freereply.parent_check", freplygrpno);
+  }
+
+  /* 대댓글과 관련되어 맨 마지막 댓글인지 검사 */
+  @Override
+  public int reply_check(HashMap hashMap) {
+    return mybatis.selectOne("freereply.reply_check", hashMap);
+  }
   
   
 

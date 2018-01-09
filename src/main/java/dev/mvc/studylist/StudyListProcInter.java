@@ -168,4 +168,15 @@ public interface StudyListProcInter {
    */
   public List<StudyListVO> rank_top5();
   
+  /**
+   * <xml> 
+   *  스터디그룹을 등록한 id 가 맞는지 검사
+   * <select id="check_stdno" resultType="int" parameterType="Hashmap">
+   * </xml>
+   * 
+   * @param hashmap
+   * @return int
+   */
+  public int check_stdno(HashMap hashmap);
+  
 }

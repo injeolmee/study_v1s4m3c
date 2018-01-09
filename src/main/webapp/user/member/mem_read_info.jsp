@@ -28,7 +28,11 @@ String root = request.getContextPath();
 <script type="text/javascript">
 
 $(function(){   
-    
+  var ch_memauth = ${check_memauth};
+  if(ch_memauth == 1){
+    alert("유효한 회원이 아닙니다.");
+    self.close();
+  }
   
 }); // function 끝
 
@@ -36,15 +40,12 @@ $(function(){
 </script>
 
 </head> 
- 
-<body>
 
 <%-- <jsp:include page="/menu/top.jsp" flush='false' /> --%>
-<jsp:include page="/menu/top.jsp" flush='false' />
 <DIV class='container'>
 <DIV class='content' style='width: 90%; margin: 0px auto;'>
 
-<div class="logmod__container" style='width: 30%; margin: 0px auto; padding-top: 30px;'>
+<div class="logmod__container" style='width: 80%; margin: 0px auto; padding-top: 30px;'>
   <ul class="logmod__tabs">
     <li data-tabtar="lgm-1"><a href="#">회원 정보</a></li>
   </ul>
@@ -192,6 +193,10 @@ $(function(){
         </div>
       </div>
     </div>  
+    
+    <div class="simform__actions">
+      <input class="sumbit" value="닫 기" onclick="self.close();" type="button" value="정보 수정하기" />
+    </div>
   
  
   </div>
@@ -204,7 +209,6 @@ $(function(){
 
 </DIV> <!-- container END -->
 
-<jsp:include page="/menu/bottom.jsp" flush='false' />
 </body>
  
 </html> 

@@ -15,8 +15,8 @@ String root = request.getContextPath();
 <!-------------------------- Web Logo Part -------------------------->
 <link rel="shortcut icon" href="<%=root%>/menu/images/ico/Short Logo.png">
 <!---------------------------------------------------------------------->
-<link href="./jecss/login.css" rel="Stylesheet" type="text/css">
-<link href="./jecss/login.scss" rel="Stylesheet" type="text/css">
+<link href="<%=root%>/nonuser/login/jecss/login.css" rel="Stylesheet" type="text/css">
+<link href="<%=root%>/nonuser/login/jecss/login.scss" rel="Stylesheet" type="text/css">
 <style>
 
 </style>
@@ -31,7 +31,6 @@ var copy_code = ""; // 이메일로 보내진 인증 코드
 var msg = "";
 
 $(function(){     
- 
   
   /* -------------------------------- 아이디 중복 검사 클릭 시작-----------------------------------  */ 
   $('#id_btn').click(function(){    
@@ -183,7 +182,7 @@ $(function(){
           // alert("data.code: " + data.code); 
           if(data.codesend == "성공") {                       
             copy_code = data.code;
-            // alert("copy_code: " + copy_code); 
+            alert("copy_code: " + copy_code); 
             msg = "<span style='color:green;'>이메일에 코드가 전송되었습니다.</span>";
             $('#panel_code').html(msg); 
             $('#panel_code').show();
@@ -578,7 +577,88 @@ $(function(){
       return false;
     } 
     
-  return true;  
+    var formData = new FormData();
+    
+    // var frm_join = $("#frm_join").serialize();
+    
+   formData.append("memid", $("input[name=memid]").val());
+   formData.append("mememail", $("input[name=mememail]").val());
+   formData.append("mempasswd", $("input[name=mempasswd]").val());
+   formData.append("memname", $("input[name=memname]").val());
+   formData.append("memconfirm", $("input[name=memconfirm]").val());
+   formData.append("memauth", $("input[name=memauth]").val());
+   formData.append("membirth", $("input[name=membirth]").val());
+   formData.append("memgender", $("input[name=memgender]").val());
+   formData.append("area", $("select[name=area]").val());
+   formData.append("selected_area", $("select[name=selected_area]").val());
+   formData.append("memphone", $("input[name=memphone]").val());
+   formData.append("memsns", $("input[name=memsns]").val());
+   formData.append("memintro", $("textarea[name=memintro]").val());
+   
+   if($("input[name=file1MF")[0].files[0] != null) { 
+     formData.append("file1MF", $("input[name=file1MF")[0].files[0]); // 파일 업로드까지 추가
+   } 
+   
+   if($("input[name='mbirthvb']:checked").val()){
+     formData.append("mbirthvb", $("input[name=mbirthvb]").val());
+   }
+   if($("input[name='mgendervb']:checked").val()){
+     formData.append("mgendervb", $("input[name=mgendervb]").val());
+   }
+   if($("input[name='maddressvb']:checked").val()){
+     formData.append("maddressvb", $("input[name=maddressvb]").val());
+   }
+   if($("input[name='mphonevb']:checked").val()){
+     formData.append("mphonevb", $("input[name=mphonevb]").val());
+   }
+   if($("input[name='msnsvb']:checked").val()){
+     formData.append("msnsvb", $("input[name=msnsvb]").val());
+   }
+   if($("input[name='mintrovb']:checked").val()){
+     formData.append("mintrovb", $("input[name=mintrovb]").val());
+   }
+   if($("input[name='mphotovb']:checked").val()){
+     formData.append("mphotovb", $("input[name=mphotovb]").val());
+   }
+   
+
+    
+    $.ajax({
+      url : '/study/nonuser/login/memberjoin.do',
+      type: "POST",
+      data : formData, 
+      processData: false,
+      contentType: false,
+      dataType : 'JSON',
+      success : function(data){
+        if(data.cnt_id != 0) {
+          alert("중복된 아이디가 있습니다.");
+        }
+        if(data.cnt_email != 0) {
+          alert("중복된 이메일이 있습니다.");
+        }
+        if(data.join_cnt==1){
+          alert("회원가입이 완료되었습니다.\n가입해주셔서 감사합니다.");
+          location.href ='<%=root %>/nonuser/login/login.do';
+        } else {
+          alert("회원가입이 실패했습니다.\n다시 시도해주세요.");
+        }
+       },
+    // 통신 에러, 요청 실패, 200 아닌 경우, dataType이 다른경우
+       error: function (request, status, error){  
+         var msg = "에러가 발생했습니다. <br><br>";
+         msg += "다시 시도해주세요.<br><br>";
+         msg += "request.status: " + request.status + "<br>";
+         msg += "request.responseText: " + request.responseText + "<br>";
+         msg += "status: " + status + "<br>";
+         msg += "error: " + error;
+
+         $('#modal_title').html("에러");   
+         $('#modal_content').html(msg); 
+         $('#modal_panel').modal(); 
+       }
+     });
+    
   });
     
   
@@ -594,10 +674,10 @@ $(function(){
 <DIV class='container'>
 <DIV class='content' style='width: 90%; margin: 0px auto;'>
 
-<!-- <div id="modal_panel" class="modal fade" role="dialog">
+ <div id="modal_panel" class="modal fade" role="dialog" style="display: none;">
   <div class="modal-dialog">
 
-    Modal content
+    <!-- Modal content -->
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -612,16 +692,16 @@ $(function(){
     </div>
 
   </div>
-</div>  --> 
+</div>  
  
 <div class="logmod__container" style='width: 50%; margin: 0px auto; padding-top: 30px;'>
   <ul class="logmod__tabs">
-    <li data-tabtar="lgm-1"><a href="#">회원가입</a></li>
+    <li data-tabtar="lgm-1"><a href="#">회원 가입</a></li>
   </ul>
   <div class="logmod__tab-wrapper">
   <div class="logmod__tab lgm-1">
     <div class="logmod__form">
-      <FORM name='frm_join' id='frm_join' method='POST' action='./memberjoin.do' enctype="multipart/form-data" class="simform">
+      <FORM name='frm_join' id='frm_join' method='POST' enctype="multipart/form-data" class="simform">
         <input type="hidden" id="memconfirm" name="memconfirm" value="Y">
         <input type="hidden" id="memauth" name="memauth" value="U">
         
@@ -796,7 +876,7 @@ $(function(){
         </div>
 
         <div class="simform__actions">
-          <input class="sumbit" name="commit" id="join" name="join" type="submit" value="JOIN" />
+          <input class="sumbit" id="join" name="join" type="button" value="JOIN" />
           <span class="simform__actions-sidetext"><a class="special" role="link" href="<%=root%>/nonuser/login/admin_create.do">관리자 전용 가입<br>Click here</a></span>
         </div> 
 

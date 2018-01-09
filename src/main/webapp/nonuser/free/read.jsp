@@ -251,7 +251,7 @@ function update_parent(freplyno) {
     success: function (data) {
       if (data.count == 1) {       // 부모 댓글 삭제와 관련된 수정 처리가 성공했을 경우
         alert("댓글이 삭제되었습니다.");
-        window.location.reload();
+        window.location.reload(); // 캐시 및 서버에서 받아와서 새로고침
       } else {                          // 부모 댓글 삭제와 관련된 수정 처리가 실패했을 경우
         alert("오류가 발생하여 댓글 삭제에 실패하였습니다. 다시 시도해주십시오.");
       }
@@ -320,10 +320,18 @@ function delete_check(freeno) {
     </ASIDE> 
     <ASIDE style='float: right;'>
       <button type="button" class="btn btn-default" onclick="location.href='${pageContext.request.contextPath}/nonuser/free/list.do?word=${param.word}&search=${param.search}'">목록</button>
+      <!-- ⓐ 접속한 회원이 작성자일 경우 수정 / 삭제가 보임 -->
       <c:if test="${fn:contains(memberno, freeVO.memberno)}">
-        <button type="button" class="btn btn-default" onclick="location.href='${pageContext.request.contextPath}/user/free/update.do?freeno=${freeVO.freeno}&word=${param.word}&search=${param.search}&freecontent=${freeVO.freecontent}'">수정</button>
+        <button type="button" class="btn btn-default" onclick="location.href='${pageContext.request.contextPath}/user/free/update.do?freeno=${freeVO.freeno}&word=${param.word}&search=${param.search}'">수정</button>
         <button type="button" class="btn btn-default" onclick="delete_check(${freeVO.freeno})">삭제</button>
       </c:if>
+      <!----------------------------------------------------------->
+      <!------- ⓑ 관리자일 경우 수정 / 삭제가 모두 보임 ------->
+      <c:if test="${sessionScope.adminno != null }">
+        <button type="button" class="btn btn-default" onclick="location.href='${pageContext.request.contextPath}/user/free/update.do?freeno=${freeVO.freeno}&word=${param.word}&search=${param.search}'">수정</button>
+        <button type="button" class="btn btn-default" onclick="delete_check(${freeVO.freeno})">삭제</button>
+      </c:if>
+      <!----------------------------------------------------------->
     </ASIDE>      
   </DIV>
     
@@ -397,10 +405,18 @@ function delete_check(freeno) {
               <IMG src="${pageContext.request.contextPath}/nonuser/free/images/rereply.png"><A href="javascript:reply_start(${freereplyVO.freplyno });" id ='reply_panel${freereplyVO.freplyno}'>답변</A>
             </span>
             <div style='float: right;'>
+              <!--------- ⓐ 댓글의 작성자일 경우 수정 / 삭제 출력 ----------------->
               <c:if test="${fn:contains(memberno, freereplyVO.memberno)}">
-              <a href='javascript:reply_update("+${freereplyVO.freplyno }+")' style='font-size: 0.8em; color: #999999;' >수정</a>
-              <a href='javascript:alert_delete_form(${freereplyVO.freplyno },${freereplyVO.seqno })' style='font-size: 0.8em; color: #999999;'> | 삭제</a>
+                <a href='javascript:reply_update("+${freereplyVO.freplyno }+")' style='font-size: 0.8em; color: #999999;' >수정</a>
+                <a href='javascript:alert_delete_form(${freereplyVO.freplyno },${freereplyVO.seqno })' style='font-size: 0.8em; color: #999999;'> | 삭제</a>
               </c:if>
+              <!----------------------------------------------------------------------->
+              <!--------- ⓑ 관리자일 경우 무조건 수정 / 삭제 출력 ----------------->
+              <c:if test="${sessionScope.adminno ne null}">
+                <a href='javascript:reply_update("+${freereplyVO.freplyno }+")' style='font-size: 0.8em; color: #999999;' >수정</a>
+                <a href='javascript:alert_delete_form(${freereplyVO.freplyno },${freereplyVO.seqno })' style='font-size: 0.8em; color: #999999;'> | 삭제</a>
+              </c:if>
+              <!----------------------------------------------------------------------->       
             </div>
             <br>
              <c:choose>
@@ -448,8 +464,14 @@ function delete_check(freeno) {
              <!---------------------------- 댓글 등록창 시작 (댓글의 댓글(대댓글)이 입력되는 창) ---------------------------->
             <form name="frm_rereply" id="frm_rereply" method="POST" action="${pageContext.request.contextPath}/user/free/rereply.do">
               <DIV id="reply${freereplyVO.freplyno}" style='display: none; padding: 10px 20px;'>    
-                <input type='hidden' name='memberno' id='memberno' value=${sessionScope.memberno }>
-                <input type='hidden' name='freplyname' id='freplyname' value=${sessionScope.memname }>
+                <c:if test="${sessionScope.memberno ne null}">
+                  <input type='hidden' name='memberno' id='memberno' value=${sessionScope.memberno }>
+                  <input type='hidden' name='freplyname' id='freplyname' value=${sessionScope.memname }>
+                </c:if>
+                <c:if test="${sessionScope.adminno ne null}">
+                  <input type='hidden' name='adminno' id='adminno' value=${sessionScope.adminno }>
+                  <input type='hidden' name='freplyname' id='freplyname' value=${sessionScope.admname }>
+                </c:if>
                 <input type='hidden' name='freplygrpno' id='freplygrpno' value=${freereplyVO.freplygrpno }>
                 <input type='hidden' name='freplyindent' id='freplyindent' value=${freereplyVO.freplyindent }>
                 <input type='hidden' name='freplyansnum' id='freplyansnum' value=${freereplyVO.freplyansnum }>
@@ -481,8 +503,14 @@ function delete_check(freeno) {
 
   <!---------------------------- 댓글 등록창 시작 (새로운 댓글이 등록되는 창) ---------------------------->
   <FORM name='frm_reply' id='frm_reply' method='POST' action='${pageContext.request.contextPath}/user/free/reply.do' style="text-align: left; width: 90%; margin: 0px auto;">
-    <input type='hidden' name='memberno' id='memberno' value=${sessionScope.memberno }>
-    <input type='hidden' name='freplyname' id='freplyname' value=${sessionScope.memname }>
+    <c:if test="${sessionScope.memberno ne null}">
+      <input type='hidden' name='memberno' id='memberno' value=${sessionScope.memberno }>
+      <input type='hidden' name='freplyname' id='freplyname' value=${sessionScope.memname }>
+    </c:if>
+    <c:if test="${sessionScope.adminno ne null}">
+      <input type='hidden' name='adminno' id='adminno' value=${sessionScope.adminno }>
+      <input type='hidden' name='freplyname' id='freplyname' value=${sessionScope.admname }>
+    </c:if>
     <input type='hidden' name='freeno' id='freeno' value= ${freeVO.freeno }>
     <input type='hidden' name='nowPage' id='nowPage' value= '${freeVO.nowPage}' >
     

@@ -47,7 +47,15 @@ public class FreereplyVO {
   private String search="";
   /* 부모와 자식 댓글을 구별하기 위한 임시 변수*/
   private int seqno;
-
+  /* 관리자 번호 */
+  private int adminno;
+ 
+  public int getAdminno() {
+    return adminno;
+  }
+  public void setAdminno(int adminno) {
+    this.adminno = adminno;
+  }
   public int getSeqno() {
     return seqno;
   }

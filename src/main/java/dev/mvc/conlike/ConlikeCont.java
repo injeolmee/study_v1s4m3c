@@ -29,7 +29,7 @@ public class ConlikeCont {
   }
   
   @ResponseBody
-  @RequestMapping(value="/conlike/good.do", method = RequestMethod.GET, produces="application/text;charset=UTF-8")
+  @RequestMapping(value="/user/conlike/good.do", method = RequestMethod.GET, produces="application/text;charset=UTF-8")
   public String good(HttpSession session, int conNo) {
     JSONObject obj = new JSONObject();
     
@@ -58,7 +58,7 @@ public class ConlikeCont {
    * @return String
    */
   @ResponseBody
-  @RequestMapping(value = "/conlike/good_up.do", method = RequestMethod.GET, produces = "application/text; charset=utf8")
+  @RequestMapping(value = "/user/conlike/good_up.do", method = RequestMethod.GET, produces = "application/text; charset=utf8")
   public String good_up(HttpSession session, int conNo) {
     
     JSONObject obj = new JSONObject();
@@ -87,7 +87,7 @@ public class ConlikeCont {
    * @return String
    */
   @ResponseBody
-  @RequestMapping(value = "/conlike/good_down.do", method = RequestMethod.GET, produces = "application/text; charset=utf8")
+  @RequestMapping(value = "/user/conlike/good_down.do", method = RequestMethod.GET, produces = "application/text; charset=utf8")
   public String good_down(HttpSession session, int conNo) {
     
     JSONObject obj = new JSONObject();

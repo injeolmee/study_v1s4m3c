@@ -71,17 +71,13 @@ public class AdminCont {
    * @throws UnsupportedEncodingException
    * @throws InvalidKeyException
    */
-  @RequestMapping(value = "/nonuser/login/admin_create.do", method = RequestMethod.POST)
-  public ModelAndView admin_create(HttpServletRequest request, AdminVO adminVO)
+  @ResponseBody
+  @RequestMapping(value = "/nonuser/login/admin_create.do", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+  public String admin_create(HttpServletRequest request, AdminVO adminVO)
       throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException,
       InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
-    String root = request.getContextPath();
-
-    ModelAndView mav = new ModelAndView();
-    mav.setViewName("nonuser/login/message"); // webapp/admin/admin/message.jsp
-
-    ArrayList<String> msgs = new ArrayList<String>();
-    ArrayList<String> links = new ArrayList<String>();
+    System.out.println("admin_create!");
+    JSONObject obj = new JSONObject();
 
     // 관리자 마스터 권한 검사 (관리자 처음가입시 마스터 권한 부여)
     int cnt_master = adminProc.check_master(adminVO.getAdmauth());
@@ -96,31 +92,25 @@ public class AdminCont {
     String admpasswd = adminVO.getAdmpasswd();
     admpasswd = aes256.aesEncode(admpasswd);
     adminVO.setAdmpasswd(admpasswd);
-    mav.addObject("admpasswd", admpasswd);
     System.out.println("암호화 패스워드: " + admpasswd);
 
     // 중복 아이디, 이메일 검사
-    int cnt_admid = adminProc.check_admid(adminVO.getAdmid());
-    int cnt_admemail = adminProc.check_admemail(adminVO.getAdmemail());
-    if (cnt_admid > 0 || cnt_admemail > 0) {
-      msgs.add("ID나 이메일이 중복됩니다.");
-      links.add("<button type='button' onclick=\"history.back()\">다시 시도</button>");
+    int cnt_id = adminProc.check_admid(adminVO.getAdmid());
+    int cnt_email = adminProc.check_admemail(adminVO.getAdmemail());
+    int join_cnt = 0;
+
+    // 회원 가입 처리
+    if (adminProc.admin_create(adminVO) == 1) {
+      join_cnt = 1;
     } else {
-      // 회원 가입 처리
-      if (adminProc.admin_create(adminVO) == 1) {
-        msgs.add("회원 가입이 완료되었습니다.");
-        links.add("<button type='button'>로그인</button>");
-
-      } else {
-        msgs.add("회원 가입에 실패했습니다.");
-        links.add("<button type='button' onclick=\"history.back()\">다시 시도</button>");
-      }
+      join_cnt = 2;
     }
-    links.add("<button type='button' onclick=\"location.href='" + root + "/main/index.do'\">홈페이지</button>");
-    mav.addObject("msgs", msgs);
-    mav.addObject("links", links);
 
-    return mav;
+  obj.put("join_cnt", join_cnt);
+  obj.put("cnt_id", cnt_id);
+  obj.put("cnt_email", cnt_email);
+
+  return obj.toString();
   }
 
   /**
@@ -223,9 +213,9 @@ public class AdminCont {
 
     word = Tool.checkNull(word);
 
-    System.out.println("word:" + word);
+/*    System.out.println("word:" + word);
     System.out.println("search:" + search);
-    System.out.println("nowPage:" + nowPage);
+    System.out.println("nowPage:" + nowPage);*/
 
     hashMap.put("word", word);
     hashMap.put("search", search);
@@ -236,7 +226,7 @@ public class AdminCont {
 
     int search_count = adminProc.search_count(hashMap); // 검색 레코드 갯수
     mav.addObject("search_count", search_count);
-    System.out.println("search_count: " + search_count);
+    //System.out.println("search_count: " + search_count);
 
     String paging = adminProc.paging(search_count, nowPage, word, search);
     mav.addObject("paging", paging);
@@ -278,22 +268,24 @@ public class AdminCont {
    */
   @ResponseBody
   @RequestMapping(value = "/admin/admin/admin_read_pwdcheck.do", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
-  public String admin_read_pwdcheck(String modal_pwd, HttpServletRequest request)
+  public String admin_read_pwdcheck(String modal_pwd, AdminVO adminVO, HttpSession session)
       throws UnsupportedEncodingException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
       InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
     JSONObject obj = new JSONObject();
-    HttpSession session = request.getSession(false);
+    int adminno = (Integer) session.getAttribute("adminno");
 
     // 패스워드 암호화
     AES256Util aes256 = new AES256Util();
-    modal_pwd = aes256.aesEncode(modal_pwd); // 리드에서 수정넘어갈 때 패스워드 검사 모달창에 입력된
-                                             // 패스워드 암호화 변환
-    String admpasswd = (String) session.getAttribute("admpasswd"); // 세션에 저장된
-                                                                   // 암호화된 패스워드
+    modal_pwd = aes256.aesEncode(modal_pwd); // 리드에서 수정넘어갈 때 패스워드 검사 모달창에 입력된 패스워드 암호화 변환
+    
+    adminVO = adminProc.admin_read(adminno);
+    String admpasswd = adminVO.getAdmpasswd();
     System.out.println("패스워드검사 admpasswd: " + admpasswd);
     int cnt_admpasswd = 0;
     if (modal_pwd.equals(admpasswd) == true) {
       cnt_admpasswd = 1;
+    } else {
+      cnt_admpasswd = 2;
     }
     obj.put("cnt_admpasswd", cnt_admpasswd);
 
@@ -350,41 +342,52 @@ public class AdminCont {
    * @throws NoSuchAlgorithmException
    * @throws InvalidKeyException
    */
-  @RequestMapping(value = "/admin/admin/admin_update.do", method = RequestMethod.POST)
-  public ModelAndView admin_update(HttpServletRequest request, AdminVO adminVO)
+  @ResponseBody
+  @RequestMapping(value = "/admin/admin/admin_update.do", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+  public String admin_update(HttpServletRequest request, HttpSession session, AdminVO adminVO)
       throws UnsupportedEncodingException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
       InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
     // System.out.println("--> admin_update() POST called.");
+    JSONObject obj = new JSONObject();
     String root = request.getContextPath();
+    AdminVO adminVO_old = adminProc.admin_read(adminVO.getAdminno());
 
-    ModelAndView mav = new ModelAndView();
-    mav.setViewName("/admin/admin/message");
-
-    // 패스워드 암호화
-    AES256Util aes256 = new AES256Util();
     String admpasswd = adminVO.getAdmpasswd();
-    admpasswd = aes256.aesEncode(admpasswd);
-    adminVO.setAdmpasswd(admpasswd);
-    mav.addObject("admpasswd", admpasswd);
-    System.out.println("업데이트 암호화 패스워드: " + admpasswd);
-
-    ArrayList<String> msgs = new ArrayList<String>();
-    ArrayList<String> links = new ArrayList<String>();
-    System.out.println(adminVO.getAdmauth());
-
-    if (adminProc.admin_update(adminVO) == 1) {
-      mav.setViewName("redirect:/master/admin_read_master.do?adminno=" + adminVO.getAdminno());
-    } else {
-      msgs.add("회원 수정에 실패했습니다.");
-      links.add("<button type='button' onclick=\"history.back()\">다시 시도</button>");
-
+    System.out.println("admpasswd: " + admpasswd);
+    
+    String admauth = (String) session.getAttribute("admauth");
+    System.out.println("admauth: " + admauth);
+    
+    int adminno = (Integer) session.getAttribute("adminno");
+    
+    // 마스터가 관리자 수정시에
+    if(admauth == "M" && adminno != adminVO.getAdminno()) {
+      admpasswd = adminVO_old.getAdmpasswd();
+      adminVO.setAdmpasswd(admpasswd);
+      System.out.println("마스터가 관리자 수정시에 암호: " + admpasswd);
+    } else { // 관리자 본인이 수정할때
+      admauth = adminVO_old.getAdmauth();
+      adminVO.setAdmauth(admauth);
+      
+      // 패스워드 암호화
+      AES256Util aes256 = new AES256Util();
+      admpasswd = aes256.aesEncode(admpasswd);
+      adminVO.setAdmpasswd(admpasswd);
+      System.out.println("업데이트 암호화 패스워드: " + admpasswd);
+      
     }
 
-    links.add("<button type='button' onclick=\"location.href='" + root + "/main/index.do'\">홈페이지</button>");
-    mav.addObject("msgs", msgs);
-    mav.addObject("links", links);
+    int update_cnt = 0;
+    if (adminProc.admin_update(adminVO) == 1) {
+      update_cnt = 1;
+    } else {
+      update_cnt = 2;
+    }
+    
+    obj.put("update_cnt", update_cnt);
 
-    return mav;
+    return obj.toString();
+
   }
 
   /**
@@ -446,20 +449,16 @@ public class AdminCont {
    * @throws NoSuchAlgorithmException
    * @throws InvalidKeyException
    */
-  @RequestMapping(value = "/nonuser/login/admin_login.do", method = RequestMethod.POST)
-  public ModelAndView admin_login(HttpServletRequest request, HttpServletResponse response, HttpSession session,
+  @ResponseBody
+  @RequestMapping(value = "/nonuser/login/admin_login.do", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+  public String admin_login(HttpServletRequest request, HttpServletResponse response, HttpSession session,
       AdminVO adminVO) throws UnsupportedEncodingException, InvalidKeyException, NoSuchAlgorithmException,
       NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
     System.out.println("--> admin_login() POST called.");
     System.out.println("adminVO.getAdmid(): " + adminVO.getAdmid());
     System.out.println("adminVO.getAdmpasswd(): " + adminVO.getAdmpasswd());
 
-    ModelAndView mav = new ModelAndView();
-    mav.setViewName("/nonuser/login/message");
-
-    ArrayList<String> msgs = new ArrayList<String>();
-    ArrayList<String> links = new ArrayList<String>();
-
+    JSONObject obj = new JSONObject();
     String root = request.getContextPath();
 
     String admid = adminVO.getAdmid();
@@ -470,70 +469,75 @@ public class AdminCont {
     String admpasswd = aes256.aesEncode(input_admpasswd);
     System.out.println("암호화 패스워드: " + admpasswd);
 
-    if (adminProc.admin_login(admid, admpasswd) != 1) {
-      msgs.add("현재 패스워드가 일치하지 않습니다.");
-      links.add("<button type='button' onclick=\"history.back()\">다시 시도</button>");
-
-    } else { // 패스워드 일치하는 경우
-      int adminno = (adminProc.admin_read_id(admid)).getAdminno(); // ID에 해당하는
-                                                                   // 번호 산출
-      String admauth = (adminProc.admin_read_id(admid)).getAdmauth();
-      String admname = (adminProc.admin_read_id(admid)).getAdmname();
-      System.out.println("admid :" + admid);
-      System.out.println("admpasswd :" + admpasswd);
-      System.out.println("admauth :" + admauth);
-      System.out.println("admname :" + admname);
-
-      session.setAttribute("adminno", adminno); // session 내부 객체
-      session.setAttribute("admid", admid);
-      session.setAttribute("admauth", admauth);
-      session.setAttribute("admname", admname);
-      // -------------------------------------------------------------------
-      // id 관련 쿠기 저장
-      // -------------------------------------------------------------------
-      String admid_save = Tool.checkNull(adminVO.getAdmid_save());
-      if (admid_save.equals("Y")) { // id를 저장할 경우
-        Cookie ck_admid = new Cookie("ck_admid", admid);
-        ck_admid.setMaxAge(60 * 60 * 72 * 10); // 30 day, 초단위
-        response.addCookie(ck_admid);
-      } else { // N, id를 저장하지 않는 경우
-        Cookie ck_admid = new Cookie("ck_admid", "");
-        ck_admid.setMaxAge(0);
-        response.addCookie(ck_admid);
+    int adminno = (adminProc.admin_read_id(admid)).getAdminno(); // ID에 해당하는
+    String admauth = (adminProc.admin_read_id(admid)).getAdmauth();
+    String admname = (adminProc.admin_read_id(admid)).getAdmname();
+    
+    int login_cnt = 0;
+    if(admauth.equals("M") == true || admauth.equals("A") == true) {
+      if (adminProc.admin_login(admid, admpasswd) != 1) {
+        login_cnt = 2;
+  
+      } else { // 패스워드 일치하는 경우
+        login_cnt = 1;
+        String login_time = Tool.getDate2();
+  
+        System.out.println("admid :" + admid);
+        System.out.println("admpasswd :" + admpasswd);
+        System.out.println("admauth :" + admauth);
+        System.out.println("admname :" + admname);
+  
+        session.setAttribute("adminno", adminno); // session 내부 객체
+        session.setAttribute("admid", admid);
+        session.setAttribute("admauth", admauth);
+        session.setAttribute("admname", admname);
+        session.setAttribute("login_time", login_time);
+        // -------------------------------------------------------------------
+        // id 관련 쿠기 저장
+        // -------------------------------------------------------------------
+        String admid_save = Tool.checkNull(adminVO.getAdmid_save());
+        if (admid_save.equals("Y")) { // id를 저장할 경우
+          Cookie ck_admid = new Cookie("ck_admid", admid);
+          ck_admid.setMaxAge(60 * 60 * 72 * 10); // 30 day, 초단위
+          response.addCookie(ck_admid);
+        } else { // N, id를 저장하지 않는 경우
+          Cookie ck_admid = new Cookie("ck_admid", "");
+          ck_admid.setMaxAge(0);
+          response.addCookie(ck_admid);
+        }
+        // id를 저장할지 선택하는 CheckBox 체크 여부
+        Cookie ck_admid_save = new Cookie("ck_admid_save", admid_save);
+        ck_admid_save.setMaxAge(60 * 60 * 72 * 10); // 30 day
+        response.addCookie(ck_admid_save);
+        // -------------------------------------------------------------------
+  
+        // -------------------------------------------------------------------
+        // Password 관련 쿠기 저장
+        // -------------------------------------------------------------------
+        String admpasswd_save = Tool.checkNull(adminVO.getAdmpasswd_save());
+        if (admpasswd_save.equals("Y")) { // 패스워드 저장할 경우
+          Cookie ck_admpasswd = new Cookie("ck_admpasswd", input_admpasswd);
+          ck_admpasswd.setMaxAge(60 * 60 * 72 * 10); // 30 day
+          response.addCookie(ck_admpasswd);
+        } else { // N, 패스워드를 저장하지 않을 경우
+          Cookie ck_admpasswd = new Cookie("ck_admpasswd", "");
+          ck_admpasswd.setMaxAge(0);
+          response.addCookie(ck_admpasswd);
+        }
+        // passwd를 저장할지 선택하는 CheckBox 체크 여부
+        Cookie ck_admpasswd_save = new Cookie("ck_admpasswd_save", admpasswd_save);
+        ck_admpasswd_save.setMaxAge(60 * 60 * 72 * 10); // 30 day
+        response.addCookie(ck_admpasswd_save);
+        // -------------------------------------------------------------------
+  
       }
-      // id를 저장할지 선택하는 CheckBox 체크 여부
-      Cookie ck_admid_save = new Cookie("ck_admid_save", admid_save);
-      ck_admid_save.setMaxAge(60 * 60 * 72 * 10); // 30 day
-      response.addCookie(ck_admid_save);
-      // -------------------------------------------------------------------
-
-      // -------------------------------------------------------------------
-      // Password 관련 쿠기 저장
-      // -------------------------------------------------------------------
-      String admpasswd_save = Tool.checkNull(adminVO.getAdmpasswd_save());
-      if (admpasswd_save.equals("Y")) { // 패스워드 저장할 경우
-        Cookie ck_admpasswd = new Cookie("ck_admpasswd", input_admpasswd);
-        ck_admpasswd.setMaxAge(60 * 60 * 72 * 10); // 30 day
-        response.addCookie(ck_admpasswd);
-      } else { // N, 패스워드를 저장하지 않을 경우
-        Cookie ck_admpasswd = new Cookie("ck_admpasswd", "");
-        ck_admpasswd.setMaxAge(0);
-        response.addCookie(ck_admpasswd);
-      }
-      // passwd를 저장할지 선택하는 CheckBox 체크 여부
-      Cookie ck_admpasswd_save = new Cookie("ck_admpasswd_save", admpasswd_save);
-      ck_admpasswd_save.setMaxAge(60 * 60 * 72 * 10); // 30 day
-      response.addCookie(ck_admpasswd_save);
-      // -------------------------------------------------------------------
-
-      mav.setViewName("redirect:/main/index.do"); // 확장자 명시
-
+    } else { // 관리자 권한 M, A가 아닌경우
+      login_cnt = 3;
     }
 
-    mav.addObject("msgs", msgs);
-    mav.addObject("links", links);
+    obj.put("login_cnt", login_cnt);
 
-    return mav;
+    return obj.toString();
   }
 
   /**
@@ -559,6 +563,7 @@ public class AdminCont {
     session.removeAttribute("admid");
     session.removeAttribute("admauth");
     session.removeAttribute("admname");
+    session.removeAttribute("login_time");
 
     // session.invalidate(); // session 내부 객체의 등록된 모든 session 변수 삭제
 
@@ -693,5 +698,58 @@ public class AdminCont {
     return obj.toJSONString();
 
   }
+  
+  
+  /**
+   * 마스터용 관리자 삭제
+   * @param adminno
+   * @param adminVO
+   * @param session
+   * @return
+   * @throws UnsupportedEncodingException
+   * @throws InvalidKeyException
+   * @throws NoSuchAlgorithmException
+   * @throws NoSuchPaddingException
+   * @throws InvalidAlgorithmParameterException
+   * @throws IllegalBlockSizeException
+   * @throws BadPaddingException
+   */
+  @ResponseBody
+  @RequestMapping(value = "/master/admin/admin_delete.do", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+  public String admin_delete(int adminno, AdminVO adminVO, HttpSession session)
+      throws UnsupportedEncodingException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
+      InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+    // System.out.println("admin_delete get!");
+    JSONObject obj = new JSONObject();
+    
+    String delete_email = adminProc.key(); // 관리자 삭제시 이메일 랜덤키로 변환
+    
+    //System.out.println("관리자번호: " + adminno);
+    adminVO = adminProc.admin_read(adminno);
+    
+    String admauth = (String) session.getAttribute("admauth");
+    //System.out.println("admauth: " + admauth);
+    
+    int cnt_withdraw = 0; // 탈퇴 성공 숫자 1, 실패 2
+    
+    // 마스터가 관리자 삭제시에
+    if(admauth.equals("M") == true) {
+      adminVO.setAdmemail(delete_email);
+      adminVO.setAdmauth("N");
+      if(adminProc.admin_delete(adminVO) == 1) { 
+        cnt_withdraw = 1;
+      } else {
+        cnt_withdraw = 2;
+      }
+      
+    } else { // 마스터가 아닐시
+      cnt_withdraw = 2;
+    }
+    
+    obj.put("cnt_withdraw", cnt_withdraw);
+    
+    return obj.toJSONString();
+  }
+  
 
 }

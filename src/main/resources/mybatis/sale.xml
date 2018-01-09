@@ -23,15 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     WHERE saleno = #{saleno}
     ORDER BY saleno DESC
   </select>
-  
-  <!-- 목록 -->
-  <select id="list" resultType="SaleVO">
-    SELECT saleno, saletitle, salecontent, saletname, salename, saledate, salecnt, saleprice, saleaddress, 
-             saletel, saleemail, salefile, salefstor, saletum, salesize, saleseqno, memberno
-    FROM sale
-    ORDER BY saleno DESC
-  </select>
-  
+
   <!-- 목록 + 검색 + 페이징 -->
   <select id="list_search" resultType="SaleVO" parameterType="HashMap">
     SELECT saleno, saletitle, salecontent, saletname, salename, saledate, salecnt, saleprice,
@@ -107,13 +99,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     WHERE saleno = #{saleno}
   </update>
   
-  <!-- 패스워드 검사 -->
-  <select id="passwd_check" resultType="int" parameterType="HashMap">
-    SELECT COUNT(*) as salecnt
-    FROM sale
-    WHERE salepasswd = #{salepasswd} AND saleno = #{saleno}
-  </select>
-  
   <!-- 아이디 검사 -->
   <select id="member_check" resultType="int" parameterType="HashMap">
     SELECT COUNT(*) as salecnt
@@ -124,7 +109,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   <!-- 수정 -->
   <update id="update" parameterType="SaleVO">
     UPDATE sale
-    SET saletitle = #{saletitle}, salecontent = #{salecontent}, saletname=#{saletname}, salename = #{salename}, saleprice = #{saleprice},
+    SET saletitle = #{saletitle}, salecontent = #{salecontent}, saletname=#{saletname}, saleprice = #{saleprice},
          saleaddress = #{saleaddress}, saletel = #{saletel}, saleemail=#{saleemail}, salefile = #{salefile}, salefstor = #{salefstor},
          saletum = #{saletum}, salesize = #{salesize}, saleseqno = #{check_seqno}, saledate = sysdate
     WHERE saleno = #{saleno}
@@ -135,6 +120,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     delete FROM sale 
     WHERE saleno = #{saleno}
   </delete>
+  
+  <!-- 관리자 게시글 등록 -->
+  <insert id="create_admin" parameterType="SaleVO">
+    INSERT INTO sale (saleno, saletitle, salecontent, saletname, salename, saledate, salecnt, saleprice, saleaddress, 
+                           saletel, saleemail, salefile, salefstor, saletum, salesize, saleseqno, adminno)
+    VALUES ((SELECT NVL(MAX(saleno), 0) + 1 as saleno from sale), #{saletitle}, #{salecontent}, #{saletname}, #{salename},
+                sysdate, 0, #{saleprice}, #{saleaddress}, #{saletel}, #{saleemail}, #{salefile}, 
+                #{salefstor}, #{saletum}, #{salesize}, #{saleseqno}, #{adminno})
+  </insert>
   
 
 </mapper>

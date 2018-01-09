@@ -86,6 +86,16 @@ public interface QnaDAOInter {
   
   /**
    * <XMP>
+   * 아이디 검사
+   * <select id="member_check" resultType="int" parameterType="HashMap">
+   * </XMP>
+   * @param hashMap
+   * @return
+   */
+  public int member_check(HashMap hashMap);
+  
+  /**
+   * <XMP>
    * 패스워드 검사
    * <select id="pwdchk" resultType="int">
    * </XMP>

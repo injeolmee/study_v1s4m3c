@@ -11,16 +11,16 @@ public interface FreeProcInter {
    * <insert id="create" parameterType="FreeVO">
    * </XMP>
    * @param freeVO
-   * @return 등록할 게시글 갯수
+   * @return int
    */
   public int create(FreeVO freeVO); 
   
   /**
    * <XMP>
-   * 게시판 목록
+   * 게시판 목록 + 검색 + 페이징
    * <select id="list" resultType="FreeVO">
    * </XMP>
-   * @return 게시판 목록
+   * @return list
    */
   public List <FreeVO> list();
   
@@ -30,7 +30,7 @@ public interface FreeProcInter {
    * <select id="read" resultType="FreeVO" parameterType="int" >
    * </XMP>
    * @param freeno
-   * @return
+   * @return freeVO
    */
   public FreeVO read (int freeno);
   
@@ -53,16 +53,6 @@ public interface FreeProcInter {
    * @return
    */
   public int increaseCnt (int freeno);
-  
-  /**
-   * <XMP>
-   * 패스워드 검사
-   * <select id="passwd_check" resultType="int" parameterType="HashMap">
-   * </XMP>
-   * @param hashMap
-   * @return
-   */
-  public int passwd_check (FreeVO freeVO);
   
   /**
    * <XMP>
@@ -172,4 +162,14 @@ public interface FreeProcInter {
    * @return
    */
   public int decreaseLike(int freeno);
+  
+  /**
+   * <XMP>
+   * 관리자 게시글 등록
+   * <insert id="create_admin" parameterType="FreeVO">
+   * </XMP>
+   * @param freeVO
+   * @return
+   */
+  public int create_admin(FreeVO freeVO);
 }

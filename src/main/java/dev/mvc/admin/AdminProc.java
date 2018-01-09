@@ -213,5 +213,10 @@ public class AdminProc implements AdminProcInter {
     return adminDAO.admpasswd_change(adminVO);
   }
 
+  @Override
+  public int admin_delete(AdminVO adminVO) {
+    return adminDAO.admin_delete(adminVO);
+  }
+
 
 }

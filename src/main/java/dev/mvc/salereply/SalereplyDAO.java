@@ -101,6 +101,30 @@ public class SalereplyDAO implements SalereplyDAOInter {
     return count;
   }
 
+  /* 관리자 댓글 등록 */
+  @Override
+  public int create_admin(SalereplyVO salereplyVO) {
+    return mybatis.insert("salereply.create_admin", salereplyVO);
+  }
+
+  /* 관리자 대댓글 등록 */
+  @Override
+  public int reply_admin(SalereplyVO salereplyVO) {
+    return mybatis.insert("salereply.reply_admin", salereplyVO);
+  }
+
+  /* 부모 댓글일 경우 하위 댓글이 존재하는지 검사 */
+  @Override
+  public int parent_check(int sreplygrpno) {
+    return mybatis.selectOne("salereply.parent_check", sreplygrpno);
+  }
+
+  /* 대댓글과 관련되어 맨 마지막 댓글인지 검사 */
+  @Override
+  public int reply_check(HashMap hashMap) {
+    return mybatis.selectOne("salereply.reply_check", hashMap);
+  }
+
 
   
 }

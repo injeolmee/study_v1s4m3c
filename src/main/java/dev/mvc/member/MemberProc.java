@@ -207,6 +207,11 @@ public class MemberProc implements MemberProcInter {
     return memberDAO.mempasswd_change(memberVO);
   }
 
+  @Override
+  public int mem_delete(MemberVO memberVO) {
+    return memberDAO.mem_delete(memberVO);
+  }
+
 
 
 

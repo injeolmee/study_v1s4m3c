@@ -126,6 +126,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   WHERE adminno = #{adminno}
 </update>
 
+<update id="admin_delete" parameterType="AdminVO">
+  UPDATE admin
+  SET admemail = #{admemail}, admauth= #{admauth}
+  WHERE adminno = #{adminno}
+</update>
+
 
 
 </mapper>

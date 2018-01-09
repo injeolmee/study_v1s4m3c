@@ -15,7 +15,7 @@ public class Std_RecomProc implements Std_RecomProcInter {
   private Std_RecomDAOInter std_recomDAO = null;
 
   public Std_RecomProc() {
-    System.out.println("--> std_recomProc created.");
+    // System.out.println("--> std_recomProc created.");
   }
 
   @Override

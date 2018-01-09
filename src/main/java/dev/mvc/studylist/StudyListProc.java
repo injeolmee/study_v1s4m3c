@@ -15,7 +15,7 @@ public class StudyListProc implements StudyListProcInter {
   private StudyListDAOInter studyListDAO = null;
 
   public StudyListProc() {
-    System.out.println("--> StudyListProc created.");
+    // System.out.println("--> StudyListProc created.");
   }
 
   /**
@@ -219,6 +219,12 @@ public class StudyListProc implements StudyListProcInter {
   public List<StudyListVO> rank_top5() {
     
     return studyListDAO.rank_top5();
+  }
+
+  @Override
+  public int check_stdno(HashMap hashmap) {
+    
+    return studyListDAO.check_stdno(hashmap);
   }
 
 }

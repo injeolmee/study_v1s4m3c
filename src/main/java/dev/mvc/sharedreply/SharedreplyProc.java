@@ -7,9 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
-import dev.mvc.sale.Sale;
-import dev.mvc.salereply.SalereplyVO;
-
 @Repository("dev.mvc.sharedreply.SharedreplyProc")
 public class SharedreplyProc implements SharedreplyProcInter {
 
@@ -176,6 +173,30 @@ public class SharedreplyProc implements SharedreplyProcInter {
   public int delete_all(int sharedno) {
     int count = sharedreplyDAO.delete_all(sharedno);
     return count;
+  }
+
+  /* 관리자 댓글 등록 */
+  @Override
+  public int create_admin(SharedreplyVO sharedreplyVO) {
+    return sharedreplyDAO.create_admin(sharedreplyVO);
+  }
+
+  /* 관리자 대댓글 등록 */
+  @Override
+  public int reply_admin(SharedreplyVO sharedreplyVO) {
+    return sharedreplyDAO.reply_admin(sharedreplyVO);
+  }
+
+  /* 부모 댓글일 경우 하위 댓글이 존재하는지 검사 */
+  @Override
+  public int parent_check(int shreplygrpno) {
+    return sharedreplyDAO.parent_check(shreplygrpno);
+  }
+
+  /* 대댓글과 관련되어서 맨 마지막 댓글인지 검사 */
+  @Override
+  public int reply_check(HashMap hashMap) {
+    return sharedreplyDAO.reply_check(hashMap);
   }
   
   

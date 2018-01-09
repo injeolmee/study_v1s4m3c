@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="my_std_catelist">
+  
+  <insert id="insert" parameterType="int">
+    INSERT INTO "STUDY"."MY_STD_CATELIST" (MYLISTNO, STDLIST_NO, CATENO)
+    VALUES ((SELECT NVL(MAX(MYLISTNO), 0) + 1 as MYLISTNO FROM "STUDY"."MY_STD_CATELIST"), #{stdlist_no}, #{cateno})
+  </insert>
+  
+  <delete id="delete" parameterType="int">
+    DELETE FROM "STUDY"."MY_STD_CATELIST"
+    WHERE STDLIST_NO=#{stdlist_no}
+  </delete>
+    
+</mapper>

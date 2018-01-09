@@ -78,5 +78,10 @@ public class MemberDAO implements MemberDAOInter {
     return mybatis.update("member.mempasswd_change", memberVO);
   }
 
+  @Override
+  public int mem_delete(MemberVO memberVO) {
+    return mybatis.update("member.mem_delete", memberVO);
+  }
+
 
 }

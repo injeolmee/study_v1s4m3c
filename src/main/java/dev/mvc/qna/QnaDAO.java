@@ -53,6 +53,13 @@ public class QnaDAO implements QnaDAOInter {
   }
   
   @Override
+  public int member_check(HashMap hashMap) {
+    int count = mybatis.selectOne("qna.member_check", hashMap);
+    
+    return count;
+  }
+
+  @Override
   public int search_count(HashMap hashMap) {
     return mybatis.selectOne("qna.search_count", hashMap);
   }

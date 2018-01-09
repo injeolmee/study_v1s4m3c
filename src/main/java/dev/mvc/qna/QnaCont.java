@@ -14,6 +14,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import nation.web.tool.AES256Util;
 import nation.web.tool.Tool;
 import nation.web.tool.Upload;
 
@@ -42,7 +43,7 @@ public class QnaCont {
   private QnareplyProcInter qnareplyProc;
   
   public QnaCont() {
-    System.out.println("--> QnaCont() Created.");
+    //System.out.println("--> QnaCont() Created.");
   }
   
   @RequestMapping(value="/user/qnaboard/create.do", method=RequestMethod.GET)
@@ -60,7 +61,6 @@ public class QnaCont {
     
     ArrayList<String> msgs = new ArrayList<String>();
     ArrayList<String> links = new ArrayList<String>();
-    
  // -------------------- 파일전송 코드 시작 --------------------
     String upDir = Tool.getRealPath(request, "/study/user/qnaboard/storage");
     MultipartFile file1MF = qnaVO.getFile1MF();
@@ -82,18 +82,8 @@ public class QnaCont {
     // -------------------- 파일전송 코드 종료 --------------------
     
     if (qnaProc.create(qnaVO) == 1) {
-      msgs.add("QnA 등록 성공<br>");
-      // categoryProc.increaseCnt(contestVO.getCateno());
-    } else {
-      msgs.add("QnA 등록 실패<br>");
-      msgs.add("다시 시도 --> 운영팀<br>");
-      links.add("<button type= 'button' onclick=\"history.back()\">다시 시도</button>");
-    }
-    
-    links.add("<button type= 'button' onclick=\"location.href='/study/user/qnaboard/list_all_qna.do'\">목록</button>");
-    mav.addObject("msgs", msgs);
-    mav.addObject("links", links);
-    
+      mav.setViewName("redirect:/nonuser/qnaboard/list_all_qna.do");
+    } 
     return mav;
   }
   
@@ -171,17 +161,8 @@ public class QnaCont {
     String root = request.getContextPath();
 
     if (qnaProc.update(qnaVO) == 1) {
-      msgs.add("게시글 변경 성공<br>");
-      links.add("<button type='button' onclick=\"location.href='/study/user/qnaboard/read.do?qnano=" + qnaVO.getQnano() + "'\">변경 확인</button>");
-    } else {
-      msgs.add("블로그 변경 실패<br>");
-      msgs.add("다시 시도 -> 운영팀<br>");
-      links.add("<button type= 'button' onclick=\"history.back()\">다시 시도</button>");
-    }
-
-    links.add("<button type= 'button' onclick=\"location.href='/study/user/qnaboard/list_all_qna.do?qnano=" + qnaVO.getQnano() +"'\">목록</button>");
-    mav.addObject("msgs", msgs);
-    mav.addObject("links", links);
+      mav.setViewName("redirect:/nonuser/qnaboard/read.do?qnano=" + qnaVO.getQnano());
+    } 
     
     return mav;
   }
@@ -226,9 +207,11 @@ public class QnaCont {
     mav.setViewName("/nonuser/qnaboard/read");
     
     QnaVO qnaVO = qnaProc.read(qnano);
+    // int memberno = qnaVO.getMemberno();
+    //System.out.println("리드 들어와서 memberno ---> " + qnaVO.getMemberno());
     qnaVO.setQnacont(Tool.convertChar(qnaVO.getQnacont()));
     mav.addObject("qnaVO", qnaVO);
-    
+    // mav.addObject("memberno", memberno);
     //***************************************************************** 
     // 댓글 목록 처리 시작 (From "Sharedreply" Package)
     //***************************************************************** 
@@ -252,6 +235,26 @@ public class QnaCont {
     return mav;
   }
   
+  @ResponseBody
+  @RequestMapping(value = "/user/qnaboard/pwdchk.do", method = RequestMethod.GET, produces= "text/plain;charset=UTF-8")
+  public String pwdchk(String modal_pwd, HttpServletRequest request, QnaVO qnaVO, int qnano) throws UnsupportedEncodingException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+    JSONObject obj = new JSONObject();
+    //System.out.println("pwdchk 컨트롤");
+    HttpSession session = request.getSession(false);
+
+    qnaVO = qnaProc.read(qnano);
+    //System.out.println("qnano ---> " + qnano);
+    String qnapwd = qnaVO.getQnapwd();
+    //System.out.println("qnapwd ---> " + qnapwd);
+    int cnt_pwd = 0;
+    if(modal_pwd.equals(qnapwd) == true) { 
+      cnt_pwd = 1;
+    }
+    obj.put("cnt_pwd", cnt_pwd);
+    
+    return obj.toJSONString();    
+  }
+  
   @RequestMapping(value = "/user/qnaboard/delete.do", method = RequestMethod.POST)
   public ModelAndView delete(HttpServletRequest request, QnaVO qnaVO) throws Exception {
     ModelAndView mav = new ModelAndView();
@@ -265,25 +268,24 @@ public class QnaCont {
     Tool.deleteFile(upDir, qnaVO_old.getQnafile1());
     Tool.deleteFile(upDir, qnaVO_old.getQnafstor1());
     // -----------------------------------파일전송 코드 종료-------------------------------------------------    
-    
-    int check = 0; // 댓글 전체 삭제
+    int qnano = qnaVO.getQnano();
+    int check = qnaProc.member_check(qnaVO_old); // 댓글 전체 삭제
+    int count_check;
     int count = 0; // 게시글 삭제 
     
-    check = qnareplyProc.delete_all(qnaVO.getQnano());
-    
-    System.out.println("check ---> " + check);
-    
     if (check == 1) {
-      System.out.println("댓글 전체 삭제 성공");
-      count = qnaProc.delete(qnaVO.getQnano());
-      mav.addObject("count", count);
+      count_check = qnareplyProc.delete_all(qnano); // 해당 게시글의 댓글 전체 삭제
+      count = qnaProc.delete(qnano);  // 게시글 삭제
+      //System.out.println("댓글 전체 삭제 성공");
+      
       if (count  == 1) {
-        System.out.println("글 삭제 성공");
+        //System.out.println("글 삭제 성공");
       } else {
-        System.out.println("글 삭제 실패");
+        //System.out.println("글 삭제 실패");
       }
       
     }
+    mav.addObject("count", count);
     mav.setViewName("redirect:/study/user/qnaboard/list_all_qna.do");
     
     return mav;
@@ -311,18 +313,18 @@ public class QnaCont {
     
     int count = qnareplyProc.create(qnareplyVO);
     
-    System.out.println("qnano ---> " + qnano);
-    System.out.println("qrcont ---> " + qrcont);
-    System.out.println("qrname ---> " + qrname);
-    System.out.println("qrno ---> " + qrno);
-    System.out.println("memberno ---> " + memberno);
-    System.out.println("count ---> " + count);
+    //System.out.println("qnano ---> " + qnano);
+    //System.out.println("qrcont ---> " + qrcont);
+    //System.out.println("qrname ---> " + qrname);
+    //System.out.println("qrno ---> " + qrno);
+    //System.out.println("memberno ---> " + memberno);
+    //System.out.println("count ---> " + count);
     
     if (count == 1) {
-      System.out.println("댓글등록 성공");
-      mav.setViewName("redirect:/user/qnaboard/read.do?qnano=" + qnano);
+      //System.out.println("댓글등록 성공");
+      mav.setViewName("redirect:/nonuser/qnaboard/read.do?qnano=" + qnano);
     } else {
-      System.out.println("댓글등록 실패");
+      //System.out.println("댓글등록 실패");
     }
     
     return mav;
@@ -401,7 +403,8 @@ public class QnaCont {
     obj.put("nowPage", nowPage);
 
     return obj.toString();
-    
   }
+  
+  
   
 }

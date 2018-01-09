@@ -32,12 +32,12 @@ public class JobCont {
   private JobProcInter jobProc = null;
   
   public JobCont() {
-    // System.out.println("--> JobCont() Created.");
+    //System.out.println("--> JobCont() Created.");
   }
   
   @RequestMapping(value="/admin/jobinfo/create.do", method=RequestMethod.GET)
   public ModelAndView create() {
-    System.out.println("---> create() GET Executed.");
+    //System.out.println("---> create() GET Executed.");
     ModelAndView mav = new ModelAndView();
     mav.setViewName("/admin/jobinfo/create");
     
@@ -46,7 +46,7 @@ public class JobCont {
   
   @RequestMapping(value="/admin/jobinfo/create.do", method=RequestMethod.POST)
   public ModelAndView create(HttpServletRequest request, JobVO jobVO) {
-    System.out.println("---> create() POST Executed.");
+    //System.out.println("---> create() POST Executed.");
     ModelAndView mav = new ModelAndView();
     mav.setViewName("/admin/jobinfo/message");
     
@@ -63,7 +63,7 @@ public class JobCont {
     // ---------------------------------------------------------------
     
     // -------------------------- 파일 전송 코드 시작 --------------------------
-    String upDir = Tool.getRealPath(request, "/study/admin/jobinfo/storage");
+    String upDir = Tool.getRealPath(request, "/admin/jobinfo/storage");
     MultipartFile file1MF = jobVO.getFile1MF();
     MultipartFile file2MF = jobVO.getFile2MF();
     
@@ -96,15 +96,8 @@ public class JobCont {
     // -------------------------- 파일 전송 코드 시작 --------------------------
     
     if (jobProc.create(jobVO) == 1) {
-      msgs.add("채용정보 등록 성공<br>");
-    } else {
-      msgs.add("채용정보 등록 실패<br>");
-      msgs.add("다시 시도 --> 운영팀<br>");
-      links.add("<button type= 'button' onclick=\"history.back()\">다시 시도</button>");
-    }
-    links.add("<button type= 'button' onclick=\"location.href='/admin/jobinfo/list_all_jobinfo.do'\">목록</button>");
-    mav.addObject("msgs", msgs);
-    mav.addObject("links", links);
+      mav.setViewName("redirect:/nonuser/jobinfo/list_all_jobinfo.do");
+    } 
     
     return mav;
   }
@@ -215,17 +208,8 @@ public class JobCont {
     String root = request.getContextPath();
     
     if (jobProc.update(jobVO) == 1) {
-      msgs.add("게시글 변경 성공<br>");
-      links.add("<button type='button' onclick=\"location.href='/study/admin/jobinfo/read.do?jobNo=" + jobVO.getJobNo() +"'\">변경 확인</button>");
-    } else {
-      msgs.add("블로그 변경 실패<br>");
-      msgs.add("다시 시도 -> 운영팀<br>");
-      links.add("<button type= 'button' onclick=\"history.back()\">다시 시도</button>");
-    }
-
-    links.add("<button type= 'button' onclick=\"location.href='/study/admin/jobinfo/list_all_jobinfo.do?jobNo=" + jobVO.getJobNo() +"'\">목록</button>");
-    mav.addObject("msgs", msgs);
-    mav.addObject("links", links);
+      mav.setViewName("redirect:/nonuser/jobinfo/read.do?jobNo=" + jobVO.getJobNo());
+    } 
     
     return mav;
   }
@@ -257,8 +241,8 @@ public class JobCont {
     String upDir = Tool.getRealPath(request, "/study/admin/jobinfo/storage");
     MultipartFile file1MF = jobVO.getFile1MF();
     
-    System.out.println("jobNo ---> " + jobVO.getJobNo());
-    System.out.println("file1MF ---> " + file1MF);
+    //System.out.println("jobNo ---> " + jobVO.getJobNo());
+    //System.out.println("file1MF ---> " + file1MF);
     
     String jobFile1 = "";
     long jobSize1 = file1MF.getSize();
@@ -289,7 +273,7 @@ public class JobCont {
     
     if (jobProc.update_thumb(jobVO) == 1) {
       mav.setViewName("redirect:/study/admin/jobinfo/update.do?jobNo=" + jobVO.getJobNo());
-      System.out.println("파일이 바뀌었습니다.");
+      //System.out.println("파일이 바뀌었습니다.");
       /*links.add("<button type='button' onclick=\"location.href='./update.do?conNo=" + contestVO.getConNo() + "&cateno=" + contestVO.getCateno() +"'\">업데이트 계속</button>");*/
     } 
     return mav;
@@ -352,7 +336,7 @@ public class JobCont {
     
     if (jobProc.update_file(jobVO) == 1) {
       mav.setViewName("redirect:/study/admin/jobinfo/update.do?jobNo=" + jobVO.getJobNo());
-      System.out.println("파일이 바뀌었습니다.");
+      //System.out.println("파일이 바뀌었습니다.");
     }
 
     return mav;
@@ -388,7 +372,7 @@ public class JobCont {
     // -----------------------------------파일전송 코드 종료-------------------------------------------------    
     
     if (jobProc.delete(jobVO.getJobNo()) == 1) {
-      mav.setViewName("redirect:/study/admin/jobinfo/list_all_jobinfo.do");
+      mav.setViewName("redirect:/nonuser/jobinfo/list_all_jobinfo.do");
     } 
     
     return mav;

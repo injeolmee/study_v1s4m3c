@@ -187,4 +187,28 @@ public class SalereplyProc implements SalereplyProcInter {
     return count;
   }
 
+  /* 관리자 댓글 등록 */
+  @Override
+  public int create_admin(SalereplyVO salereplyVO) {
+    return salereplyDAO.create_admin(salereplyVO);
+  }
+
+  /* 관리자 대댓글 등록 */
+  @Override
+  public int reply_admin(SalereplyVO salereplyVO) {
+    return salereplyDAO.reply_admin(salereplyVO);
+  }
+
+  /* 부모 댓글일 경우 하위 댓글이 존재하는지 검사 */
+  @Override
+  public int parent_check(int sreplygrpno) {
+    return salereplyDAO.parent_check(sreplygrpno);
+  }
+
+  /* 대댓글과 관련되어 맨 마지막 댓글인지 검사 */
+  @Override
+  public int reply_check(HashMap hashMap) {
+    return salereplyDAO.reply_check(hashMap);
+  }
+
 }

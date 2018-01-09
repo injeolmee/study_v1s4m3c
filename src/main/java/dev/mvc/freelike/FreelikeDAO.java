@@ -46,5 +46,11 @@ public class FreelikeDAO implements FreelikeDAOInter{
   public int good_chk_n(HashMap hashMap) {
     return mybatis.update("freelike.good_chk_n", hashMap);
   }
+
+  /* 게시글 작성자가 게시글을 삭제 시 게시글에 등록된 좋아요도 같이 삭제 */
+  @Override
+  public int like_delete(int freeno) {
+    return mybatis.delete("freelike.like_delete", freeno);
+  }
   
 }

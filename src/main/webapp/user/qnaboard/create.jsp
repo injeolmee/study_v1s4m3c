@@ -28,7 +28,7 @@ String root = request.getContextPath();
 <DIV style='color: #333333; width: 20%; margin: 20px auto; padding: 3px; border-bottom: solid 2px #555555; text-align: center;'>질문 등록</DIV>
 <FORM name='frm' method='POST' action='/study/user/qnaboard/create.do'
                enctype="multipart/form-data" class="form-horizontal" style='text-align: center; margin: 0px auto; width: 50%;'> 
-  <!-- <input type='hidden' name='memberno' id='memberno' value='1'> -->
+  <input type='hidden' name='memberno' id='memberno' value='${sessionScope.memberno }'>
   
   <DIV class = "form-group form-group-sm">
     <label for='qnatitle' class='col-md-4 control-label' style='width: 13%; padding-left: 1%;'>질문 제목</label>
@@ -69,7 +69,11 @@ String root = request.getContextPath();
   <DIV class = "form-group form-group-sm">
     <label for='wname' class='col-md-2 control-label' style='width: 12%;'>작성자</label>
     <DIV class="col-md-6" style='width: 10%;'>
-      <input type='text' class="form-control input-sm" name='wname' id='wname' value='작성자' required="required">
+      <input type='text' class="form-control input-sm" name='wname' id='wname' value='${sessionScope.memname }' required="required">
+    </DIV>
+    <label for='qnapwd' class='col-md-2 control-label' style='width: 12%;'>P/W</label>
+    <DIV class="col-md-6" style='width: 10%;'>
+      <input type='text' class="form-control input-sm" name='qnapwd' id='qnapwd' value='' required="required">
     </DIV>
     <DIV style='margin: 0px auto; text-align: center; width:80%; padding-top: 10px;'>
       <button class='btn btn-default' type="submit">등록</button>

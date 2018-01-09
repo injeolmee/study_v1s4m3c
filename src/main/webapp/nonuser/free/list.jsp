@@ -8,6 +8,14 @@
 <head>
 <meta charset="UTF-8">
 <title>Study Matching Web Site</title>
+<!-------------------------- Web Logo Part -------------------------->
+<link rel="shortcut icon" href="/study/menu/images/ico/Short Logo.png">
+<!---------------------------------------------------------------------->
+<link href="${pageContext.request.contextPath }/nonuser/free/gnacss/style.css" rel="Stylesheet" type="text/css">
+<!--------------------------J Query Part ------------------------------>
+<script type="text/JavaScript"
+          src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<!---------------------------------------------------------------------->
 <!---------------------- 실시간 검색 관련 CSS Part -------------------->
 <style type="text/css">
   .news {padding:0 0px 20px;}
@@ -26,13 +34,6 @@
       .news .control a.stop {font-size:12px;}
       .news .control a.on {color:red; font-size:12px;}
 </style>
-<!---------------------------------------------------------------------->
-<!-------------------------- Web Logo Part -------------------------->
-<link rel="shortcut icon" href="/study/menu/images/ico/Short Logo.png">
-<!---------------------------------------------------------------------->
-<link href="${pageContext.request.contextPath }/nonuser/free/gnacss/style.css" rel="Stylesheet" type="text/css">
-<!--------------------------J Query Part ------------------------------>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <!---------------------------------------------------------------------->
 <script type="text/javascript">
 $(function(){
@@ -304,8 +305,8 @@ function fn_article3(containerID, buttonID, autoStart){
         
        <!-- 목록 UP / DOWN 버튼 시작 -->
       <span id="bt5"> 
-        <a href="#" class="prev"><img src="http://mylko72.maru.net/jquerylab/images/ico/bul_arrow_up.gif" alt="Prev"></a>
-        <a href="#" class="next"><img src="http://mylko72.maru.net/jquerylab/images/ico/bul_arrow_down.gif" alt="Next"></a>
+        <a href="#" class="prev"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true" style="line-height: 0px; font-size: 5px; top: 3px;"></span></a>
+        <a href="#" class="next"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true" style="line-height: 0px; font-size: 5px;"></span></a>
       </span>
       <!-- 목록 UP / DOWN 버튼 종료 -->
       
@@ -330,15 +331,15 @@ function fn_article3(containerID, buttonID, autoStart){
           <!-- 실시간 조회수 Best 3 목록 출력 종료 -->
           
           <!-- 목록 UP / DOWN 버튼 시작 -->
-          <span id="bt5">
-            <a href="#" class="prev"><img src="http://mylko72.maru.net/jquerylab/images/ico/bul_arrow_up.gif" alt="Prev"></a>
-            <a href="#" class="next"><img src="http://mylko72.maru.net/jquerylab/images/ico/bul_arrow_down.gif" alt="Next"></a>
+          <span id="bt6">
+            <a href="#" class="prev"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true" style="line-height: 0px; font-size: 5px; top: 3px;"></span></a>
+            <a href="#" class="next"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true" style="line-height: 0px; font-size: 5px;"></span></a>
           </span>
           <!-- 목록 UP / DOWN 버튼 종료 -->
           
         </div>
     </DIV>
-    <script type="text/javascript">fn_article3('cnt_max','bt5',true);</script> <!-- 한줄씩 자동으로 출력되도록 하는 javascript -->
+    <script type="text/javascript">fn_article3('cnt_max','bt6',true);</script> <!-- 한줄씩 자동으로 출력되도록 하는 javascript -->
     <!----------------------------- ② 실시간 조회수 관련 종료 ----------------------------->
    </form>
 </ASIDE>

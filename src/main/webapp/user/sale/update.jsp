@@ -13,8 +13,10 @@
 <link rel="shortcut icon" href="/study/menu/images/ico/Short Logo.png">
 <!---------------------------------------------------------------------->
 <link href="${pageContext.request.contextPath}/user/sale/gnacss/style.css" rel="Stylesheet" type="text/css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/ckeditor/ckeditor.js"></script>
+<!--------------------------J Query Part ------------------------------>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<!---------------------------------------------------------------------->
  
 <script type="text/JavaScript">
   window.onload=function(){
@@ -41,8 +43,14 @@
     // alert("파일명 받아오는지 확인: " + salefstor);
     var formData = new FormData();
     
-    formData.append("memberno", $("input[name=memberno]").val());
-    formData.append("salename", $("input[name=salename]").val());
+    if ($("input[name=memberno]").val() != null) { // 회원일 경우
+      formData.append("memberno", $("input[name=memberno]").val());
+    }
+    
+    if ($("input[name=adminno]").val() != null) { // 관리자일경우
+      formData.append("adminno", $("input[name=adminno]").val());
+    }
+
     formData.append("saleseqno", $("input[name=saleseqno]").val());
     formData.append("saletitle", $("input[name=saletitle]").val());
     formData.append("saletname", $("input[name=saletname]").val());
@@ -59,7 +67,6 @@
     
     // alert("게시글 번호 받아오는지 확인: " + $("input[name=saleno]").val());
     
-
     //********** NOT NULL 대해 입력안했으면 실행하지 못하도록 함 *****************
     if($("input[name=saletitle]").val() == null || $("input[name=saletitle]").val() == '') {
       alert("제목을 입력해주세요.");
@@ -159,8 +166,12 @@
   <DIV style="text-align: center; width: 100%;">
   
     <FORM name='frm' id='frm' method='POST' action='' enctype="multipart/form-data" class="form-horizontal" style="text-align: left;">
-      <input type='hidden' name='memberno' id='memberno' value=${sessionScope.memberno }>
-      <input type='hidden' name='salename' id='salename' value=${sessionScope.memname }>
+      <c:if test = "${sessionScope.memberno ne null }">
+        <input type='hidden' name='memberno' id='memberno' value='${sessionScope.memberno }'>
+      </c:if>
+      <c:if test = "${sessionScope.adminno ne null }">
+        <input type='hidden' name='adminno' id='adminno' value='${sessionScope.adminno }'>
+      </c:if>
       <input type='hidden' name='saleno' id='saleno' value=${saleVO.saleno }>
       <input type='hidden' name='saleseqno' id='saleseqno' value=${saleVO.saleseqno }>
       <input type='hidden' name='salefstor' id='salefstor' value=${saleVO.salefstor }>
@@ -211,9 +222,9 @@
         </div>
       </div>
     
-      <div class="form-group" style="display: -webkit-box; width: 500px;"> 
+      <div class="form-group" style="display: -webkit-box; width: 500px; padding-left: 15px;"> 
         <label for="filetitle" class="control-label" style="margin-right: 18px;">기존 업로드 파일</label>
-          <div class="col-md-10" style="width: 100%; padding-top: 7px;">
+          <div class="col-md-10" style="width: 100%; padding-top: 7px; float: none;">
           <c:set var='salefile' value="${fn:toLowerCase(saleVO.salefile)}" /> <!-- 파일명을 소문자로 변경 -->
           <!-- 소문자로 변경된 파일명이 이미지인지 검사 -->
           <c:choose>
@@ -236,8 +247,8 @@
           </div>
       </div>
     
-      <div class="form-group" style="width: 500px; display: flex;"> 
-        <label for="file1MF" class="col-md-2 control-label" style="width: 22%; padding-top: 2px; padding-right: 30px;">업로드 파일 </label>
+      <div class="form-group" style="width: 500px; display: -webkit-box; "> 
+        <label for="file1MF" class="col-md-2 control-label" style="width: 22%; padding-top: 2px; padding-right: 15px; text-align: left;">업로드 파일 </label>
         <div class="col-md-10" style="text-align: center; width: 100%;">
           <input type="file" class="input-md" name='file1MF' id='file1MF' value="파일 선택" size='40' style="border: none; line-height: 0px;">
         </div>

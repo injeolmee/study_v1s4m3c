@@ -243,10 +243,18 @@ function delete_check(saleno) {
       <ASIDE style='float: right;'>
         <button type="button" class="btn btn-default" onclick="location.href='${pageContext.request.contextPath}/user/sale/list.do?word=${param.word}&search=${param.search}'">목록형</button>
         <button type="button" class="btn btn-default" onclick="location.href='${pageContext.request.contextPath}/user/sale/list_grid.do?word=${param.word}&search=${param.search}'">앨범형</button>
+       <!-- ⓐ 접속한 회원이 작성자일 경우 수정 / 삭제가 보임 -->
         <c:if test="${fn:contains(memberno, saleVO.memberno)}">
           <button type="button" class="btn btn-default" onclick="location.href='${pageContext.request.contextPath}/user/sale/update.do?saleno=${saleVO.saleno}&word=${param.word}&search=${param.search}'">수정</button>
           <button type="button" class="btn btn-default" onclick="delete_check(${saleVO.saleno })">삭제</button>
         </c:if>
+        <!----------------------------------------------------------->
+        <!------- ⓑ 관리자일 경우 수정 / 삭제가 모두 보임 ------->
+        <c:if test="${sessionScope.adminno != null }">
+          <button type="button" class="btn btn-default" onclick="location.href='${pageContext.request.contextPath}/user/sale/update.do?saleno=${saleVO.saleno}&word=${param.word}&search=${param.search}'">수정</button>
+          <button type="button" class="btn btn-default" onclick="delete_check(${saleVO.saleno })">삭제</button>
+        </c:if>
+        <!----------------------------------------------------------->
       </ASIDE>      
     </DIV>
     <!----------------------- ASIDE 메뉴 종료 --------------------------------------->
@@ -267,7 +275,7 @@ function delete_check(saleno) {
             <IMG src="${pageContext.request.contextPath}/user/sale/images/user_gray.png"> ${saleVO.salename } 
             <div style="float: right; font-size: 0.8em; ">
             <c:if test="${saleVO.salesize > 0}">
-              파일: <A href='${pageContext.request.contextPath}/download?dir=/user/sale/storage&filename=${saleVO.salefstor}&downname=${saleVO.salefile}'>${saleVO.salefile}</A> 
+              파일: <A href='${pageContext.request.contextPath}/download?dir=${pageContext.request.contextPath}/user/sale/storage&filename=${saleVO.salefstor}&downname=${saleVO.salefile}'>${saleVO.salefile}</A> 
               (${saleVO.salesizeLabel})
             </c:if>
           </div>
@@ -357,10 +365,18 @@ function delete_check(saleno) {
               <IMG src="${pageContext.request.contextPath}/user/sale/images/rereply.png"><A href="javascript:reply_start(${salereplyVO.sreplyno });" id ='reply_panel${salereplyVO.sreplyno }'>답변</A>
             </span>
             <div style='float: right;'>
+              <!--------- ⓐ 댓글의 작성자일 경우 수정 / 삭제 출력 ----------------->
               <c:if test="${fn:contains(memberno, salereplyVO.memberno)}">
-              <a href='javascript:reply_update("+${salereplyVO.sreplyno }+")' style='font-size: 0.8em; color: #999999;' >수정</a>
-              <a href='javascript:alert_delete_form(${salereplyVO.sreplyno },${salereplyVO.seqno })' style='font-size: 0.8em; color: #999999;'> | 삭제</a>
+                <a href='javascript:reply_update("+${salereplyVO.sreplyno }+")' style='font-size: 0.8em; color: #999999;' >수정</a>
+                <a href='javascript:alert_delete_form(${salereplyVO.sreplyno },${salereplyVO.seqno })' style='font-size: 0.8em; color: #999999;'> | 삭제</a>
               </c:if>
+              <!-------------------------------------------------------------------->
+              <!--------- ⓑ 관리자일 경우 무조건 수정 / 삭제 출력 ----------------->
+              <c:if test="${sessionScope.adminno ne null}">
+                <a href='javascript:reply_update("+${salereplyVO.sreplyno }+")' style='font-size: 0.8em; color: #999999;' >수정</a>
+                <a href='javascript:alert_delete_form(${salereplyVO.sreplyno },${salereplyVO.seqno })' style='font-size: 0.8em; color: #999999;'> | 삭제</a>
+              </c:if>
+              <!-------------------------------------------------------------------->
             </div>
             <br>
              <c:choose>
@@ -409,8 +425,14 @@ function delete_check(saleno) {
             <!---------------------------- 댓글 등록창 시작 (댓글의 댓글(대댓글)이 입력되는 창) ---------------------------->
             <form name="frm_rereply" id="frm_rereply" method="POST" action="./rereply.do">
               <DIV id="reply${salereplyVO.sreplyno }" style='display: none; padding: 10px 20px;'>    
-                <input type='hidden' name='memberno' id='memberno' value=${sessionScope.memberno }>
-                <input type='hidden' name='sreplyname' id='sreplyname' value=${sessionScope.memname }>
+                <c:if test="${sessionScope.memberno ne null}">
+                  <input type='hidden' name='memberno' id='memberno' value=${sessionScope.memberno }>
+                  <input type='hidden' name='sreplyname' id='sreplyname' value=${sessionScope.memname }>
+                </c:if>
+                <c:if test="${sessionScope.adminno ne null}">
+                   <input type='hidden' name='adminno' id='adminno' value=${sessionScope.adminno }>
+                  <input type='hidden' name='sreplyname' id='sreplyname' value=${sessionScope.admname }>
+                </c:if>
                 <input type='hidden' name='sreplygrpno' id='sreplygrpno' value=${salereplyVO.sreplygrpno }>
                 <input type='hidden' name='sreplyindent' id='sreplyindent' value=${salereplyVO.sreplyindent }>
                 <input type='hidden' name='sreplyansnum' id='sreplyansnum' value=${salereplyVO.sreplyansnum }>
@@ -441,8 +463,14 @@ function delete_check(saleno) {
 
   <!---------------------------- 댓글 등록창 시작 (새로운 댓글이 등록되는 창) ---------------------------->
   <FORM name='frm_reply' id='frm_reply' method='POST' action='./reply.do' style="text-align: left; width: 90%; margin: 0px auto;">
-    <input type='hidden' name='memberno' id='memberno' value=${sessionScope.memberno }>
-    <input type='hidden' name='sreplyname' id='sreplyname' value=${sessionScope.memname }>
+    <c:if test="${sessionScope.memberno ne null}">
+      <input type='hidden' name='memberno' id='memberno' value=${sessionScope.memberno }>
+      <input type='hidden' name='sreplyname' id='sreplyname' value=${sessionScope.memname }>
+    </c:if>
+    <c:if test="${sessionScope.adminno ne null}">
+       <input type='hidden' name='adminno' id='adminno' value=${sessionScope.adminno }>
+       <input type='hidden' name='sreplyname' id='sreplyname' value=${sessionScope.admname }>
+    </c:if>
     <input type='hidden' name='saleno' id='saleno' value= ${saleVO.saleno }>
     <input type='hidden' name='nowPage' id='nowPage' value= '${saleVO.nowPage }'>
     

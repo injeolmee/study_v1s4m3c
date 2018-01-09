@@ -142,6 +142,15 @@ public interface AdminProcInter {
    * @return
    */
   public int admpasswd_change(AdminVO adminVO);
+  
+  
+  /**
+   * 관리자 삭제
+   * <update id="admin_delete" parameterType="AdminVO">
+   * @param adminVO
+   * @return
+   */
+  public int admin_delete(AdminVO adminVO);
 
 
 }

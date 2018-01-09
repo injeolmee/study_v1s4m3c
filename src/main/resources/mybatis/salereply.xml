@@ -14,16 +14,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 (SELECT NVL(MAX(sreplygrpno), 0) + 1 as sreplygrpno FROM salereply), 
                 0, 0, #{saleno}, #{memberno}, 1)
   </insert>
-  
-  <!-- 댓글 목록 (원본) -->
-  <select id="list_reply" resultType="SalereplyVO" parameterType="int">
-    SELECT sreplyno, sreplycontent, sreplyname, sreplydate, sreplygrpno, 
-          sreplyindent, sreplyansnum, saleno, MEMBERNO, seqno
-    FROM salereply
-    WHERE saleno = #{saleno}
-    ORDER BY sreplyno ASC, sreplyansnum ASC
-  </select>
-  
+   
   <!-- 댓글 목록 + 페이징 -->
   <select id="total_list_reply" resultType="SalereplyVO" parameterType="HashMap">
     SELECT sreplyno, sreplycontent, sreplyname, sreplydate, sreplygrpno, 
@@ -72,7 +63,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
      VALUES ((SELECT NVL(MAX(sreplyno), 0) + 1 as sreplyno from salereply), #{sreplycontent}, #{sreplyname}, sysdate, 
                 #{sreplygrpno}, #{sreplyindent}, #{sreplyansnum}, #{saleno}, #{memberno}, #{seqno})
   </insert>
-
+  
+  <!-- 댓글의 답변(대댓글) 등록 (관리자용) --> 
+  <insert id="reply_admin" parameterType="SalereplyVO">
+    INSERT INTO salereply(sreplyno, sreplycontent, sreplyname, sreplydate, sreplygrpno, 
+                             sreplyindent, sreplyansnum, saleno, adminno, seqno)   
+     VALUES ((SELECT NVL(MAX(sreplyno), 0) + 1 as sreplyno from salereply), #{sreplycontent}, #{sreplyname}, sysdate, 
+                #{sreplygrpno}, #{sreplyindent}, #{sreplyansnum}, #{saleno}, #{adminno}, #{seqno})
+  </insert>
+  
   <!-- ******************** 대댓글(답변) 관련 종료 ******************** -->
   
   <!-- 댓글 수정 -->
@@ -107,5 +106,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     DELETE FROM salereply
     WHERE saleno = #{saleno}
   </delete>
-
+  
+  <!-- 관리자 댓글 등록 -->
+  <insert id="create_admin" parameterType="SalereplyVO" >
+    INSERT INTO salereply (sreplyno, sreplycontent, sreplyname, sreplydate, sreplygrpno, 
+                             sreplyindent, sreplyansnum, saleno, adminno, seqno) 
+    VALUES ((SELECT NVL(MAX(sreplyno), 0) + 1 as sreplyno from salereply), #{sreplycontent}, #{sreplyname}, sysdate, 
+                (SELECT NVL(MAX(sreplygrpno), 0) + 1 as sreplygrpno FROM salereply), 
+                0, 0, #{saleno}, #{adminno}, 1)
+  </insert>
+  
+  <!-- 부모 댓글일 경우 하위 댓글이 존재하는지 검사 -->
+  <select id="parent_check" parameterType="int" resultType="int">
+    SELECT COUNT(*) as cnt
+    FROM salereply
+    WHERE sreplygrpno = #{sreplygrpno}
+  </select>
+  
+  <!-- 대댓글과 관련되어 맨 마지막 댓글인지 검사 -->
+  <select id="reply_check" parameterType="HashMap" resultType="int">
+    SELECT MAX(sreplyindent)
+    FROM salereply
+    WHERE saleno = #{saleno} AND sreplygrpno = #{sreplygrpno}
+  </select>
+  
 </mapper>

@@ -99,8 +99,8 @@ WHERE adminno = 1;
 3. UPDATE  
 1) 회원 정보 수정
 UPDATE admin
-SET admauth='M'
-WHERE adminno = 1;
+SET admauth='A'
+WHERE adminno = 9;
   
 2) 패스워드 변경
 - 기존 패스워드 검사

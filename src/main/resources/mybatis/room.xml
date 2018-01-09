@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="room">
+
+  <!-- 글 등록 -->
+  <insert id="create" parameterType="RoomVO">
+    INSERT INTO room(rono, adminno, roname, rotel, rosite, rorunday, romap, 
+                                 rolocation, rocity, rogu, rodong, ronalo, rocost, rofile1, rosize1, rothumb, rocontent, rocount, rooption)
+    VALUES((SELECT NVL(MAX(rono), 0) + 1 as rono FROM room), 1, #{roname}, #{rotel}, #{rosite},
+                 #{rorunday}, #{romap}, #{rolocation}, #{rocity}, #{rogu}, #{rodong}, #{ronalo}, #{rocost}, #{rofile1}, #{rosize1}, #{rothumb}, #{rocontent}, #{rocount}, #{rooption})
+  </insert>
+
+  
+  <!-- 검색된 레코드 목록 + 페이징 -->
+  <select id="list" resultType="RoomVO" parameterType="HashMap">
+    SELECT rono, adminno, roname, rotel, rosite, rorunday, romap, 
+               rolocation, rocity, rogu, rodong, ronalo, rocost, rofile1, rosize1, rothumb, rocontent, rocount, rooption, r
+    FROM (
+              SELECT rono, adminno, roname, rotel, rosite, rorunday, romap, 
+                         rolocation, rocity, rogu, rodong, ronalo, rocost, rofile1, rosize1, rothumb, rocontent, rocount, rooption, rownum as r
+              FROM (
+                        SELECT rono, adminno, roname, rotel, rosite, rorunday, romap,  
+                                   rolocation, rocity, rogu, rodong, ronalo, rocost, rofile1, rosize1, rothumb, rocontent, rocount, rooption
+                        FROM room
+                        
+                        <choose>
+                          <when test="ronalo == null or ronalo == '' ">
+                            ORDER BY rono DESC
+                          </when>
+                          <otherwise>
+                            WHERE ronalo LIKE '%' || #{ronalo} || '%'
+                            ORDER BY rono DESC
+                          </otherwise>
+                        </choose>
+                        
+              )
+    )
+    <!-- WHERE <![CDATA[ r >= #{startNum} AND r <= #{endNum} ]]> -->
+    WHERE r &gt;= #{startNum} AND r &lt; = #{endNum}
+    
+  </select>
+  
+  <!-- category별 검색된 레코드 갯수 -->
+  <select id="search_count" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as cnt
+    FROM room
+    <choose>
+      <when test="ronalo == null or ronalo == ''"> <!-- 검색하지 않는 경우 -->   
+      </when>
+      <otherwise>
+        WHERE ronalo LIKE '%' || #{ronalo} || '%'
+      </otherwise>
+    </choose>
+  </select>
+  
+  <!-- 게시 글 조회 -->
+  <select id="read" resultType="RoomVO" parameterType="int">
+    SELECT rono, adminno, roname, rotel, rosite, rorunday, romap,
+               rolocation, rocity, rogu, rodong, rocost, rofile1, rosize1, rothumb, rocontent, rocount, rooption
+    FROM room
+    WHERE rono=#{rono}
+  </select> 
+
+  
+  <!-- 게시 글 수정 -->
+  <update id="update" parameterType="RoomVO">
+    UPDATE room
+    SET roname=#{roname}, rotel=#{rotel}, rosite=#{rosite}, rorunday=#{rorunday}, romap=#{romap}, ronalo=#{ronalo},
+          rolocation=#{rolocation}, rocity=#{rocity}, rogu=#{rogu}, rodong=#{rodong}, rocost=#{rocost}, rofile1=#{rofile1}, rosize1=#{rosize1}, 
+          rothumb=#{rothumb}, rocontent=#{rocontent}, rocount=#{rocount}, rooption=#{rooption}
+    WHERE rono=#{rono}
+  </update>
+  
+  
+  <!-- 게시 글 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM room
+    WHERE rono=#{rono}
+  </delete>
+
+</mapper>

@@ -16,16 +16,7 @@ public interface SaleProcInter {
    * @return
    */
   public int create (SaleVO saleVO);
-  
-  /**
-   * <XMP>
-   * 게시글 목록
-   * <select id="list" resultType="SaleVO">
-   * </XMP>
-   * @return
-   */
-  public List <SaleVO> list();
-  
+
   /**
    * <XMP>
    * 검색 + 목록 + 페이징
@@ -121,16 +112,6 @@ public interface SaleProcInter {
 
   /**
    * <XMP>
-   * 패스워드 검사
-   * <select id="passwd_check" resultType="int" parameterType="HashMap">
-   * </XMP>
-   * @param hashMap
-   * @return
-   */
-  public int passwd_check (SaleVO saleVO);
-  
-  /**
-   * <XMP>
    * 게시글 수정
    * <update id="update" parameterType="SaleVO">
    * </XMP>
@@ -158,5 +139,15 @@ public interface SaleProcInter {
    * @return
    */
   public int member_check (SaleVO saleVO);
+  
+  /**
+   * <XMP>
+   * 관리자 게시글 등록
+   * <insert id="create_admin" parameterType="SaleVO">
+   * </XMP>
+   * @param saleVO
+   * @return int
+   */
+  public int create_admin(SaleVO saleVO);
   
 }

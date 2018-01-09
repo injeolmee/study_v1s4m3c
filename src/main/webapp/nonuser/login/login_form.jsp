@@ -1,5 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
- 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
+
  <% 
 String root = request.getContextPath(); 
 %>
@@ -12,8 +15,8 @@ String root = request.getContextPath();
 <!-------------------------- Web Logo Part -------------------------->
 <link rel="shortcut icon" href="<%=root%>/menu/images/ico/Short Logo.png">
 <!---------------------------------------------------------------------->
-<link href="./jecss/login.css" rel="Stylesheet" type="text/css">
-<link href="./jecss/login.scss" rel="Stylesheet" type="text/css">
+<link href="<%=root%>/nonuser/login/jecss/login.css" rel="Stylesheet" type="text/css">
+<link href="<%=root%>/nonuser/login/jecss/login.scss" rel="Stylesheet" type="text/css">
 <style>
 
 </style>
@@ -23,9 +26,84 @@ String root = request.getContextPath();
 <script type="text/javascript" src="<%=root%>/js/jquery.cookie.js"></script>
 <script type="text/javascript" src="<%=root%>/nonuser/login/login.js"></script>
 <script type="text/javascript">
-$(function(){
+$(function(){ 
+  
+  $('#login').click(function(){  
+    var frm_login = $("#frm_login").serialize();
+    $.ajax({
+      url : '/study/nonuser/login/login.do',
+      type: "POST",
+      data : frm_login, 
+      dataType : 'JSON',
+      success : function(data){
+        // alert(data.login_cnt);
+        if(data.login_cnt==1){
+          location.href ='<%=root %>/main/index.do';
+        } else if(data.login_cnt==2){
+          alert("아이디나 패스워드가 다릅니다.\n다시 시도해주세요.");
+          location.href ='<%=root %>/nonuser/login/login.do';
+        } else {
+          alert("유효한 회원이 아닙니다.");
+          location.href ='<%=root %>/nonuser/login/login.do';
+        }
+       },
+    // 통신 에러, 요청 실패, 200 아닌 경우, dataType이 다른경우
+       error: function (request, status, error){  
+         var msg = "에러가 발생했습니다. <br><br>";
+         msg += "다시 시도해주세요.<br><br>";
+         msg += "request.status: " + request.status + "<br>";
+         msg += "request.responseText: " + request.responseText + "<br>";
+         msg += "status: " + status + "<br>";
+         msg += "error: " + error;
 
-});
+         $('#modal_title').html("에러");   
+         $('#modal_content').html(msg); 
+         $('#modal_panel').modal(); 
+       }
+     });
+    
+    
+  });
+  
+  
+  $('#login_admin').click(function(){  
+    var frm_admin_login = $("#frm_admin_login").serialize();
+    $.ajax({
+      url : '/study/nonuser/login/admin_login.do',
+      type: "POST",
+      data : frm_admin_login, 
+      dataType : 'JSON',
+      success : function(data){
+        // alert(data.login_cnt);
+        if(data.login_cnt==1){
+          location.href ='<%=root %>/main/index.do';
+        } else if(data.login_cnt==2){
+          alert("아이디나 패스워드가 다릅니다.\n다시 시도해주세요.");
+          location.href ='<%=root %>/nonuser/login/login.do';
+        } else {
+          alert("유효한 회원이 아닙니다.");
+          location.href ='<%=root %>/nonuser/login/login.do';
+        }
+       },
+    // 통신 에러, 요청 실패, 200 아닌 경우, dataType이 다른경우
+       error: function (request, status, error){  
+         var msg = "에러가 발생했습니다. <br><br>";
+         msg += "다시 시도해주세요.<br><br>";
+         msg += "request.status: " + request.status + "<br>";
+         msg += "request.responseText: " + request.responseText + "<br>";
+         msg += "status: " + status + "<br>";
+         msg += "error: " + error;
+
+         $('#modal_title').html("에러");   
+         $('#modal_content').html(msg); 
+         $('#modal_panel').modal(); 
+       }
+     });
+    
+    
+  });
+
+}); // function 끝
 </script>
 </head>
 
@@ -45,7 +123,7 @@ $(function(){
           <span class="logmod__heading-subtitle">Enter your ID and Password <strong>to member login in</strong></span>
         </div>
         <div class="logmod__form">
-          <form accept-charset="utf-8" name='frm' method='POST' action='./login.do' class="simform">
+          <form accept-charset="utf-8" name='frm_login' id='frm_login' method='POST' class="simform">
             <div class="sminputs">
               <div class="input full">
                 <label class="string optional" for="user-name">ID*</label>
@@ -68,7 +146,7 @@ $(function(){
               </div>
             </div>
             <div class="simform__actions">
-              <input class="sumbit" name="commit" type="submit" value="Log In" />
+              <input class="sumbit" id="login" name="login" type="button" value="Log In" />
               <span class="simform__actions-sidetext"><a class="special" role="link" href="<%=root%>/nonuser/login/member_id_pwd_find.do">Forgot your ID/Password?<br>Click here</a></span>
             </div> 
           </form>
@@ -83,7 +161,7 @@ $(function(){
           <span class="logmod__heading-subtitle">Enter your ID and Password <strong>to admin login in</strong></span>
         </div> 
         <div class="logmod__form">
-          <form accept-charset="utf-8" name='frm' method='POST' action='./admin_login.do' class="simform">
+          <form accept-charset="utf-8" name='frm_admin_login' id='frm_admin_login' method='POST' action='./admin_login.do' class="simform">
             <div class="sminputs">
               <div class="input full">
                 <label class="string optional" for="user-name">ID*</label>
@@ -106,7 +184,7 @@ $(function(){
               </div>
             </div>
             <div class="simform__actions">
-              <input class="sumbit" name="commit" type="submit" value="Log In" />
+              <input class="sumbit" id="login_admin" name="login_admin" type="button" value="Log In" />
               <span class="simform__actions-sidetext"><a class="special" role="link" href="<%=root%>/nonuser/login/admin_id_pwd_find.do">Forgot your ID/Password?<br>Click here</a></span>
             </div> 
           </form>

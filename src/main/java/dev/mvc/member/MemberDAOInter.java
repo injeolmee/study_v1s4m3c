@@ -117,5 +117,14 @@ public interface MemberDAOInter {
    */
   public int mempasswd_change(MemberVO memberVO);
   
+  
+  /**
+   * È¸¿ø Å»Åð
+   * <update id="mem_delete" parameterType="MemberVO">
+   * @param memberVO
+   * @return
+   */
+  public int mem_delete(MemberVO memberVO);
+  
 
 }

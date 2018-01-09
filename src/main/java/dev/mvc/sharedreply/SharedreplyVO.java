@@ -22,8 +22,6 @@ public class SharedreplyVO {
   private String shreplyname;
   /* 등록일 */
   private String shreplydate;
-  /* 패스워드 */
-  private String shreplypasswd;
   /* 댓글 그룹번호 */
   private int shreplygrpno;
   /* 댓글 차수 */
@@ -46,7 +44,15 @@ public class SharedreplyVO {
   private String search="";
   /* 부모/자식 구별을 위한 임시 변수*/
   private int seqno;
-
+  /* 관리자 번호 */
+  private int adminno;
+ 
+  public int getAdminno() {
+    return adminno;
+  }
+  public void setAdminno(int adminno) {
+    this.adminno = adminno;
+  }
   public int getSeqno() {
     return seqno;
   }
@@ -76,12 +82,6 @@ public class SharedreplyVO {
   }
   public void setShreplydate(String shreplydate) {
     this.shreplydate = shreplydate;
-  }
-  public String getShreplypasswd() {
-    return shreplypasswd;
-  }
-  public void setShreplypasswd(String shreplypasswd) {
-    this.shreplypasswd = shreplypasswd;
   }
   public int getShreplygrpno() {
     return shreplygrpno;

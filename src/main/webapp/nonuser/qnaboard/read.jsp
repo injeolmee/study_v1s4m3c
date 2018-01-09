@@ -48,7 +48,49 @@ $(function() {
     var reply_data = $('#frm_update').serialize();
     update_reply_post(reply_data);   
   });
-//*******************************************************************   
+//*******************************************************************  
+  // alert("memberno ---> " + ${memberno});
+  $('#update_btn').click(function(){  
+    var modal_pwd = "modal_pwd=" + $('#modal_pwd').val() + "&qnano=" + ${qnaVO.qnano};  
+    alert(modal_pwd);  
+    
+    $.ajax({
+      type: 'GET',
+      url: '/study/user/qnaboard/pwdchk.do',
+      cache: false,
+      data: modal_pwd,       
+      dataType: 'JSON',        
+      success: function(data){
+       alert(data.cnt_pwd);
+        if(data.cnt_pwd==1){
+          var url ='<%=root %>/user/qnaboard/update.do?qnano=${qnaVO.qnano}';
+          $(location).attr('href', url);
+        } else{
+          msg = "<span style='color:red;'>패스워드가 다릅니다.</span>";
+          $('#panel_pwd').html(msg); 
+          $('#panel_pwd').show();
+          return false;
+          }
+
+      },
+      // 통신 에러, 요청 실패, 200 아닌 경우, dataType이 다른경우
+      error: function (request, status, error){  
+        var msg = "에러가 발생했습니다. <br><br>";
+        msg += "다시 시도해주세요.<br><br>";
+        msg += "request.status: " + request.status + "<br>";
+        msg += "request.responseText: " + request.responseText + "<br>";
+        msg += "status: " + status + "<br>";
+        msg += "error: " + error;
+
+        $('#modal_title').html("에러");   
+        $('#modal_content').html(msg); 
+        $('#modal_panel').modal(); 
+      }
+    });  //end ajax  
+    
+  });
+
+
 });
 
 //**************************  답변 등록창 ON ********************* 
@@ -258,9 +300,17 @@ function delete_check(qnano) {
           </c:choose> --%> 
           <!-- <A style="float: right;"> | 수정 | </A>
           <A style="float: right;"> | 삭제  &nbsp;</A> -->
-          <button type="button" class="btn btn-default btn-sm" style="line-height: 15px; float: right;" onclick="location.href='/study/user/qnaboard/update.do?qnano=${qnaVO.qnano}'">수정하기</button>
-          <button type="button" class="btn btn-default btn-sm" onclick="location.href='javascript: delete_check(${qnaVO.qnano});'" style="line-height: 15px; float: right;">삭제하기</button>
+          <c:set var="memberno" value="${qnaVO.memberno }" />
+          <c:choose>
+            <c:when test="${sessionScope.memberno == memberno}">
+              <input data-toggle="modal" data-target="#myModal_update" type="button" value="수정하기" style="float: right;"/>  
+              <button type="button" class="btn btn-default btn-sm" onclick="location.href='javascript: delete_check(${qnaVO.qnano});'" style="line-height: 15px; float: right;">삭제하기</button>
+            </c:when>
+          </c:choose>
+          <%-- <button type="button" class="btn btn-default btn-sm" style="line-height: 15px; float: right;" onclick="location.href='/study/user/qnaboard/update.do?qnano=${qnaVO.qnano}'">수정하기</button> --%>
           <button type="button" class="btn btn-default btn-sm" onclick="location.href='/study/nonuser/qnaboard/list_all_qna.do'" style="line-height: 15px; float: right;">목록</button>
+          <%-- session_memberno = ${sessionScope.memberno }<br>
+          db_memberno = ${qnaVO.memberno } --%>
         </td>
       </tr>
     </tbody>
@@ -359,6 +409,25 @@ function delete_check(qnano) {
   </div>
 </div>
 <!-- Modal END -->
+
+<div class="modal fade modal-sm" id="myModal_update" role="dialog" style='position: absolute; top:50%; left:58%; display: none;'>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">패스워드 검사</h4>
+      </div>
+      <div class="modal-body" style='text-align: center; height: 70px;'>
+        <label style='float: left; margin: 5px 0px 5px 5px;'><strong>패스워드</strong></label>
+        <input type="password" id="modal_pwd" name="modal_pwd" value="" style='padding: 6px; margin: 0px; width:50%;' >
+        <input type="text" style="display: none;">
+        <div id="panel_pwd" style= "text-align: center; padding: 15px; font-weight: 900;"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="update_btn">확인</button>
+        <button class="btn" data-dismiss="modal">닫기</button>    
+      </div>
+    </div>
+  </div>
   
 </DIV> <!-- content END -->
 </DIV> <!-- container END -->

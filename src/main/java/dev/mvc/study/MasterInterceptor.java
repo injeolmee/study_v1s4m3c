@@ -25,7 +25,7 @@ public class MasterInterceptor extends HandlerInterceptorAdapter {
      }
     
     String admauth = (String) session.getAttribute("admauth");
-    System.out.println("技记鼻茄master: " + admauth);
+    // System.out.println("技记鼻茄master: " + admauth);
     
     if (admauth == null) {
       admauth = "";

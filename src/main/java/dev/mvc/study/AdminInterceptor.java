@@ -25,7 +25,7 @@ public class AdminInterceptor extends HandlerInterceptorAdapter {
      }
     
     String admauth = (String) session.getAttribute("admauth");
-    System.out.println("세션권한 admauth: " + admauth);
+    // System.out.println("세션권한 admauth: " + admauth);
     
     if (admauth == null) {
       admauth = "";
@@ -33,12 +33,12 @@ public class AdminInterceptor extends HandlerInterceptorAdapter {
 
      //if (admauth.contentEquals("M") || admauth.contentEquals("A")) {       
      if (admauth.equals("A") == true || admauth.equals("M") == true) { // 접근 가능, 요청 페이지 처리
-       System.out.println("된다아ㅏㅇ");
+       // System.out.println("된다아ㅏㅇ");
       return true; // 요청 페이지로 계속 진행  
       
     } else{
       /*System.out.println("== : " + admauth.contentEquals("A"));*/
-      System.out.println("어드민 인터셉터");
+      // System.out.println("어드민 인터셉터");
       response.sendRedirect(request.getContextPath() + "/nonuser/login/login.do");
       return false;
     } 

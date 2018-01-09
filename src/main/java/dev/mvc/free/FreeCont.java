@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import dev.mvc.freelike.FreelikeProcInter;
 import dev.mvc.freereply.FreereplyProcInter;
 import dev.mvc.freereply.FreereplyVO;
+import nation.web.tool.Tool;
 
 @Controller
 public class FreeCont {
@@ -64,12 +65,17 @@ public class FreeCont {
    */
   @ResponseBody
   @RequestMapping(value="/user/free/create.do", method=RequestMethod.POST, produces = "text/html; charset=UTF-8")
-  public String create(HttpServletRequest request, FreeVO freeVO) {
+  public String create(HttpSession session, HttpServletRequest request, FreeVO freeVO) {
 
     JSONObject obj = new JSONObject();
 
-    int count = freeProc.create(freeVO);
+    int count = 0; // 게시글 등록을 처리할 변수
     
+    if (session.getAttribute("memberno") != null) { // 회원일 경우
+      count = freeProc.create(freeVO);
+    } else if (session.getAttribute("adminno") != null) { // 관리자일 경우
+      count = freeProc.create_admin(freeVO);
+    }
     obj.put("count", count);
  
     return obj.toString();
@@ -146,7 +152,7 @@ public class FreeCont {
   
   /**
    * <XMP>
-   * 게시글 조회 및 댓글 목록 출력
+   * 게시글 조회 + 댓글 목록
    * </XMP>
    * @param nowPage 현재 페이지
    * @param freeno 게시글 번호
@@ -236,6 +242,18 @@ public class FreeCont {
     mav.setViewName("/user/free/update");
     
     FreeVO freeVO = freeProc.read(freeno);
+    
+    //**************************************************************************
+    // 내용의 특수문자 처리를 위한 구문 시작 
+    //**************************************************************************
+    String freecontent = freeVO.getFreecontent(); // 기존 내용을 가져와서
+    String new_freecontent = Tool.toJS(freecontent); // 자바스크립트가 인식할 수 있는 코드로 변환한다.
+    
+    freeVO.setFreecontent(new_freecontent);
+    //**************************************************************************
+    // 내용의 특수문자 처리를 위한 구문 종료
+    //**************************************************************************
+
     mav.addObject("freeVO", freeVO);
     
     return mav;
@@ -251,22 +269,28 @@ public class FreeCont {
    */
   @ResponseBody
   @RequestMapping(value="/user/free/update.do", method=RequestMethod.POST, produces = "text/html; charset=UTF-8")
-  public String update(FreeVO freeVO) {
+  public String update(HttpSession session, FreeVO freeVO) {
     
     JSONObject obj = new JSONObject(); 
  
     int freeno = freeVO.getFreeno();
 
-    int check = freeProc.member_check(freeVO);
-    int count= 0;
+    int check = 0; // 아이디 검사를 처리할 변수 (★ 회원만 해당)
+    int count= 0; // 아디디 검사를 성공할 경우 처리할 변수
     
-    if (check == 1) { // 등록된 멤버 아이디와 일치하는 경우
+    if (session.getAttribute("memberno") != null) { // 회원일 경우
+      check = freeProc.member_check(freeVO); // 아이디 검사
+    }
+    
+    if (check == 1 || session.getAttribute("adminno") != null) { // 등록된 멤버 아이디와 일치하거나 관리자일 경우
        count = freeProc.update(freeVO);
+       
        if (count == 1) { // 수정 처리가 성공한 경우
          // System.out.println("수정 성공");
        } else { // 수정 처리가 실패한 경우
          // System.out.println("수정 실패");
        }
+       
     } else { // 등록된 멤버 아이디와 일치하지 않는 경우
       // System.out.println("아이디 일치 X");
     }
@@ -279,42 +303,6 @@ public class FreeCont {
   
   /**
    * <XMP>
-   * 추천수 증가 (현재 사용하지 않음)
-   * </XMP>
-   * @param freeno
-   * @return
-   */
-  /*@RequestMapping(value="/user/free/increaseLike.do", method=RequestMethod.POST)
-  public ModelAndView increaseLike(int freeno) {
-    // System.out.println(" --> freelikeup POST create");
-    ModelAndView mav = new ModelAndView();
-    
-    if (freeProc.increaseLike(freeno) == 1) {
-      mav.setViewName("redirect:/nonuser/free/read.do?freeno=" + freeno);
-    }
-    
-    return mav;
-  }*/
-  
-  /**
-   * <XMP>
-   * 게시글 삭제 폼 출력 (현재 사용하지 않음)
-   * </XMP> 
-   * @param freeno
-   * @return
-   */
-/*  @RequestMapping(value = "/user/free/delete.do", method = RequestMethod.GET)
-  public ModelAndView delete(int freeno) {
-    ModelAndView mav = new ModelAndView();
-    mav.setViewName("/user/free/delete");
-    
-    mav.addObject("freeno", freeno);
-    
-    return mav;
-  }*/
-  
-  /**
-   * <XMP>
    * 게시글 삭제결과 출력
    * </XMP>
    * @param request
@@ -323,21 +311,28 @@ public class FreeCont {
    */
   @ResponseBody
   @RequestMapping(value = "/user/free/delete.do", method = RequestMethod.POST,  produces = "text/html; charset=UTF-8")
-  public String delete(HttpServletRequest request, int freeno) {
+  public String delete(HttpSession session, HttpServletRequest request, int freeno) {
 
     JSONObject obj = new JSONObject(); 
     String root = request.getContextPath(); // 절대 경로 산출
     
     FreeVO freeVO = freeProc.read(freeno);
-    int check = freeProc.member_check(freeVO); // 아이디 검사
     
-    int count_all = 0; // 아이디 검사 성공시 처리할 변수1
-    int count = 0; // 아이디 검사 성공시 처리할 변수2
+    int check = 0; // 아이디 검사 처리할 변수 (★ 회원만 해당)
+    
+    if (session.getAttribute("memberno") != null) { // 회원일 경우
+     check = freeProc.member_check(freeVO); // 아이디 검사
+    }
+    
+    int like_all = 0; // 아디디 검사 성공시 처리할 변수 ①
+    int count_all = 0; // 아이디 검사 성공시 처리할 변수 ②
+    int count = 0; // 아이디 검사 성공시 처리할 변수 ③
   
-    if (check == 1) { // 등록된 멤버 아이디와 일치하는 경우
+    if (check == 1 || session.getAttribute("adminno") != null) { // 등록된 멤버 아이디와 일치하거나 관리자일 경우
       
-      count_all = freereplyProc.delete_all(freeno); // ⓐ 댓글 전체 삭제
-      count = freeProc.delete(freeno);               // ⓑ 게시글 삭제
+      like_all = freelikeProc.like_delete(freeno); // ⓐ 좋아요 삭제
+      count_all = freereplyProc.delete_all(freeno); // ⓑ 댓글 전체 삭제
+      count = freeProc.delete(freeno);               //  ⓒ 게시글 삭제
       
       if (count == 1) { // 삭제 처리가 성공한 경우
         // System.out.println("삭제 처리 성공");
@@ -364,13 +359,19 @@ public class FreeCont {
    * @return
    */
   @RequestMapping(value = "/user/free/reply.do", method = RequestMethod.POST)
-  public ModelAndView reply(HttpServletRequest request, FreereplyVO freereplyVO, int nowPage) {
+  public ModelAndView reply(HttpSession session, HttpServletRequest request, FreereplyVO freereplyVO, int nowPage) {
     // System.out.println("--> reply() POST called.");
     ModelAndView mav = new ModelAndView();
     
     int freeno = freereplyVO.getFreeno();
     freereplyVO.setNowPage(nowPage);
-    int count = freereplyProc.create(freereplyVO);
+    int count = 0; // 댓글 등록을 처리하기위한 변수
+    
+    if (session.getAttribute("memberno") != null) { // 회원일 경우
+      count = freereplyProc.create(freereplyVO);
+    } else if (session.getAttribute("adminno") != null) { // 관리자일 경우
+      count = freereplyProc.create_admin(freereplyVO);
+    }
     
     if (count == 1) {
       // System.out.println("댓글등록 성공");
@@ -391,7 +392,7 @@ public class FreeCont {
    * @return
    */
   @RequestMapping(value = "/user/free/rereply.do", method = RequestMethod.POST)
-  public ModelAndView rereply(HttpServletRequest request, FreereplyVO freereplyVO, int nowPage) {
+  public ModelAndView rereply(HttpSession session, HttpServletRequest request, FreereplyVO freereplyVO, int nowPage) {
     // System.out.println("--> rereply() POST called.");
     ModelAndView mav = new ModelAndView();
 
@@ -406,7 +407,15 @@ public class FreeCont {
     int seqno_ch = 1; // 자식값에 주는 seqno를 1로 처리하기 위한 변수
 
     freereplyVO.setFreeno(parentVO.getFreeno());                       // 게시글 번호
-    freereplyVO.setMemberno(freereplyVO.getMemberno());          // 회원번호 => 부모에서 받으면 X 
+    
+    //**************** session에 따른 받아오는 값 구분 시작 ***********************************
+    if (session.getAttribute("memberno") != null) { // 회원일 경우
+      freereplyVO.setMemberno(freereplyVO.getMemberno());      // 회원번호 => 부모에서 받으면 X
+    } else if (session.getAttribute("adminno") != null) { // 관리자일 경우
+      freereplyVO.setAdminno(freereplyVO.getAdminno());          // 관리자번호 => 부모에서 받으면 X
+    }
+    //**************** session에 따른 받아오는 값 구분 종료 ***********************************
+
     freereplyVO.setFreplyname(freereplyVO.getFreplyname());          // 작성자   => 부모에서 받으면 X
     freereplyVO.setFreplygrpno(parentVO.getFreplygrpno());          // 그룹 번호
     freereplyVO.setFreplyansnum(parentVO.getFreplyansnum());       // 댓글 순서
@@ -422,8 +431,14 @@ public class FreeCont {
     // 대댓글(답변) 등록 처리 종료
     // *************************************************************************
 
-    int count = freereplyProc.reply(freereplyVO);
+    int count = 0; // 댓글 등록을 처리하기 위한 변수
     
+    if (session.getAttribute("memberno") != null) { // 회원일 경우
+      count = freereplyProc.reply(freereplyVO);
+    } else if (session.getAttribute("adminno") != null) { // 관리자일 경우
+      count = freereplyProc.reply_admin(freereplyVO);
+    }
+
     if (count == 1) {
       // System.out.println("대댓글 등록 성공");     
       mav.setViewName("redirect:/nonuser/free/read.do?freeno=" + freereplyVO.getFreeno() + "&nowPage=" + freereplyVO.getNowPage());
@@ -436,7 +451,7 @@ public class FreeCont {
   
   /**
    * <XMP>
-   * 수정을 위한 해당 댓글의 댓글 내용 read
+   * 수정을 위한 해당 댓글내용 조회
    * </XMP>
    * @param freplyno 댓글 번호
    * @return freplyno, freplycontent
@@ -527,11 +542,43 @@ public class FreeCont {
     // System.out.println(" => Update_parent() POST executed");
     
     JSONObject obj = new JSONObject(); 
-      
-    int freplyno = freereplyVO.getFreplyno();
-    int nowPage = freereplyVO.getNowPage();
     
-    int count = freereplyProc.update_parent(freplyno);
+    int parent_check = 0; // ⓐ 부모 댓글에 대한 검사를 처리하기 위한 변수
+    int reply_check = 0;   // ⓑ 맨 마지막 댓글 검사를 처리하기 위한 변수
+    int count = 0;          // ⓒ 검사 후 댓글에 대해 처리하기 위한 변수
+    
+    //*****************************************************************************************************
+    // 댓글과 관련된 내용을 조회하는 부분 시작
+    //*****************************************************************************************************
+    int freplyno = freereplyVO.getFreplyno();                                   // 댓글 번호
+    freereplyVO = freereplyProc.read(freplyno);                                // 댓글 조회
+    int freplygrpno = freereplyVO.getFreplygrpno();                          // 댓글 그룹번호
+    int nowPage = freereplyVO.getNowPage();                                // 현재 페이지
+    int freplyindent = freereplyVO.getFreplyindent();                         // 대댓글 차수
+    //*****************************************************************************************************
+    // 댓글과 관련된 내용을 조회하는 부분 종료
+    //*****************************************************************************************************
+   
+    //*****************************************************************************************************
+    // 맨 마지막 댓글인지 검사하기 위한 부분 시작
+    //*****************************************************************************************************
+    HashMap hashMap = new HashMap();
+    hashMap.put("freeno", freereplyVO.getFreeno());
+    hashMap.put("freplygrpno", freplygrpno);
+    
+    reply_check = freereplyProc.reply_check(hashMap); // 댓글의 차수 최대값 검사
+    int max_value = reply_check;                           // 대댓글 차수 최대값
+    //*****************************************************************************************************
+    // 맨 마지막 댓글인지 검사하기 위한 부분 종료
+    //*****************************************************************************************************
+    
+    parent_check = freereplyProc.parent_check(freplygrpno);  // 부모 댓글에 대하여 하위 댓글이 존재하는지 검사
+    
+    if (parent_check == 1 || max_value == freplyindent) { // ⓐ 하위 댓글이 존재하지 않는 경우 또는 대댓글 차수가 최대값일 경우
+      count = freereplyProc.delete(freplyno);
+    } else {             // ⓑ 하위 댓글이 존재하는 경우
+      count = freereplyProc.update_parent(freplyno);
+    }
     
     obj.put("count", count);
     obj.put("nowPage", nowPage);

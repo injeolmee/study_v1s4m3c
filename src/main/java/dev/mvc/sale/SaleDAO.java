@@ -24,13 +24,6 @@ public class SaleDAO implements SaleDAOInter {
     return count;
   }
 
-  /* 목록 */
-  @Override
-  public List<SaleVO> list() {
-    List <SaleVO> list = mybatis.selectList("sale.list");
-    return list;
-  }
-
   /* 검색 + 목록 + 페이징 */
   @Override
   public List<SaleVO> list_search(HashMap hashMap) {
@@ -66,17 +59,10 @@ public class SaleDAO implements SaleDAOInter {
     return count;
   }
 
-  /* 추천수 상승 */
+  /* 조회수 상승 */
   @Override
   public int increaseCnt(int saleno) {
     int count = mybatis.update("sale.increaseCnt", saleno);
-    return count;
-  }
-
-  /* 패스워드 검사 */
-  @Override
-  public int passwd_check(HashMap<String, Object> hashMap) {
-    int count = mybatis.selectOne("sale.passwd_check", hashMap);
     return count;
   }
 
@@ -99,6 +85,12 @@ public class SaleDAO implements SaleDAOInter {
   public int member_check(HashMap<String, Object> hashMap) {
     int count = mybatis.selectOne("sale.member_check", hashMap);
     return count;
+  }
+
+  /* 관리자 게시글 등록*/
+  @Override
+  public int create_admin(SaleVO saleVO) {
+    return mybatis.insert("sale.create_admin", saleVO);
   }
 
 }

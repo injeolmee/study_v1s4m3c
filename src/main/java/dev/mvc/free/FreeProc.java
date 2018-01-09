@@ -24,12 +24,11 @@ public class FreeProc implements FreeProcInter {
   /* 등록 */
   @Override
   public int create(FreeVO freeVO) {
-    int count = 0;
-    count = freeDAO.create(freeVO);
+    int count = freeDAO.create(freeVO);
     return count;
   }
 
-  /* 목록 */
+  /* 목록 + 검색 + 페이징 */
   @Override
   public List<FreeVO> list() {
     List <FreeVO> list = freeDAO.list();
@@ -63,20 +62,6 @@ public class FreeProc implements FreeProcInter {
   @Override
   public int update(FreeVO freeVO) {
     int count = freeDAO.update(freeVO);
-    return count;
-  }
-
-  /* 패스워드 검사 */
-  @Override
-  public int passwd_check(FreeVO freeVO) {
-    HashMap<String, Object> hashMap = new HashMap<String, Object>();
-    
-    hashMap.put("freeno", freeVO.getFreeno());
-    hashMap.put("freepasswd", freeVO.getFreepasswd());
-    
-    /*System.out.println("passwd: " + freeVO.getFreepasswd());*/
-    
-    int count = freeDAO.passwd_check(hashMap);
     return count;
   }
 
@@ -286,8 +271,10 @@ public class FreeProc implements FreeProcInter {
     return count;
   }
 
-  
-
-
+  /* 관리자 게시글 등록 */
+  @Override
+  public int create_admin(FreeVO freeVO) {
+    return freeDAO.create_admin(freeVO);
+  }
 
 }

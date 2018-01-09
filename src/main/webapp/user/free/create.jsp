@@ -1,22 +1,29 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
 
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt_rt" %>
 
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <title>Study Matching Web Site</title>
+
 <!-------------------------- Web Logo Part -------------------------->
 <link rel="shortcut icon" href="/study/menu/images/ico/Short Logo.png">
 <!---------------------------------------------------------------------->
 <link href="${pageContext.request.contextPath }/user/free/gnacss/style.css" rel="Stylesheet" type="text/css">
-<script type="text/javascript" src="${pageContext.request.contextPath}/ckeditor/ckeditor.js"></script>
+<!--------------------------J Query Part ------------------------------>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
- 
+<!---------------------------------------------------------------------->
+ <script type="text/javascript" src="${pageContext.request.contextPath}/ckeditor/ckeditor.js"></script>
+ <script type="text/javascript" src="${pageContext.request.contextPath}/ckfinder/ckfinder.js"></script>
 <script type="text/JavaScript">
   window.onload=function(){
     CKEDITOR.replace('freecontent');  // <TEXTAREA>태그 id 값
-    
+
+
     //**************등록 버튼에 대한 이벤트 등록 **************
     $('#create_btn').click(function() { 
       var create_data = $('#frm').serialize();
@@ -26,16 +33,16 @@
     //************************************************************
   };
   
-  
   //*********************** 게시글 등록 이벤트 처리 *********************** 
   function create_check (create_data, freecontent) {
-
+    
     var freetitle = $('#freetitle').val();
-    var new_data = create_data + freecontent;
+    var new_data = create_data + freecontent; // form의 내용 + ckeditor 내용
     
     // alert("freecontent: " + freecontent);
     // alert("new_data: " + new_data);
 
+     //********** NULL 값 Check해  입력안했으면 실행하지 못하도록 함 *****************
     if (freetitle == null || freetitle == '') {
       alert("제목을 입력해주세요.");
       return false;
@@ -45,7 +52,8 @@
       alert("내용을 입력해주세요.");
       return false;
     }
-    
+    //***************************************************************************************
+  
     $.ajax({
       url: "/study/user/free/create.do",
       type: "POST",
@@ -75,10 +83,15 @@
   
   <DIV style="text-align: center; width: 100%;">
   
-  <FORM name='frm' id='frm' method='POST' action='./create.do'
-                           enctype="multipart/form-data" class="form-horizontal" style="text-align: left;">
-     <input type='hidden' name='freename' id='freename' value=${sessionScope.memname }>
-     <input type='hidden' name='memberno' id='memberno' value=${sessionScope.memberno }>
+  <FORM name='frm' id='frm' method='POST' action='' class="form-horizontal" style="text-align: left;">
+     <c:if test="${sessionScope.memberno ne null }">
+       <input type='hidden' name='memberno' id='memberno' value=${sessionScope.memberno }>
+       <input type='hidden' name='freename' id='freename' value=${sessionScope.memname }>
+     </c:if> 
+     <c:if test="${sessionScope.adminno ne null }">
+       <input type='hidden' name='adminno' id='adminno' value=${sessionScope.adminno }>
+       <input type='hidden' name='freename' id='freename' value=${sessionScope.admname }>
+     </c:if>
   
     <div class="form-group">   
       <div class="col-md-10" style="width: 100%; margin-top: 30px;">
@@ -101,13 +114,7 @@
         </div>
       </div>
   </div>
-      
-    <div class="form-group">  
-      <div class="col-md-10" style="width: 100%"> 
-      </div>
-    </div>   
-    
-
+       
   </FORM>
   
   </DIV>

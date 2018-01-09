@@ -1,0 +1,646 @@
+  /* version 1.9 2017-10-18 */
+  /* 모든 태그에 적용 */
+  *{ 
+     font-family:'Roboto', sans-serif; 
+     font-size: 14px; 
+     margin: 0px;  /* top right bottom left */
+     padding: 0px;
+     color: #555555;
+  }  
+  
+  .container {
+    width: 80%;
+    margin: 0px auto;
+  }
+  
+  .content {
+    width: 100%;
+    margin: 0px auto;
+    padding: 20px;
+  }
+     
+  /* class='focus1' */
+  .focus1{
+    font-weight: bold; 
+    font-size: 32px; 
+    color: #00FF00; 
+    background-color: #FFFF00;
+  }
+  
+  /* 특정 단어 강조 */
+  .focus2{
+    font-weight: bold; 
+    font-size: 32px; 
+    color: #FFFFFF; 
+    background-color: #FF0000;
+  }
+  
+  A:link{  /* 방문전 상태 */
+    text-decoration: none; /* 밑줄 삭제 */
+    color: #555555;
+  }
+
+  A:visited{  /* 방문후 상태 */
+    text-decoration: none; /* 밑줄 삭제 */
+    color: #555555;
+  }
+
+  A:hover{  /* A 태그에 마우스가 올라간 상태 */
+    text-decoration: underline; /* 밑줄 출력 */
+    color: #5555FF;
+  }
+
+  A:active{  /* A 태그를 클릭한 상태 */
+    text-decoration: underline; /* 밑줄 출력 */
+    color: #5555FF;
+  }  
+
+  A.button {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+  }
+  
+  .li_none{
+    list-style: none; /* 블렛 기호 생략 */
+    margin: 10px 10px; /* 위아래 좌우 */
+  }
+  
+  .title_box{
+    color: #FFFFFF;
+    width: 20%; 
+    margin: 10px auto; 
+    padding: 3px; 
+    background-color: #6699ff; 
+    border: solid 1px #555555; 
+    text-align: center;
+  }
+  
+  .title_line {
+    color: #333333;
+    width: 25%; 
+    margin: 20px auto; 
+    padding: 3px; 
+    border-bottom: solid 2px #555555; 
+    text-align: center;
+  }
+  
+  .table_basic {
+    margin: 10px auto; 
+    border: none; 
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .th_basic {
+    border: solid 1px #CCCCCC; 
+    background-color: #e6eeff;
+  }
+  
+  .td_basic {
+    border: solid 1px #CCCCCC; 
+    background-color: #FFFFFF;
+    text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .td_left {
+    border: solid 1px #CCCCCC; 
+    background-color: #FFFFFF;
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  
+  .td_img {
+    border: solid 1px #CCCCCC; 
+    background-color: #FFFFFF;
+    text-align: center;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+    
+  .bottom_menu {
+    margin: 0px auto; 
+    text-align: center; 
+    background-color: #FFFFFF;
+    clear: both;
+    display: table;
+  }
+  
+  .top_menu1{
+    color: #CCCCCC;
+  }
+  
+  .fieldset_basic{
+    width: 100%; 
+    margin: 10px auto;
+    border-left: none;
+    border-right: none;
+    font-size: 20px;
+  }
+
+  .fieldset_home{
+    width: 90%; 
+    margin: 10px auto;
+    border-left: none;
+    border-right: none;
+  }
+
+  .fieldset_no_line{
+    border: none;
+  }
+    
+  .legend_basic {
+    margin: 0px 30px;
+    border: solid 1px #AAAAAA;
+    background-color: #a6c2ff;
+    color: #FFFFFF;
+    padding: 2px;
+  }
+  
+  .legend_home {
+    margin: 0px 30px;
+    border: none;
+    padding: 2px;
+  }
+  
+  .span_asterisk{  /* (*=asterisk) */
+    vertical-align: top; 
+    font-size: 20px; 
+  }
+  
+  /* 이미지 파일을 찾을 때 style.css 파일을 기준으로 검색함. */
+  .li_home {
+    background: url(./images/bu6.gif) left center no-repeat;
+    line-height: 20px;
+    padding-left: 15px;
+    list-style: none;
+  }
+
+  .li_center {
+    text-align: center;
+    list-style: none;
+    margin: 20px auto;
+  }
+
+  .li_right {
+    text-align: right;
+    list-style: none;
+    margin: 10px 10px;
+  }
+      
+  /* Menu 시작 ----------------------------------------
+  <DIV id='top_menu', 페이지에서 1번만 사용됨  */
+  .top_menu_label{
+    position: relative; /* 속해 있는 부모 태그 기준 좌표 이동*/
+    top: 0%;
+    left: 0%;
+    color: #333333;
+    
+  }
+  
+  #top_menu{
+    margin-top: 0px; 
+    width: 100%;
+    height: 150px;
+  }
+  
+  .top_menu_list{
+    position: relative; /* 속해 있는 부모 태그 기준 좌표 이동*/
+    top: 80%;
+    left: 0%;
+    background-color: rgba(0, 0, 255, 0.2); /* 0.2: Alpha 값 투명도 */   
+    color: white;
+  }
+
+  /* 의사 클래스(pseudo-class) 를 이용한 CSS 적용, <A class='menu_link'  */
+  .menu_link:link{
+    color: white;
+    text-decoration: none;
+  }
+
+  .menu_link:visited{  /* 방문후 상태 */
+    color: white;
+    text-decoration: none; /* 밑줄 삭제 */
+  }
+    
+  .menu_link:hover{  /* A 태그에 마우스가 올라간 상태 */
+    color: white;
+    font-weight: bold;
+    text-decoration: none; /* 밑줄 삭제 */
+  }
+  
+  .menu_link:active{  /* A 태그를 클릭한 상태 */
+    color: white;
+    text-decoration: none; /* 밑줄 삭제 */
+
+  }
+
+  /* Menu 종료 ---------------------------------------- */
+  
+    
+  /* ASIDE 서브메뉴의 시작 -------------------------- */
+    .aside_menu{ /* 서브 메뉴 */
+    width: 100%;
+    border: none;
+    margin: 10px auto;
+  }
+
+  .menu_line{
+    width: 100%;
+    border-bottom: dotted 1px #777777;
+    margin: 1px 0px 10px 0px; /* top -> right -> bottom -> left */
+  } 
+  
+  /* ASIDE 메뉴 세로 구분선 */
+  .menu_divide{
+    color: #777777;
+    font-size: 0.8em; /* 주변에비해 글자를 80% 크기로 출력 */
+  }  
+  
+    /* ASIDE 서브메뉴의 종료 -------------------------- */
+
+  .input_basic {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }  
+  
+  .message {
+    width: 70%;
+    border: none;
+    margin: 0px auto;
+    text-align: center;
+    background-color: #EEEEFF;
+    padding: 30px;
+  }
+
+  .span_title {
+    font-size: 1.2em;
+    color: #FFFFFF;
+    background-color: rgba(0, 0, 100, 0.4);
+    font-weight: bold;
+    padding: 2px;
+  }
+    
+  .span_info {
+    color: #FFFFFF;
+    background-color: rgba(0, 200, 0, 0.6);
+    font-weight: bold;
+    padding: 2px;
+  }
+  
+  .span_alert {
+    color: #FFFFFF;
+    background-color: rgba(0, 0, 200, 0.6);
+    font-weight: bold;
+    padding: 2px;    
+  }
+  
+  .span_warning {
+    color: #FFFFFF;
+    background-color: rgba(255, 0, 0, 0.6);
+    font-weight: bold;
+    padding: 2px;    
+  }
+  
+  .hr_dotted{
+    width: 100%; 
+    clear: both; 
+    height: 1px; 
+    border-top: dotted 1px #AAAAAA; 
+    border-bottom: none;
+    border-left: none;
+    border-right: none; 
+    margin: 10px auto;
+  }
+  
+  .div_grid_img{
+    background-color: #ffffff; 
+    float: left; 
+    position: relative; 
+    margin: 0px auto; 
+  }
+  
+  .label_basic {
+    width: 110px; 
+    background-color: #FFFFFF; 
+    display: inline-block; 
+    text-align: right;
+  }
+  
+  /* 팝업 윈도우 */
+  .popup1 {
+    line-height: 50px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 5px;
+    position: absolute;
+    top: 30%;
+    left: 35%;
+    width: 36%;
+    height: 40%;
+    background-color: #333333;
+    opacity: 0.8;
+    text-align: center;
+    color: #FFFFFF;
+  }
+  
+   .popup2 {
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-left: 5px;
+    padding-right: 5px;
+    position: absolute;
+    top: 2%;
+    left: 2%;
+    width: 90%;
+    background-color: #333333;
+    opacity: 1.0;
+    text-align: center;
+    color: #FFFFFF;
+  }
+  
+  
+  /* 평점등록 별 CSS. */
+.star-input>.input,
+.star-input>.input>label:hover,
+.star-input>.input>input:focus+label,
+.star-input>.input>input:checked+label{display: inline-block;vertical-align:middle;background:url('./images/grade_img2.png')no-repeat;}
+.star-input{display:inline-block; white-space:nowrap;width:225px;height:40px;padding:25px;line-height:30px;}
+.star-input>.input{display:inline-block;width:150px;background-size:150px;height:28px;white-space:nowrap;overflow:hidden;position: relative;}
+.star-input>.input>input{position:absolute;width:1px;height:1px;opacity:0;}
+star-input>.input.focus{outline:1px dotted #ddd;}
+.star-input>.input>label{width:30px;height:0;padding:28px 0 0 0;overflow: hidden;float:left;cursor: pointer;position: absolute;top: 0;left: 0;}
+.star-input>.input>label:hover,
+.star-input>.input>input:focus+label,
+.star-input>.input>input:checked+label{background-size: 150px;background-position: 0 bottom;}
+.star-input>.input>label:hover~label{background-image: none;}
+.star-input>.input>label[for="p1"]{width:30px;z-index:5;}
+.star-input>.input>label[for="p2"]{width:60px;z-index:4;}
+.star-input>.input>label[for="p3"]{width:90px;z-index:3;}
+.star-input>.input>label[for="p4"]{width:120px;z-index:2;}
+.star-input>.input>label[for="p5"]{width:150px;z-index:1;}
+.star-input>output{display:inline-block;width:60px; font-size:20px;text-align:right; vertical-align:middle;}
+
+.star-output>.out,
+.star-output>.out>label,
+/* .star-output>.out>span:focus+label, */
+.star-output>.out>span+label{display: inline-block;vertical-align:middle;background:url('./images/grade_img2.png')no-repeat;},
+.star-output{display:inline-block; white-space:nowrap;width:225px;height:40px;padding:25px;line-height:24px;}
+.star-output>.out{display:inline-block;width:120px;background-size:120px;height:23px;white-space:nowrap;overflow:hidden;position: relative;}
+.star-output>.out>span{position:absolute;width:1px;height:1px;opacity:0;}  
+star-output>.out.focus{outline:1px dotted #ddd;}
+.star-output>.out>label{width:30px;height:0;padding:22px 0 0 0;overflow: hidden;float:left;position: absolute;top: 0;left: 0;}
+.star-output>.out>label,
+/* .star-output>.out>span:focus+label, */
+.star-output>.out>span+label{background-size: 120px;background-position: 0 bottom;},
+.star-output>.out>label[for="a1"]{width:24px;z-index:5;}
+.star-output>.out>label[for="a2"]{width:48px;z-index:4;}
+.star-output>.out>label[for="a3"]{width:72px;z-index:3;}
+.star-output>.out>label[for="a4"]{width:96px;z-index:2;}
+.star-output>.out>label[for="a5"]{width:120px;z-index:1;}
+
+
+.nav {
+  margin-bottom: 0;
+  padding-left: 0; // Override default ul/ol
+  list-style: none;
+  &:extend(.clearfix all)
+
+  > li {
+    position: relative;
+    display: block;
+
+    > a {
+      position: relative;
+      display: block;
+      padding: @nav-link-padding;
+      &:hover,
+      &:focus {
+        text-decoration: none;
+        background-color: @nav-link-hover-bg;
+      }
+    }
+
+    // Disabled state sets text to gray and nukes hover/tab effects
+    &.disabled > a {
+      color: @nav-disabled-link-color;
+
+      &:hover,
+      &:focus {
+        color: @nav-disabled-link-hover-color;
+        text-decoration: none;
+        background-color: transparent;
+        cursor: @cursor-disabled;
+      }
+    }
+  }
+
+  // Open dropdowns
+  .open > a {
+    &,
+    &:hover,
+    &:focus {
+      background-color: @nav-link-hover-bg;
+      border-color: @link-color;
+    }
+  }
+
+  // Nav dividers (deprecated with v3.0.1)
+  //
+  // This should have been removed in v3 with the dropping of `.nav-list`, but
+  // we missed it. We don't currently support this anywhere, but in the interest
+  // of maintaining backward compatibility in case you use it, it's deprecated.
+  .nav-divider {
+    .nav-divider();
+  }
+
+  // Prevent IE8 from misplacing imgs
+  //
+  // See https://github.com/h5bp/html5-boilerplate/issues/984#issuecomment-3985989
+  > li > a > img {
+    max-width: none;
+  }
+}
+
+// Give the tabs something to sit on
+.nav-tabs {
+  border-bottom: 1px solid @nav-tabs-border-color;
+  > li {
+    float: left;
+    // Make the list-items overlay the bottom border
+    margin-bottom: -1px;
+
+    // Actual tabs (as links)
+    > a {
+      margin-right: 2px;
+      line-height: @line-height-base;
+      border: 1px solid transparent;
+      border-radius: @border-radius-base @border-radius-base 0 0;
+      &:hover {
+        border-color: @nav-tabs-link-hover-border-color @nav-tabs-link-hover-border-color @nav-tabs-border-color;
+      }
+    }
+
+    // Active state, and its :hover to override normal :hover
+    &.active > a {
+      &,
+      &:hover,
+      &:focus {
+        color: @nav-tabs-active-link-hover-color;
+        background-color: @nav-tabs-active-link-hover-bg;
+        border: 1px solid @nav-tabs-active-link-hover-border-color;
+        border-bottom-color: transparent;
+        cursor: default;
+      }
+    }
+  }
+  // pulling this in mainly for less shorthand
+  &.nav-justified {
+    .nav-justified();
+    .nav-tabs-justified();
+  }
+}
+
+
+// Pills
+// -------------------------
+.nav-pills {
+  > li {
+    float: left;
+
+    // Links rendered as pills
+    > a {
+      border-radius: @nav-pills-border-radius;
+    }
+    + li {
+      margin-left: 2px;
+    }
+
+    // Active state
+    &.active > a {
+      &,
+      &:hover,
+      &:focus {
+        color: @nav-pills-active-link-hover-color;
+        background-color: @nav-pills-active-link-hover-bg;
+      }
+    }
+  }
+}
+
+
+// Stacked pills
+.nav-stacked {
+  > li {
+    float: none;
+    + li {
+      margin-top: 2px;
+      margin-left: 0; // no need for this gap between nav items
+    }
+  }
+}
+
+
+// Nav variations
+// --------------------------------------------------
+
+// Justified nav links
+// -------------------------
+
+.nav-justified {
+  width: 100%;
+
+  > li {
+    float: none;
+    > a {
+      text-align: center;
+      margin-bottom: 5px;
+    }
+  }
+
+  > .dropdown .dropdown-menu {
+    top: auto;
+    left: auto;
+  }
+
+  @media (min-width: @screen-sm-min) {
+    > li {
+      display: table-cell;
+      width: 1%;
+      > a {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+// Move borders to anchors instead of bottom of list
+//
+// Mixin for adding on top the shared `.nav-justified` styles for our tabs
+.nav-tabs-justified {
+  border-bottom: 0;
+
+  > li > a {
+    // Override margin from .nav-tabs
+    margin-right: 0;
+    border-radius: @border-radius-base;
+  }
+
+  > .active > a,
+  > .active > a:hover,
+  > .active > a:focus {
+    border: 1px solid @nav-tabs-justified-link-border-color;
+  }
+
+  @media (min-width: @screen-sm-min) {
+    > li > a {
+      border-bottom: 1px solid @nav-tabs-justified-link-border-color;
+      border-radius: @border-radius-base @border-radius-base 0 0;
+    }
+    > .active > a,
+    > .active > a:hover,
+    > .active > a:focus {
+      border-bottom-color: @nav-tabs-justified-active-link-border-color;
+    }
+  }
+}
+
+
+// Tabbable tabs
+// -------------------------
+
+// Hide tabbable panes to start, show them when `.active`
+.tab-content {
+  > .tab-pane {
+    display: none;
+  }
+  > .active {
+    display: block;
+  }
+}
+
+
+// Dropdowns
+// -------------------------
+
+// Specific dropdowns
+.nav-tabs .dropdown-menu {
+  // make dropdown border overlap tab border
+  margin-top: -1px;
+  // Remove the top rounded corners here since there is a hard edge above the menu
+  .border-top-radius(0);
+}
+
+  
+  
+  
+  
+  
+  
+  
+  
+  

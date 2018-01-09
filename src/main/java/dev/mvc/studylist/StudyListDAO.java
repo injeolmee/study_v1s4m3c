@@ -14,7 +14,7 @@ public class StudyListDAO implements StudyListDAOInter{
   private SqlSessionTemplate mybatis;
   
   public StudyListDAO() {
-    System.out.println("--> StudyListDAO created.");
+    // System.out.println("--> StudyListDAO created.");
   }
 
   @Override
@@ -112,6 +112,12 @@ public class StudyListDAO implements StudyListDAOInter{
   public List<StudyListVO> rank_top5() {
     
     return mybatis.selectList("studylist.rank_top5");
+  }
+
+  @Override
+  public int check_stdno(HashMap hashmap) {
+    
+    return mybatis.selectOne("studylist.check_stdno", hashmap);
   }
 
 

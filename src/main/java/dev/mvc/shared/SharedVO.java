@@ -52,6 +52,8 @@ public class SharedVO {
   private String sharedpasswd;
   /* 회원번호 */
   private int memberno;
+  /* 관리자 번호 */
+  private int adminno;
   /* 파일 실제 사이즈 위한 임시 변수*/
   private MultipartFile file1MF;
   /** size1의 컴마 저장 출력용 임시 변수 */
@@ -69,6 +71,12 @@ public class SharedVO {
   /* 다음글 위한 임시 변수 */
   private int post_num;
   
+  public int getAdminno() {
+    return adminno;
+  }
+  public void setAdminno(int adminno) {
+    this.adminno = adminno;
+  }
   public int getPre_num() {
     return pre_num;
   }

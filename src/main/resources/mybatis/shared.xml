@@ -15,14 +15,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             0, #{sharedfile}, #{sharedfstor},  #{sharedtum}, #{sharedsize}, sysdate, 0, 0, #{memberno})
   </insert>
   
-  <!-- 게시판 목록 -->
-  <select id="list" resultType="SharedVO">
-    SELECT sharedno, sharedtitle, sharedcontent, sharedname, sharedyoutube, sharedseqno,
-          sharedfile, sharedfstor, sharedtum, sharedsize, shareddate, sharedcnt, sharedlike, memberno
-    FROM shared
-    ORDER BY sharedno DESC
-  </select>
-  
   <!-- 게시판 목록 + 검색 + 페이징 -->
   <select id="list_search" resultType="SharedVO" parameterType="HashMap">
     SELECT sharedno, sharedtitle, sharedcontent, sharedname, sharedyoutube, sharedseqno,
@@ -103,20 +95,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     WHERE sharedno = #{sharedno}
   </update>
   
-  <!-- 추천수 상승 -->
-  <update id="increaseLike" parameterType="int">
-    UPDATE shared
-    SET sharedlike = sharedlike + 1
-    WHERE sharedno = #{sharedno}
-  </update>
-  
-  <!-- 패스워드 검사 -->
-  <select id="passwd_check" resultType="int" parameterType="HashMap">
-    SELECT COUNT(*) as sharedcnt 
-    FROM shared
-    WHERE sharedno = #{sharedno} AND sharedpasswd = #{sharedpasswd}
-  </select>
-  
   <!-- 아이디 검사 -->
   <select id="member_check" resultType="int" parameterType="HashMap">
     SELECT COUNT(*) as sharedcnt 
@@ -137,6 +115,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     DELETE FROM shared
     WHERE sharedno = #{sharedno}
   </delete>
+  
+  <!-- 관리자 게시글 등록 -->
+  <insert id="create_admin" parameterType="SharedVO">
+    INSERT INTO shared (sharedno, sharedtitle, sharedcontent, sharedname, sharedyoutube, sharedseqno, sharedfile, sharedfstor, sharedtum, 
+                           sharedsize, shareddate, sharedcnt, sharedlike, adminno) 
+    VALUES ((SELECT NVL(MAX(sharedno), 0)+1 as sharedno FROM shared),
+            #{sharedtitle} , #{sharedcontent}, #{sharedname}, #{sharedyoutube}, 
+            0, #{sharedfile}, #{sharedfstor},  #{sharedtum}, #{sharedsize}, sysdate, 0, 0, #{adminno})
+  </insert>
   
 
 </mapper>

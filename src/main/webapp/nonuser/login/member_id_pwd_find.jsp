@@ -52,7 +52,7 @@ $(function(){
            // alert("data.code: " + data.code); 
           if(data.codesend == "성공") {                       
             copy_code = data.code;
-            // alert("copy_code: " + copy_code); 
+            alert("copy_code: " + copy_code); 
             msg = "<span style='color:green;'>이메일에 코드가 전송되었습니다.</span>";
             $('#panel_code').html(msg); 
             $('#panel_code').show();

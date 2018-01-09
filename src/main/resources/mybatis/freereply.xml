@@ -62,6 +62,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     VALUES ((SELECT NVL(MAX(freplyno), 0)+1 as freplyno FROM freereply), #{freplycontent}, #{freplyname}, sysdate, 
                #{freplygrpno}, #{freplyindent}, #{freplyansnum}, #{freeno}, #{memberno}, #{seqno})
   </insert>
+  
+  <!-- 댓글의 답변(대댓글) 등록 (관리자용) --> 
+  <insert id="reply_admin" parameterType="FreereplyVO">
+    INSERT INTO freereply (freplyno, freplycontent, freplyname, freplydate, freplygrpno, 
+                                  freplyindent, freplyansnum, freeno, adminno, seqno)    
+    VALUES ((SELECT NVL(MAX(freplyno), 0)+1 as freplyno FROM freereply), #{freplycontent}, #{freplyname}, sysdate, 
+               #{freplygrpno}, #{freplyindent}, #{freplyansnum}, #{freeno}, #{adminno}, #{seqno})
+  </insert>
 
   <!-- ******************** 대댓글(답변) 관련 종료 ******************** -->
   
@@ -97,5 +105,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     DELETE FROM freereply
     WHERE freeno = #{freeno}
   </delete>
+  
+  <!-- 관리자 댓글 등록 -->
+  <insert id="create_admin" parameterType="FreereplyVO">
+    INSERT INTO freereply (freplyno, freplycontent, freplyname, freplydate, freplygrpno, 
+                                 freplyindent, freplyansnum, freeno, adminno, seqno) 
+    VALUES ((SELECT NVL(MAX(freplyno), 0)+1 as freplyno FROM freereply), #{freplycontent}, #{freplyname}, sysdate,
+               (SELECT NVL(MAX(freplygrpno), 0)+1 as freplygrpno FROM freereply), 0, 0, #{freeno}, #{adminno}, 1)
+  </insert>
+  
+  <!-- 부모 댓글일 경우 하위 댓글이 존재하는지 검사 -->
+  <select id="parent_check" parameterType="int" resultType="int">
+    SELECT COUNT(*) as cnt
+    FROM freereply
+    WHERE freplygrpno = #{freplygrpno}
+  </select>
+  
+  <!-- 대댓글과 관련되어 맨 마지막 댓글인지 검사 -->
+  <select id="reply_check" parameterType="HashMap" resultType="int">
+    SELECT MAX(freplyindent)
+    FROM freereply
+    WHERE freeno = #{freeno} AND freplygrpno = #{freplygrpno}
+  </select>
   
 </mapper>

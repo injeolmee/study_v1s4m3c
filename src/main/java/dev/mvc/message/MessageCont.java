@@ -54,6 +54,7 @@ public class MessageCont {
   }
   
   
+  
   /** 
    * 받은 쪽지함 리스트 정보
    * @param request

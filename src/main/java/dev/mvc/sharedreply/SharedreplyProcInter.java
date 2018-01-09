@@ -126,4 +126,46 @@ public interface SharedreplyProcInter {
    * @return
    */
   public int delete_all (int sharedno);
+
+  /**
+   * <XMP>
+   * 관리자 댓글 등록
+   * <insert id="create_admin" parameterType="SharedreplyVO">
+   * </XMP>
+   * @param sharedreplyVO
+   * @return
+   */
+  public int create_admin (SharedreplyVO sharedreplyVO);
+  
+  /**
+   * <XMP>
+   * 관리자 대댓글 등록
+   * <insert id="reply_admin" parameterType="SharedreplyVO">
+   * </XMP>
+   * @param sharedreplyVO
+   * @return
+   */
+  public int reply_admin (SharedreplyVO sharedreplyVO);
+  
+  /**
+   * <XMP>
+   * 부모 댓글일 경우 하위댓글이 존재하는지 검사
+   * <select id="parent_check" parameterType="int" resultType="int">
+   * </XMP>
+   * @param shreplygrpno
+   * @return int
+   */
+  public int parent_check (int shreplygrpno);
+  
+  /**
+   * <XMP>
+   * 대댓글과 관련되어서 맨 마지막 댓글인지 검사
+   * <select id="reply_check" parameterType="HashMap" resultType="int">
+   * </XMP>
+   * @param hashMap (sharedno, shreplygrpno)
+   * @return
+   */
+  public int reply_check (HashMap hashMap);
+  
+  
 }

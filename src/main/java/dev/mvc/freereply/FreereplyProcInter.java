@@ -126,4 +126,44 @@ public interface FreereplyProcInter {
    * @return
    */
   public int delete_all (int freeno);
+  
+  /**
+   * <XMP>
+   * 관리자 댓글 등록
+   * <insert id="create_admin" parameterType="FreereplyVO">
+   * </XMP>
+   * @param freereplyVO
+   * @return
+   */
+  public int create_admin (FreereplyVO freereplyVO);
+  
+  /**
+   * <XMP>
+   * 관리자 대댓글 등록
+   * <insert id="reply_admin" parameterType="FreereplyVO">
+   * </XMP>
+   * @param freereplyVO
+   * @return
+   */
+  public int reply_admin (FreereplyVO freereplyVO);
+  
+  /**
+   * <XMP>
+   * 부모 댓글일 경우 하위 댓글이 존재하는지 검사
+   * <select id="parent_check" parameterType="int" resultType="int">
+   * </XMP>
+   * @param freplygrpno
+   * @return
+   */
+  public int parent_check (int freplygrpno);
+  
+  /**
+   * <XMP>
+   * 대댓글과 관련되어 맨 마지막 댓글인지 검사
+   * <select id="reply_check" parameterType="HashMap" resultType="int">
+   * </XMP>
+   * @param hashMap
+   * @return
+   */
+  public int reply_check (HashMap hashMap);
 }

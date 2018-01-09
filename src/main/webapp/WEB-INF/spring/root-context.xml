@@ -50,7 +50,13 @@
                               dev.mvc.salereply,
                               dev.mvc.freereply,
                               dev.mvc.freelike,
-                              dev.mvc.sale
+                              dev.mvc.sale,
+                              dev.mvc.room,
+                              dev.mvc.review,
+                              dev.mvc.rvlike,
+                              dev.mvc.mystudy,
+                              dev.mvc.my_std_catelist,
+                              dev.mvc.my_pds
                              " />
 
     <property name="configLocation" value="classpath:mybatis/config/mybatis-config.xml" />

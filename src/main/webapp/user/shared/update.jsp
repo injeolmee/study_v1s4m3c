@@ -13,8 +13,10 @@
 <!---------------------------------------------------------------------->
 <link href="${pageContext.request.contextPath}/user/shared/gnacss/style.css" rel="Stylesheet" type="text/css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/ckeditor/ckeditor.js"></script>
+<!--------------------------J Query Part ------------------------------>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
- 
+<!---------------------------------------------------------------------->
+
 <script type="text/JavaScript">
   window.onload=function(){
     CKEDITOR.replace('sharedcontent');  // <TEXTAREA>태그 id 값
@@ -39,8 +41,14 @@
     // alert("파일명 받아오는지 확인: " + salefstor);
     var formData = new FormData();
     
-    formData.append("memberno", $("input[name=memberno]").val());
-    formData.append("sharedname", $("input[name=sharedname]").val());
+    if ($("input[name=memberno]").val() != null) { // 회원일 경우 회원 데이터 전송
+      formData.append("memberno", $("input[name=memberno]").val());
+    }
+    
+    if ($("input[name=adminno]").val() != null) { // 관리자일 경우 관리자 데이터 전송
+      formData.append("adminno", $("input[name=adminno]").val());
+    }
+
     formData.append("sharedtitle", $("input[name=sharedtitle]").val());
     formData.append("sharedyoutube", $("textarea[name=sharedyoutube]").val());
     formData.append("sharedcontent", ck_sharedcontent);
@@ -152,7 +160,7 @@
 </head>
 <body>
 <jsp:include page="/menu/top.jsp" flush="false" />
-<div class="container" style='margin-bottom: 100px;'>
+<div class="container">
 <DIV class='content' style='width: 60%; margin: 0px auto; '>  
 
   <DIV class="title_line"> 게시글 수정 </DIV>
@@ -160,8 +168,12 @@
   <DIV style="text-align: center; width: 100%;">
   
     <FORM name='frm' id='frm' method='POST' action='' enctype="multipart/form-data" class="form-horizontal" style="text-align: left;">
-      <input type='hidden' name='memberno' id='memberno' value=${sessionScope.memberno }>
-      <input type='hidden' name='sharedname' id='sharedname' value=${sessionScope.memname }>
+      <c:if test="${sessionScope.memberno != null }">
+        <input type='hidden' name='memberno' id='memberno' value=${sessionScope.memberno }>
+      </c:if>
+      <c:if test="${sessionScope.adminno != null }">
+        <input type='hidden' name='adminno' id='adminno' value=${sessionScope.adminno }>
+      </c:if>
       <input type='hidden' name='sharedno' id='sharedno' value=${sharedVO.sharedno }>
       <input type='hidden' name='sharedfstor' id='sharedfstor' value=${sharedVO.sharedfstor }>
       <input type='hidden' name='sharedtum' id='sharedtum' value=${sharedVO.sharedtum }>
@@ -182,9 +194,9 @@
         </div>
       </div>
     
-      <div class="form-group" style="display: -webkit-box; width: 500px;"> 
+      <div class="form-group" style="display: -webkit-box; width: 500px; padding-left: 15px;"> 
         <label for="title" class="control-label" style="margin-right: 18px;">기존 업로드 파일</label>
-        <div class="col-md-10" style="width: 100%;  padding-top: 7px;">
+        <div class="col-md-10" style="width: 100%;  padding-top: 7px; float: none;">
           <c:set var='sharedfile' value="${fn:toLowerCase(sharedVO.sharedfile)}" /> <!-- 파일명을 소문자로 변경 -->
           <!-- 소문자로 변경된 파일명이 이미지인지 검사 -->
           <c:choose>
@@ -208,7 +220,7 @@
       </div>
       
       <div class="form-group" style="display: -webkit-box; width: 500px;"> 
-        <label for="file1MF" class="col-md-2 control-label" style="width: 90px; padding-top: 2px; padding-right: 30px;">업로드 파일  </label>
+        <label for="file1MF" class="col-md-2 control-label" style="width: 90px; padding-top: 2px; padding-right: 30px; text-align: left;">업로드 파일  </label>
         <div class="col-md-10" style="text-align: center; width: 100%;">
           <input type="file" class="input-md" name='file1MF' id='file1MF' value="파일 선택" size='40' style="border: none; line-height: 0px;">
         </div>
@@ -216,7 +228,7 @@
     
       <div class="form-group">  
         <div class="col-md-10" style="width: 100%; display: -webkit-box;"> 
-          <label for="title" class="control-label" style="margin-right: 50px; ">YOUTUBE</label>
+          <label for="title" class="control-label" style="margin-right: 70px; ">YOUTUBE</label>
           <textarea class="form-control input-md" name="sharedyoutube" id="sharedyoutube" rows="3" style="width: 60%;">${sharedVO.sharedyoutube}</textarea>
         </div>
       </div>      

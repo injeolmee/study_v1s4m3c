@@ -231,7 +231,7 @@ function msg_recv_list(nowpage){
           add_tr+='  <div id="dropdown'+data[0].list_info[i].msg_no+'" class="dropdown">';
           add_tr+='    <button onclick="dropdown('+data[0].list_info[i].msg_no+', event);" class="btn btn-link" type="button" data-toggle="dropdown">'+data[0].list_info[i].memid+'('+data[0].list_info[i].memname+')<span class="caret"></span></button>';
           add_tr+='    <ul id="dropdown_menu'+data[0].list_info[i].msg_no+'" class="dropdown-menu">';
-          add_tr+='      <li style="text-align:left;"><a onclick="javascript:wait();"><img src="/study/my_pds/images/mem_info.png">회원정보</a></li>';
+          add_tr+='      <li style="text-align:left;"><a onclick="javascript:meminfo();"><img src="/study/my_pds/images/mem_info.png">회원정보</a></li>';
           add_tr+='      <li style="text-align:left;"><a onclick="javascript:msg_create(\''+data[0].list_info[i].memid+'\');"><img src="/study/my_pds/images/message_add.png">쪽지보내기</a></li>';
           add_tr+='      <li style="text-align:left;"><a onclick="javascript:wait();">그외 기능</a></li>';
           add_tr+='    </ul>';
@@ -259,6 +259,10 @@ function msg_recv_list(nowpage){
       alert("실패");
     }
   });
+}
+
+function meminfo() {
+  window.open("/study/user/member/mem_read_info.do?memberno=3", "a", "resizable, width=450, height=500, left=500, top=100");
 }
 
 /**
@@ -323,7 +327,7 @@ function msg_send_list(nowpage){
           add_tr+='  <div id="dropdown'+data[0].list_info[i].msg_no+'" class="dropdown">';
           add_tr+='    <button onclick="dropdown('+data[0].list_info[i].msg_no+', event);" class="btn btn-link" type="button" data-toggle="dropdown">'+data[0].list_info[i].memid+'('+data[0].list_info[i].memname+')<span class="caret"></span></button>';
           add_tr+='    <ul id="dropdown_menu'+data[0].list_info[i].msg_no+'" class="dropdown-menu">';
-          add_tr+='      <li style="text-align:left;"><a onclick="javascript:wait();"><img src="/study/my_pds/images/mem_info.png">회원정보</a></li>';
+          add_tr+='      <li style="text-align:left;"><a onclick="javascript:meminfo();"><img src="/study/my_pds/images/mem_info.png">회원정보</a></li>';
           add_tr+='      <li style="text-align:left;"><a onclick="javascript:msg_create(\''+data[0].list_info[i].memid+'\');"><img src="/study/my_pds/images/message_add.png">쪽지보내기</a></li>';
           add_tr+='      <li style="text-align:left;"><a onclick="javascript:wait();">그외 기능</a></li>';
           add_tr+='    </ul>';
@@ -369,7 +373,7 @@ function msg_repo_list(nowpage){
     dataType: "json", // or json
     data: "search_condition="+search_condition+"&msgword="+msgword+"&nowpage="+nowpage,
     success: function(data){ 
-      var add_tr=""; // tbody에 끼워넣을 tr 정보들.
+      var add_tr=""; // tbody에 끼워넣을 tr 정보들. 
       
       if(search_condition=="search_id"){
         real_condition="아이디";

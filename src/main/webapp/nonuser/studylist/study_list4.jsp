@@ -15,12 +15,13 @@ String root = request.getContextPath();
 <head>
 <meta charset="UTF-8">
 <title></title>
-<link href="../css/style.css" rel='Stylesheet' type='text/css'>
+<link href="./css/style.css" rel='Stylesheet' type='text/css'>
     
 
 
 <!-- jQuery library -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/JavaScript"
+          src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
 
 <style>
@@ -127,7 +128,7 @@ $(function(){
   
   search_topic(1);
 
-  rank_top5();
+
 });
 
 function search_topic(nowPage){
@@ -205,7 +206,14 @@ function search_topic(nowPage){
         
         
         li += "</td>";        
-        li += "<td style='text-align:center;'><span class='label label-warning'>"+stdlist_cnt+"</span></td>";        
+        li += "<td style='text-align:center;'><span class='label label-warning'>"+stdlist_cnt+"</span></td>";  
+        
+        if(${sessionScope.admauth == 'M' or sessionScope.admauth == 'A'}){
+          li += "<td>";
+          li += "<a onclick='javascript:alert_delete_form("+stdlist_no+")'>삭제</a>";
+          li += "</td>";
+        }
+        
         li += "</tr>";        
         
       }
@@ -224,10 +232,47 @@ function search_topic(nowPage){
 };
 
 
+//스터디그룹 삭제 처리
+function delete_stdlist(stdlist_no){
+  
+  params ='stdlist_no='+stdlist_no;
+  
+  $.ajax({
+    url : '/study/admin/studylist/delete.do',
+    type: "GET",
+    data : params,
+    dataType : 'JSON',
+    success : function(data){
+      
+      if(data.count > 0){
+        
+        location.href="/study/nonuser/studylist/list.do";
+      }
+              
+    }     
+})
+};
+
+//스터디그룹 삭제에 대한 alertform
+function alert_delete_form(stdlist_no){
+ 
+ var r = confirm("스터디그룹을 삭제하시겠습니까?  삭제 하면 복구 할 수 없습니다.")
+
+ if (r == true) {
+ 
+   delete_stdlist(stdlist_no);
+     
+ } else {
+   
+   alert("취소되었습니다.");
+ }
+ 
+};
+
 </script>
 <body>
 <jsp:include page="/menu/top.jsp" flush='false'/>
-<DIV class='container'>
+<DIV class='container' style='margin-bottom:5%;'>
 <DIV class='content'>
 
 
@@ -285,6 +330,7 @@ function search_topic(nowPage){
       <col style='width:9%; '>
       <col style='width:5%; '>
       <col style='width:5%; '>
+      <col style='width:5%; '>
     </colgroup>
     <thead>
       <tr>
@@ -298,6 +344,12 @@ function search_topic(nowPage){
         <th style='text-align:center;'>좋아요</th>
         <th style='text-align:center;'>상태</th>
         <th style='text-align:center;'>조회수</th>
+          <c:choose>
+            <c:when test="${sessionScope.admauth == 'M' or sessionScope.admauth == 'A'}">
+              <th style='text-align:center;'>기타</th>
+            </c:when>
+            <c:otherwise></c:otherwise>
+          </c:choose>        
       </tr>
     </thead>
     <tbody>

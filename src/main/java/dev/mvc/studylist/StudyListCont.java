@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONArray;
@@ -53,7 +54,7 @@ public class StudyListCont {
   // http://localhost:9090/study/studylist/create.do
   @RequestMapping(value = "/user/studylist/create.do", method = RequestMethod.GET)
   public ModelAndView create() {
-    // System.out.println("--> create() GET executed");
+    System.out.println("--> create() GET executed");
     ModelAndView mav = new ModelAndView();
     mav.setViewName("/user/studylist/studycreate"); // webapp/studylist/create.jsp
 
@@ -68,7 +69,7 @@ public class StudyListCont {
    */
   @RequestMapping(value = "/user/studylist/create.do", method = RequestMethod.POST)
   public ModelAndView create(HttpSession session, StudyListVO studyListVO) {
-    // System.out.println("--> create() POST executed");
+    System.out.println("--> create() POST executed");
 
     ModelAndView mav = new ModelAndView();
 
@@ -149,17 +150,14 @@ public class StudyListCont {
 
         recruitProc.leader_auth(hashmap);
         Std_RecomProc.create(hashmap);
-        msgs.add("등록 성공");
+
+        mav.setViewName("redirect:/nonuser/studylist/list.do"); // 확장자 명시 
       }
     } else {
       msgs.add("등록 실패");
       msgs.add("다시 시도 -> 운영팀");
       links.add("<button type= 'button' onclick=\"history.back()\">다시 시도</button>");
     }
-
-    links.add("<button type= 'button' onclick=\"location.href='/study/nonuser/studylist/list.do'\">목록</button>");
-    mav.addObject("msgs", msgs);
-    mav.addObject("links", links);
 
     return mav;
   }
@@ -173,7 +171,7 @@ public class StudyListCont {
   @RequestMapping(value = "/nonuser/studylist/list.do", method = RequestMethod.GET)
   public ModelAndView list() {
 
-    // System.out.println("--> list() GET executed");
+    System.out.println("--> list() GET executed");
 
     ModelAndView mav = new ModelAndView();
 
@@ -187,7 +185,7 @@ public class StudyListCont {
 
     return mav;
   }
-
+  
   /**
    * 체크박스 검색을 통한 스터디리스트 목록 출력
    * 
@@ -197,7 +195,7 @@ public class StudyListCont {
   @ResponseBody
   @RequestMapping(value = "/nonuser/studylist/listajax.do", method = RequestMethod.GET, produces = "application/text; charset=utf8")
   public String search_list(StudyListVO studyListVO) {
-    // System.out.println("--> search_list() GET executed");
+    System.out.println("--> search_list() GET executed");
 
     JSONArray searchlist = new JSONArray();
 
@@ -222,7 +220,7 @@ public class StudyListCont {
   @ResponseBody
   @RequestMapping(value = "/nonuser/studylist/search.do", method = RequestMethod.GET, produces = "application/text; charset=utf8")
   public String search_list2(StudyListVO studyListVO) {
-    // System.out.println("--> search_list() GET executed");
+    System.out.println("--> search_list() GET executed");
 
     JSONArray searchlist = new JSONArray();
 
@@ -249,12 +247,12 @@ public class StudyListCont {
     getselected_topic = Tool.checkNull(getselected_topic);
     word = Tool.checkNull(word);
 
-/*    System.out.println("memberno:" + studyListVO.getMemberno());
+    System.out.println("memberno:" + studyListVO.getMemberno());
     System.out.println("topic:" + gettopic);
     System.out.println("selected_topic:" + getselected_topic);
     System.out.println("word:" + word);
     System.out.println("search:" + search);
-    System.out.println("nowPage:" + nowPage);*/
+    System.out.println("nowPage:" + nowPage);
 
     // 분야가 공백이 들어오면 topic을 공백으로
     if (gettopic == "") {
@@ -263,7 +261,7 @@ public class StudyListCont {
       topic = gettopic + "/" + getselected_topic;
     }
 
-    // System.out.println(topic);
+    System.out.println(topic);
 
     hashmap.put("topic", topic);
     hashmap.put("word", word);
@@ -288,7 +286,7 @@ public class StudyListCont {
     obj.put("search_count", search_count);
     obj.put("searchlist", searchlist);
 
-    // System.out.println(obj);
+    System.out.println(obj);
 
     return obj.toString();
   }
@@ -301,7 +299,7 @@ public class StudyListCont {
   // http://localhost:9090/study/studylist/update.do
   @RequestMapping(value = "/user/studylist/update.do", method = RequestMethod.GET)
   public ModelAndView update(int stdlist_no) {
-    // System.out.println("--> update() GET executed");
+    System.out.println("--> update() GET executed");
     ModelAndView mav = new ModelAndView();
     mav.setViewName("/user/studylist/studyupdate"); // webapp/studylist/update.jsp
 
@@ -357,13 +355,13 @@ public class StudyListCont {
     }
     ;
 
-/*    System.out.println(studyListVO.getDow1());
+    System.out.println(studyListVO.getDow1());
     System.out.println(studyListVO.getDow2());
     System.out.println(studyListVO.getDow3());
     System.out.println(studyListVO.getDow4());
     System.out.println(studyListVO.getDow5());
     System.out.println(studyListVO.getDow6());
-    System.out.println(studyListVO.getDow7());*/
+    System.out.println(studyListVO.getDow7());
 
     // 나누어서 저장
     studyListVO.setArea(area); // 지역 저장
@@ -471,6 +469,30 @@ public class StudyListCont {
 
     return obj.toString();
   }
+  
+  /**
+   * 관리자 권한 스터디리스트 삭제
+   * 
+   * @param stdlist_no
+   * @return
+   */
+  @ResponseBody
+  @RequestMapping(value = "/admin/studylist/delete.do", method = RequestMethod.GET, produces = "application/text; charset=utf8")
+  public String delete_admin(int stdlist_no) {
+    // System.out.println("--> delete() POST executed");
+
+    JSONObject obj = new JSONObject();
+
+    recruitProc.delete(stdlist_no);
+    ReplyProc.delete_all(stdlist_no);
+    Std_RecomProc.delete(stdlist_no);
+    
+    int count = studylistProc.delete(stdlist_no);
+
+    obj.put("count", count);
+
+    return obj.toString();
+  }
 
   /**
    * 스터디리스트 ajax를 이용한 댓글출력 + paging
@@ -481,7 +503,8 @@ public class StudyListCont {
   @ResponseBody
   @RequestMapping(value = "/nonuser/studylist/ajaxread1.do", method = RequestMethod.GET, produces = "application/text; charset=utf8")
   public String ajaxread1(StudyListVO studyListVO) {
-    // System.out.println("--> ajaxread1() executed");
+
+    System.out.println("--> ajaxread1() executed");
 
     JSONObject obj = new JSONObject();
 
@@ -510,7 +533,7 @@ public class StudyListCont {
     obj.put("paging", paging); // 페이징 처리
     obj.put("nowPage", nowPage);
 
-    // System.out.println(obj);
+    System.out.println(obj);
 
     return obj.toString();
 
@@ -543,7 +566,6 @@ public class StudyListCont {
       if (Std_RecomProc.std_recom_check(hashmap) == 0) {
 
         Std_RecomProc.create(hashmap);
-        
       }
     }
 
@@ -582,7 +604,8 @@ public class StudyListCont {
   @ResponseBody
   @RequestMapping(value = "/nonuser/studylist/ajaxread2.do", method = RequestMethod.GET, produces = "application/text; charset=utf8")
   public String ajaxread2(StudyList_MemberVO studyList_memberVO) {
-    // System.out.println("--> ajaxread2() executed");
+
+    System.out.println("--> ajaxread2() executed");
 
     JSONObject obj = new JSONObject();
 
@@ -628,15 +651,45 @@ public class StudyListCont {
   @ResponseBody
   @RequestMapping(value = "/nonuser/studylist/rank_top5.do", method = RequestMethod.GET, produces = "application/text; charset=utf8")
   public String rank_top5() {
-    // System.out.println("top_5()");
+    
+    System.out.println("top_5()");
     
     List<StudyListVO> list =  studylistProc.rank_top5();
     
     JSONArray LIST = JSONArray.fromObject(list);
     
-    // System.out.println(LIST);
+    System.out.println(LIST);
     
     return LIST.toString();
    
+  }
+  
+  /**
+   * 스터디그룹을 등록한 id 가 맞는지 검사
+   * @param studyListVO
+   * @return String
+   */
+  @ResponseBody
+  @RequestMapping(value = "/user/studylist/check_stdno.do", method = RequestMethod.GET, produces = "application/text; charset=utf8")
+  public String check_stdno(HttpSession session, StudyListVO studyListVO) {
+    
+   System.out.println("check_stdno()");
+    
+    //session을 통해 id의 memberno값을 가져오기.
+    int memberno =  (Integer) session.getAttribute("memberno");
+    int stdlist_no =  studyListVO.getStdlist_no();
+    
+    HashMap hashmap =  new HashMap();
+    hashmap.put("memberno", memberno);
+    hashmap.put("stdlist_no", stdlist_no);
+    
+    int count  =  studylistProc.check_stdno(hashmap);
+    
+    JSONObject obj = new JSONObject();
+    
+    obj.put("count", count);
+    
+    return obj.toJSONString();
+    
   }
 }

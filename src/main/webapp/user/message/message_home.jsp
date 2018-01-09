@@ -187,6 +187,23 @@ function msg_create_proc(send_memid){
     </div> 
   </div>
   <!-- 공통 모달 종료 -->
+  
+  <!-- 회원 정보 모달 시작  --> 
+  <div class="modal fade" id="modal_meminfo" role="dialog" style="display: none;">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h3 class="modal-title text-error" id='modal_title'></h3>
+      </div>
+      <div class="modal-body" id="modal-body">
+        
+      </div>
+      <div class="modal-footer" id="modal-footer">
+      </div>
+    </div> 
+  </div>
+  <!-- 공회원 정보 모달 종료 -->
    
   <DIV style=" width: 190px; position: absolute; bottom: 0; left: 0; right: 0; top: 0; border: 0.5px solid #eee; padding-top: 15px;">
     <DIV style="text-align:center; width:100%;"> 

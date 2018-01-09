@@ -84,4 +84,9 @@ public class AdminDAO implements AdminDAOInter {
     return mybatis.update("admin.admpasswd_change", adminVO);
   }
 
+  @Override
+  public int admin_delete(AdminVO adminVO) {
+    return mybatis.update("admin.admin_delete", adminVO);
+  }
+
 }

@@ -74,7 +74,11 @@ LogOutTimer.start(); --%>
   <div style="text-align: right; margin: 10px; color: #333333; font-size: 15px;">
    <div style="float: left; text-align: left; color: #333333; font-size: 15px;">
      오늘 방문자 : ${sessionScope.todayCount}<span style='margin:5px;'>|</span>전체 방문자 : ${sessionScope.totalCount}
-     ${sessionScope.mem_login_time}
+      <c:choose>
+        <c:when test="${sessionScope.memauth == 'U' || sessionScope.admauth == 'M' || sessionScope.admauth == 'A'}">
+        <span style='margin:5px;'>|</span>로그인 시간 : ${sessionScope.login_time}
+        </c:when>
+      </c:choose>
    </div>
   
 <%--   0. login 세션의 설정값 : <FONT COLOR=BLUE><%= session.getAttribute("memid") %></font> 님의 세션 유지<BR>
@@ -135,15 +139,19 @@ session.setMaxInactiveInterval(10);
         <!-------------------------- 웹사이트 메인 메뉴 부분 시작 ------------------------ -->
         <div class="nav-collapse collapse pull-right">
           <ul class="nav" id="top-navigation">
-
+          
+          <c:choose>
+            <c:when test="${sessionScope.memauth == 'U'}">
             <!-- <Menu1> 내 스터디 -->
-            <li><a href="${pageContext.request.contextPath }/mystudy/mystudy.do">내 스터디</a></li>
+            <li><a href="${pageContext.request.contextPath }/user/mystudy/mystudy.do">내 스터디</a></li>
+            </c:when>
+          </c:choose>
            
             <!-- <Menu2> 스터티그룹 찾기 -->
             <li><a href="<%=root %>/nonuser/studylist/list.do">스터디 그룹</a></li>
             
             <!-- <Menu3> 스터디룸 찾기 -->
-            <li><a href="#">스터디룸</a></li>
+            <li><a href="<%=root %>/nonuser/room/list.do ">스터디룸</a></li>
             
             <!-- <Menu4> 공모전 / 취업 -->
             <li class="dropdown">
@@ -164,38 +172,38 @@ session.setMaxInactiveInterval(10);
               </ul>
             </li>
             
-            <!-- <Menu6> 공지사항 -->
+<!-- <Menu6> 공지사항 -->
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">공지/Q&A<b class="caret"></b></a>
-              <ul class="dropdown-menu">
+              <ul class="dropdown-menu" style="min-width: 130px;">
                 <li><a href="<%=root%>/nonuser/notice/notice_list.do">공지사항</a></li>
                 <li><a href="<%=root %>/nonuser/qnaboard/list_all_qna.do">Q & A</a></li>
               </ul>
             </li>
             
             <!-- <Menu7> 관리자 -->
-        <c:choose>
-          <c:when test='${sessionScope.admauth == "A"}'>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="<%=root%>/admin/categrp/grp_list.do">카테그룹</a></li>
-                <li><a href="<%=root%>/admin/member/mem_list.do">회원 관리</a></li>
-              </ul>
-            </li>
-          </c:when>
-          <c:when test='${sessionScope.admauth == "M"}'>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="<%=root%>/admin/categrp/grp_list.do">카테그룹</a></li>
-                <li><a href="<%=root%>/admin/member/mem_list.do">회원 관리</a></li>
-                <li><a href="<%=root%>/master/admin_list.do">관리자 관리</a></li>
-                <li><a href="<%=root%>/admin/message/message_admin.do">쪽지함 관리</a></li>
-              </ul>
-            </li>
-          </c:when>
-        </c:choose>
+            <c:choose>
+              <c:when test='${sessionScope.admauth == "A"}'>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b class="caret"></b></a>
+                  <ul class="dropdown-menu" style="min-width: 120px;">
+                    <li><a href="<%=root%>/admin/categrp/grp_list.do">카테그룹</a></li>
+                    <li><a href="<%=root%>/admin/member/mem_list.do">회원 관리</a></li>
+                  </ul>
+                </li>
+              </c:when>
+              <c:when test='${sessionScope.admauth == "M"}'>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b class="caret"></b></a>
+                    <ul class="dropdown-menu" style="min-width: 120px;">
+                      <li><a href="<%=root%>/admin/categrp/grp_list.do">카테그룹</a></li>
+                      <li><a href="<%=root%>/admin/member/mem_list.do">회원 관리</a></li>
+                      <li><a href="<%=root%>/master/admin_list.do">관리자 관리</a></li>
+                      <li><a href="<%=root%>/admin/message/message_admin.do">쪽지함 관리</a></li>
+                    </ul>
+                </li>
+              </c:when>
+            </c:choose>
             
           </ul>
         </div>

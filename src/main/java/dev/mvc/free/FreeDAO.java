@@ -53,13 +53,6 @@ public class FreeDAO implements FreeDAOInter {
     return count;
   }
 
-  /* 패스워드 검사 */
-  @Override
-  public int passwd_check(HashMap<String, Object> hashMap) {
-    int count = mybatis.selectOne("free.passwd_check", hashMap);
-    return count;
-  }
-  
   /* 삭제 */
   @Override
   public int delete(int freeno) {
@@ -128,6 +121,12 @@ public class FreeDAO implements FreeDAOInter {
   public int decreaseLike(int freeno) {
     int count = mybatis.update("free.decreaseLike", freeno);
     return count;
+  }
+
+  /* 관리자 게시글 등록 */
+  @Override
+  public int create_admin(FreeVO freeVO) {
+    return mybatis.insert("free.create_admin", freeVO);
   }
 
   

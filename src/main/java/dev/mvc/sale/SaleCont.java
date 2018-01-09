@@ -1,10 +1,11 @@
 package dev.mvc.sale;
 
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +62,7 @@ public class SaleCont {
    */
   @ResponseBody
   @RequestMapping(value = "/user/sale/create.do", method = RequestMethod.POST, produces = "application/text; charset=utf8")
-  public String create(HttpServletRequest request, SaleVO saleVO) {
+  public String create(HttpSession session, HttpServletRequest request, SaleVO saleVO) {
     // System.out.println("--> create() POST executed");
     JSONObject obj = new JSONObject();
     
@@ -114,7 +115,13 @@ public class SaleCont {
     // 파일 전송 코드 종료
     //***************************************************************** 
 
-    int count = saleProc.create(saleVO);
+    int count = 0; // 게시글 등록을 처리할 변수
+    
+    if (session.getAttribute("memberno") != null) { // 회원일 경우
+      count = saleProc.create(saleVO);
+    } else if (session.getAttribute("adminno") != null) { // 관리자일 경우
+      count = saleProc.create_admin(saleVO);
+    }
     
     if (count == 1) { // 글 등록에 성공했을 경우
       // System.out.println("글 등록 성공");
@@ -295,7 +302,7 @@ public class SaleCont {
    */
   @ResponseBody
   @RequestMapping(value = "/user/sale/update.do", method = RequestMethod.POST, produces = "application/text; charset=utf8")
-  public String update(HttpServletRequest request, SaleVO saleVO) {
+  public String update(HttpSession session, HttpServletRequest request, SaleVO saleVO) {
     
     // System.out.println("=> update post called");
     // System.out.println("Cont에서 saleno: " + saleVO.getSaleno() + " 그리고 memberno: " + saleVO.getMemberno());
@@ -367,10 +374,14 @@ public class SaleCont {
     // 파일 전송 코드 종료
     //*****************************************************************
 
-    int check = saleProc.member_check(saleVO_od); // 아이디 검사
+    int check = 0; // 아이디 검사를 처리할 변수(회원일 경우)
     int count=0; // 아이디 검사가 성공할 경우 처리할 변수
     
-    if (check == 1) { // 등록된 아이디와 일치하는 경우
+    if (session.getAttribute("memberno") != null) { // 회원일 경우
+      check = saleProc.member_check(saleVO_od); // 아이디 검사
+    }
+    
+    if (check == 1 || session.getAttribute("adminno") != null) { // 등록된 아이디와 일치하거나 관리자일 경우
       count = saleProc.update(saleVO);
       
       if (count == 1) { // 수정 처리가 성공했을 경우
@@ -387,26 +398,7 @@ public class SaleCont {
 
     return obj.toString();
   }
-
-  /**
-   * <XMP> 
-   * 게시글 삭제폼 출력 (지금은 쓰지 않음)
-   * </XMP>
-   * @param saleno
-   * @return
-   */
-/*  @RequestMapping(value = "/user/sale/delete.do", method = RequestMethod.GET)
-  public ModelAndView delete(int saleno) {
-    
-    ModelAndView mav = new ModelAndView();
-    mav.setViewName("/user/sale/delete");
-
-    SaleVO saleVO = saleProc.read(saleno);
-    mav.addObject("saleVO", saleVO);
-
-    return mav;
-  }*/
-
+  
   /**
    * <XMP> 
    * 게시글 삭제결과 출력
@@ -416,7 +408,7 @@ public class SaleCont {
    */
   @ResponseBody
   @RequestMapping(value = "/user/sale/delete.do", method = RequestMethod.POST, produces = "text/html; charset=UTF-8")
-  public String delete(HttpServletRequest request, int saleno) {
+  public String delete(HttpSession session, HttpServletRequest request, int saleno) {
     
     JSONObject obj = new JSONObject();
     String root = request.getContextPath(); // 절대경로 산출
@@ -435,14 +427,20 @@ public class SaleCont {
     // 파일 삭제 코드 종료
     // *************************************************************************
 
-    int check = saleProc.member_check(saleVO);
-    int count_check;
-    int count = 0;
     
-    if (check == 1) { // 등록된 아이디와 일치하는 경우
+    int check = 0; // 아이디 검사를 처리할 변수 (★ 회원일 경우)
+    
+    if (session.getAttribute("memberno") != null) { // 회원일 경우
+      check = saleProc.member_check(saleVO); // 아이디 검사
+    }
+    
+    int count_check; // 아이디 검사 성공시 처리할 변수 ①
+    int count = 0;  // 아이디 검사 성공시 처리할 변수 ②
+    
+    if (check == 1 || session.getAttribute("adminno") != null) { // 등록된 아이디와 일치하거나 관리자일 경우
       
-      count_check = salereplyProc.delete_all(saleno); // 글에 해당하는 모든 댓글 삭제
-      count = saleProc.delete(saleno);                   // 게시글 삭제
+      count_check = salereplyProc.delete_all(saleno); // ⓐ 글에 해당하는 모든 댓글 삭제
+      count = saleProc.delete(saleno);                   // ⓑ 게시글 삭제
 
       if (count == 1) { // 삭제 처리가 성공했을 경우
         // System.out.println("글 삭제 성공");
@@ -470,13 +468,19 @@ public class SaleCont {
    * @return
    */
   @RequestMapping(value = "/user/sale/reply.do", method = RequestMethod.POST)
-  public ModelAndView reply(HttpServletRequest request, SalereplyVO salereplyVO) {
+  public ModelAndView reply(HttpSession session, HttpServletRequest request, SalereplyVO salereplyVO) {
     
     ModelAndView mav = new ModelAndView();
 
     int saleno = salereplyVO.getSaleno();
-    int count = salereplyProc.create(salereplyVO);
-
+    int count = 0; // 댓글 등록을 처리할 변수
+    
+    if (session.getAttribute("memberno") != null) { // 회원일 경우
+      count = salereplyProc.create(salereplyVO);
+    } else if (session.getAttribute("adminno") != null) { // 관리자일 경우
+      count = salereplyProc.create_admin(salereplyVO);
+    }
+    
     if (count == 1) {
       // System.out.println("댓글등록 성공");
       mav.setViewName("redirect:/user/sale/read.do?saleno=" + saleno);
@@ -496,7 +500,7 @@ public class SaleCont {
    * @return
    */
   @RequestMapping(value = "/user/sale/rereply.do", method = RequestMethod.POST)
-  public ModelAndView rereply(HttpServletRequest request, SalereplyVO salereplyVO) {
+  public ModelAndView rereply(HttpSession session, HttpServletRequest request, SalereplyVO salereplyVO) {
     
     // System.out.println("--> reply() POST called.");
     ModelAndView mav = new ModelAndView();
@@ -511,8 +515,16 @@ public class SaleCont {
     
     int seqno_ch = 1; // 자식값에 주는 seqno를 1로 처리하기 위한 변수
     
-    salereplyVO.setSaleno(parentVO.getSaleno());                  // 게시글 번호
-    salereplyVO.setMemberno(salereplyVO.getMemberno());    // 회원번호 => 부모에서 받으면 안된다! (주의)
+    salereplyVO.setSaleno(parentVO.getSaleno());                   // 게시글 번호
+    
+    //**************** session에 따른 받아오는 값 구분 시작 ***********************************
+    if (session.getAttribute("memberno") != null) { // 회원일 경우
+      salereplyVO.setMemberno(salereplyVO.getMemberno());      // 회원번호 => 부모에서 받으면 X
+    } else if (session.getAttribute("adminno") != null) { // 관리자일 경우
+      salereplyVO.setAdminno(salereplyVO.getAdminno());          // 관리자번호 => 부모에서 받으면 X
+    }
+    //**************** session에 따른 받아오는 값 구분 종료 ***********************************
+
     salereplyVO.setSreplyname(salereplyVO.getSreplyname());   // 작성자   => 부모에서 받으면 안된다! (주의)
     salereplyVO.setSreplygrpno(parentVO.getSreplygrpno());    // 그룹 번호
     salereplyVO.setSreplyansnum(parentVO.getSreplyansnum()); // 댓글 순서
@@ -527,8 +539,14 @@ public class SaleCont {
     // 대댓글(답변) 등록 처리 종료
     // *************************************************************************
 
-    int count = salereplyProc.reply(salereplyVO);
+    int count = 0; // 댓글 등록을 처리하기 위한 변수
     
+    if (session.getAttribute("memberno") != null) { // 회원일 경우
+      count = salereplyProc.reply(salereplyVO);
+    } else if (session.getAttribute("adminno") != null) { // 관리자일 경우
+      count = salereplyProc.reply_admin(salereplyVO);
+    }
+        
     if (count == 1) {
       // System.out.println("대댓글 등록 성공");     
       mav.setViewName("redirect:/user/sale/read.do?saleno=" + salereplyVO.getSaleno());
@@ -541,7 +559,7 @@ public class SaleCont {
   
   /**
    * <XMP>
-   * 수정을 위한 해당 댓글의 댓글 내용 read
+   * 수정을 위한 해당 댓글내용 조회
    * </XMP>
    * @param sreplyno 댓글 번호
    * @return sreplyno, sreplycontent
@@ -587,7 +605,6 @@ public class SaleCont {
     obj.put("nowPage", nowPage);
 
     return obj.toString();
-    
   }
   
   /**
@@ -631,17 +648,48 @@ public class SaleCont {
     
     // System.out.println(" => Update_parent() POST executed");
     JSONObject obj = new JSONObject(); 
-      
-    int sreplyno = salereplyVO.getSreplyno();
-    int nowPage = salereplyVO.getNowPage();
     
-    int count = salereplyProc.update_parent(sreplyno);
+    int parent_check = 0; // ⓐ 부모 댓글에 대한 검사를 처리하기 위한 변수
+    int reply_check = 0;   // ⓑ 맨 마지막 댓글 검사를 처리하기 위한 변수
+    int count = 0;          // ⓒ 검사 후 댓글에 대해 처리하기 위한 변수
     
+    //*****************************************************************************************************
+    // 댓글과 관련된 내용을 조회하는 부분 시작
+    //*****************************************************************************************************
+    int sreplyno = salereplyVO.getSreplyno();                                       // 댓글 번호
+    salereplyVO = salereplyProc.read(sreplyno);                                     // 댓글 조회
+    int sreplygrpno = salereplyVO.getSreplygrpno();                              // 댓글 그룹번호
+    int nowPage = salereplyVO.getNowPage();                                     // 현재페이지
+    int sreplyindent = salereplyVO.getSreplyindent();                             // 대댓글 차수
+    //*****************************************************************************************************
+    // 댓글과 관련된 내용을 조회하는 부분 종료
+    //*****************************************************************************************************
+   
+    //*****************************************************************************************************
+    // 맨 마지막 댓글인지 검사하기 위한 부분 시작
+    //*****************************************************************************************************
+    HashMap hashMap = new HashMap();
+    hashMap.put("saleno", salereplyVO.getSaleno());
+    hashMap.put("sreplygrpno", sreplygrpno);
+    
+    reply_check = salereplyProc.reply_check(hashMap); // 댓글의 차수 최대값 검사
+    int max_value = reply_check;                           // 대댓글 차수 최대값
+    //*****************************************************************************************************
+    // 맨 마지막 댓글인지 검사하기 위한 부분 종료
+    //*****************************************************************************************************
+    
+    parent_check = salereplyProc.parent_check(sreplygrpno); // 부모 댓글에 대하여 하위 댓글이 존재하는지 검사
+
+    if (parent_check == 1 || max_value == sreplyindent) {  // ⓐ 하위 댓글이 존재하지 않는 경우 또는 대댓글 차수가 최대값일 경우
+      count =  salereplyProc.delete(sreplyno);
+    } else {             // ⓑ 하위 댓글이 존재하는 경우
+      count = salereplyProc.update_parent(sreplyno);
+    }
+   
     obj.put("count", count);
     obj.put("nowPage", nowPage);
 
     return obj.toString();
-    
   }
   
 

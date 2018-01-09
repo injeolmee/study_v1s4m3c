@@ -86,6 +86,16 @@ public interface QnaProcInter {
   
   /**
    * <XMP>
+   * 아이디 검사
+   * <select id="member_check" resultType="int" parameterType="HashMap">
+   * </XMP>
+   * @param hashMap
+   * @return
+   */
+  public int member_check(QnaVO qnaVO);
+  
+  /**
+   * <XMP>
    * qna별 검색된 레코드 갯수
    * <select id="search_count" resultType="int" parameterType="HashMap">
    * </XMP>

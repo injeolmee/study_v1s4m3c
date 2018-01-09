@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 내가 신청하여 승인된 스터디 목록 : 내가 참여중인 스터디 -->
+<mapper namespace="studylist">
+  <select id="mystudylist" resultType="StudyListVO" parameterType="int">
+    select s.STDLIST_NO ,s.STDLIST_TITLE, s.STDLIST_TOPIC ,s.STDLIST_AREA, s.STDLIST_TIME, s.STDLIST_DOW, s.STDLIST_DATE
+    from STUDYLIST s
+    where s.STDLIST_NO IN(
+        select r.STDLIST_NO
+        from RECRUIT r
+        where r.MEMBERNO=#{memberno} and (r.STD_AUTH='T' or r.STD_AUTH='L')
+    )
+  </select>
+  
+  <!-- 이동석 추가 --> 
+  <!-- 현재 회원이 신청한 내역 조회 --> 
+  <!-- 수락이 안된 신청 내역을 조회 -->
+  <select id="my_apply_list" parameterType="int" resultType="My_apply_listVO">
+    select r.RECRUITNO, s.STDLIST_TITLE, s.STDLIST_TOPIC, s.STDLIST_AREA, s.STDLIST_DOW, s.STDLIST_CURR_NUM, s.STDLIST_TOT_NUM, r.CONFIRM
+    from STUDYLIST s, RECRUIT r
+    where s.STDLIST_NO = r.STDLIST_NO
+    AND r.confirm!='Y'
+    AND r.MEMBERNO=#{memberno }
+  </select>
+  
+  <!-- 스터디 참여 신청 취소 -->
+  <delete id="cancel_apply" parameterType="int">
+    DELETE
+    FROM RECRUIT
+    WHERE RECRUITNO=#{RECRUITNO }
+  </delete>
+  
+</mapper>

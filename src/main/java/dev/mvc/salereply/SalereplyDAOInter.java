@@ -125,4 +125,45 @@ public interface SalereplyDAOInter {
    */
   public int delete_all (int saleno);
   
+  /**
+   * <XMP>
+   * 관리자 댓글 등록
+   * <insert id="create_admin" parameterType="SalereplyVO" >
+   * </XMP>
+   * @param sharedreplyVO
+   * @return
+   */
+  public int create_admin(SalereplyVO salereplyVO);
+
+  /**
+   * <XMP>
+   * 관리자 대댓글 등록
+   * <insert id="reply_admin" parameterType="SalereplyVO">
+   * </XMP>
+   * @param salereplyVO
+   * @return
+   */
+  public int reply_admin(SalereplyVO salereplyVO);
+  
+  /**
+   * <XMP>
+   * 부모 댓글일 경우 하위 댓글이 존재하는지 검사
+   * <select id="parent_check" parameterType="int" resultType="int">
+   * </XMP>
+   * @param sreplygrpno
+   * @return
+   */
+  public int parent_check (int sreplygrpno);
+  
+  /**
+   * <XMP>
+   * 대댓글과 관련되어 맨 마지막 댓글인지 검사
+   * <select id="reply_check" parameterType="HashMap" resultType="int">
+   * </XMP>
+   * @param hashMap
+   * @return
+   */
+  public int reply_check (HashMap hashMap);
+  
+  
 }

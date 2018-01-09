@@ -55,7 +55,7 @@ $(function(){
       </c:otherwise>
     </c:choose>
     <button type="submit" class="btn btn-default btn-sm" style="line-height: 15px;">Search</button>
-    <button type="button" class="btn btn-default btn-sm" style="line-height: 15px;" onclick="location.href='/study/admin/qnaboard/create.do'">문의하기</button>
+    <button type="button" class="btn btn-default btn-sm" style="line-height: 15px;" onclick="location.href='/study/user/qnaboard/create.do'">문의하기</button>
   </DIV>
   </form>
   <table style="width: 55.3%; border-collapse: collapse; margin: 0px auto;">

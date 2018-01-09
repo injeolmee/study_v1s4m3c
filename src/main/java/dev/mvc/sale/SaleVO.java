@@ -79,7 +79,16 @@ public class SaleVO {
   private int post_num;
   /* 출력 변경을 위한 임시 변수 */
   private int check_seqno;
+  /* 관리자 번호 */
+  private int adminno;
 
+  
+  public int getAdminno() {
+    return adminno;
+  }
+  public void setAdminno(int adminno) {
+    this.adminno = adminno;
+  }
   public int getCheck_seqno() {
     return check_seqno;
   }

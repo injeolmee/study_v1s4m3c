@@ -24,13 +24,6 @@ public class SharedDAO implements SharedDAOInter {
     return count;
   }
 
-  /* 목록 */
-  @Override
-  public List<SharedVO> list() {
-    List <SharedVO> list = mybatis.selectList("shared.list");
-    return list;
-  }
-
   /* 검색 */
   @Override
   public List<SharedVO> list_search(HashMap hashMap) {
@@ -59,24 +52,10 @@ public class SharedDAO implements SharedDAOInter {
     return count;
   }
 
-  /* 추천수 상승*/
-  @Override
-  public int increaseLike(int sharedno) {
-    int count = mybatis.update("shared.increaseLike", sharedno);
-    return count;
-  }
-
   /* 수정 */
   @Override
   public int update(SharedVO sharedVO) {
     int count = mybatis.update("shared.update", sharedVO);
-    return count;
-  }
-
-  /* 패스워드 검사 */
-  @Override
-  public int passwd_check(HashMap<String, Object>  hashMap) {
-    int count = mybatis.selectOne("shared.passwd_check", hashMap);
     return count;
   }
 
@@ -106,6 +85,12 @@ public class SharedDAO implements SharedDAOInter {
   public int member_check(HashMap<String, Object> hashMap) {
     int count = mybatis.selectOne("shared.member_check", hashMap);
     return count;
+  }
+
+  /* 관리자 게시글 등록 */
+  @Override
+  public int create_admin(SharedVO sharedVO) {
+    return mybatis.insert("shared.create_admin", sharedVO);
   }
 
 }

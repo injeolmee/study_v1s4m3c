@@ -14,7 +14,7 @@ public class Std_RecomDAO implements Std_RecomDAOInter {
   private SqlSessionTemplate mybatis;
 
   public Std_RecomDAO() {
-    System.out.println("--> std_recomDAO created.");
+    // System.out.println("--> std_recomDAO created.");
   }
 
   @Override

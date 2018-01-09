@@ -6,24 +6,40 @@
 String root = request.getContextPath(); 
 %>
 
-<!DOCTYPE html> 
-<html lang="ko"> 
+<!DOCTYPE html>
+<html lang="ko">
 <head>
+<meta charset="UTF-8">
+<title>Study Matching Web Site</title>
+<!-------------------------- Web Logo Part -------------------------->
+<link rel="shortcut icon" href="<%=root%>/menu/images/ico/Short Logo.png">
+<!---------------------------------------------------------------------->
+<link href="<%=root%>/nonuser/login/jecss/login.css" rel="Stylesheet" type="text/css">
+<link href="<%=root%>/nonuser/login/jecss/login.scss" rel="Stylesheet" type="text/css">
+<style>
 
-<meta charset="UTF-8"> 
-<title>회원 수정</title> 
- 
-<link href="./jecss/style.css" rel="Stylesheet" type="text/css">
- 
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+</style>
 <script type="text/JavaScript"
           src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+          
 <script type="text/javascript" src="<%=root%>/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="<%=root%>/nonuser/login/login.js"></script>
 
 <script type="text/javascript">
 var msg = "";
 
 $(function(){ 
+  var auth = '${sessionScope.admauth}';
+  var adminno_session = '${sessionScope.adminno}';
+  var adminno_VO = '${adminVO.adminno}';
+  if(adminno_session != adminno_VO) {
+    if(auth == 'M') {
+    } else {
+      alert("유효한 접근이 아닙니다.");
+      location.href ='<%=root %>/main/index.do';
+    }
+  } 
+  
   $.cookie('check_email', 'KEEP');
   $.cookie('code_send', 'KEEP');
   $.cookie('code_confirm', 'KEEP');
@@ -296,7 +312,38 @@ $(function(){
       return false;
     } 
     
-  return true;  
+    var frm_update = $("#frm_update").serialize();
+    alert(frm_update);
+    
+    $.ajax({
+      url : '/study/admin/admin/admin_update.do',
+      type: "POST",
+      data : frm_update, 
+      dataType : 'JSON',
+      success : function(data){
+        if(data.update_cnt==1){
+          alert("관리자수정이 완료되었습니다.");
+          location.href ='<%=root %>/admin/admin/admin_read.do?adminno=${adminVO.adminno}';
+        } else {
+          alert("관리자수정이 실패했습니다.\n다시 시도해주세요.");
+        }
+       },
+    // 통신 에러, 요청 실패, 200 아닌 경우, dataType이 다른경우
+       error: function (request, status, error){  
+         var msg = "에러가 발생했습니다. <br><br>";
+         msg += "다시 시도해주세요.<br><br>";
+         msg += "request.status: " + request.status + "<br>";
+         msg += "request.responseText: " + request.responseText + "<br>";
+         msg += "status: " + status + "<br>";
+         msg += "error: " + error;
+
+         $('#modal_title').html("에러");   
+         $('#modal_content').html(msg); 
+         $('#modal_panel').modal(); 
+       }
+     });
+    
+    
   });
   
 }); // function 끝
@@ -308,16 +355,8 @@ $(function(){
 <body>
 
 <jsp:include page="/menu/top.jsp" flush='false' />
-<DIV class='container'>
-<DIV class='content'>
-      
-  <ASIDE style='float: left;'>
-      
-  </ASIDE>
-  <ASIDE style='float: right;'>
-    <A href="javascript:location.reload();">새로고침</A>
-    <span class='menu_divide' >│</span> 
-  </ASIDE>
+<DIV class='container' style='margin-bottom: 10%;'>
+<DIV class='content' style='width: 90%; margin: 0px auto;'>
 
 <!-- 
 <div id="modal_panel" class="modal fade" role="dialog">
@@ -340,107 +379,108 @@ $(function(){
   </div>
 </div>  -->
  
-<DIV class='title_line' style='margin: 50px auto; font-size: 20px;'>회원 수정</DIV>
- 
-<FORM name='frm_join' id='frm_join' method='POST' action='./admin_update.do' enctype="multipart/form-data" class="form-horizontal">  
-<input type="hidden" id="adminno" name="adminno" value="${adminVO.adminno }">
-<input type="hidden" id="admid" name="admid" value="${adminVO.admid }">
-<input type="hidden" id="admconfirm" name="admconfirm" value="Y">
 
-  <div class="form-group" style= 'padding: 20px;'>
-    <div class="col-md-offset-2 col-md-2" style='background-color: #e4e4e4; text-align:center; padding: 8px;'><strong>* 아이디</strong></div>
-    <div class="col-sm-7" style='padding-left: 10px;'>
-      <input type="text" class="form-control" value="${adminVO.admid }" style="padding:6px; margin:0px; width: 43%;" disabled="disabled">
-    </div>  
-  </div>
-  
-  <div class="form-group" style= 'padding: 20px;'>
-    <div class="col-md-offset-2 col-md-2" style='background-color: #e4e4e4; text-align: center; padding: 8px;'><strong>* 비밀번호</strong></div>
-    <div class="col-md-3" style='padding-left: 10px;'>
-      <input type="password" class="form-control" id="admpasswd" name="admpasswd"  placeholder="Password 영어나 숫자(6 ~ 12자)">
-    </div>
-    <div class="col-md-4" id="panel_pwd" style= "text-align: left; padding: 6px 0px 15px 10px; font-weight: 900;"></div>     
-  </div>
-  
-  <div class="form-group" style= 'padding: 20px;'>
-    <div class="col-md-offset-2 col-md-2" style='background-color: #e4e4e4; text-align: center; padding: 8px;'><strong>* 비밀번호 확인</strong></div>
-    <div class="col-md-3" style='padding-left: 10px;'>
-      <input type="password" class="form-control" id="admpasswd_c" name="admpasswd_c">
-    </div>
-    <div class="col-md-4" id="panel_pwd_c" style= "text-align: left; padding: 6px 0px 15px 10px; font-weight: 900;"></div>     
-  </div>
-  
-  <div class="form-group" style= 'padding: 20px;'>
-    <div class="col-md-offset-2 col-md-2" style='background-color: #e4e4e4; text-align:center; padding: 8px;'><strong>* 이메일</strong></div>
-    <div class="col-md-3" style='padding-left: 10px;'>
-      <input type="text" class="form-control" id="admemail" name="admemail" value="${adminVO.admemail }" placeholder="이메일  @ 이메일.com">
-    </div>
-    <div class="col-md-1" style='padding: 0px; text-align: left;'>
-      <button type="button" class="btn" id="email_btn"><strong>중복 검사</strong></button>
-    </div>
-    <div class="col-md-3" id="panel_email" style= "text-align: left; padding: 6px 0px 15px 10px; font-weight: 900;"></div>     
-  </div>
-  
-  <div class="form-group" style= 'padding: 20px;'>
-    <div class="col-md-offset-2 col-md-2" style='background-color: #e4e4e4; text-align: center; padding: 8px;'><strong>* 이메일 인증</strong></div>
-    <div class="col-md-4" style='padding: 0px; text-align: left;'>
-      <button type="button" class="btn" id="code_btn" style='margin-left: 10px;'><strong>코드 전송</strong></button>
-    </div>
-    <div class="col-md-3" id="panel_code" style= "text-align: left; margin-left:35px; padding: 6px 0px 15px 0px; font-weight: 900;"></div>     
-  </div>
-  
-  <div class="form-group" style= 'padding: 20px;'>
-    <div class="col-md-offset-2 col-md-2" style='background-color: #e4e4e4; text-align: center; padding: 8px;'><strong>* 인증 코드</strong></div>
-    <div class="col-md-3" style='padding-left: 10px;'>
-      <input type="text" class="form-control" id="mailcode" name="mailcode" placeholder="이메일에서 인증 코드를 복사하여 붙여주세요.">
-    </div>
-    <div class="col-md-1" style='padding: 0px; text-align: left;'>
-      <button type="button" class="btn" id="codecf_btn"><strong>인증 확인</strong></button>
-    </div>
-    <div class="col-md-3" id="panel_confirm" style= "text-align: left; padding: 6px 0px 15px 10px; font-weight: 900;"></div>     
-  </div> 
-  
-  <div class="form-group" style='padding: 20px;'>
-    <div class="col-md-offset-2 col-md-2" style='background-color: #e4e4e4; text-align:center; padding: 8px;'><strong>* 이름</strong></div>
-    <div class="col-sm-7" style='padding-left: 10px;'>
-      <input type="text" class="form-control" id="admname" name="admname" value="${adminVO.admname }" placeholder="홍길동" style="width: 43%; padding:6px; margin:0px;">
-    </div>    
-  </div>    
-  
-<c:choose>
-  <c:when test="${sessionScope.admauth == 'M'}">
-  <div class="form-group" style='padding: 20px;'>
-    <div class="col-md-offset-2 col-md-2" style='background-color: #e4e4e4; text-align:center; padding: 8px;'><strong>* 권한</strong></div>
-    <div class="col-sm-7" style='padding: 10px 0px 5px 10px; text-align: left;'>
-      <label class="radio-inline" style= 'padding:0px 0px 5px; margin:0px 30px;'>
-        <input type="radio" name="admauth" id="N" value="N" /> 대기</label>        
-      <label class="radio-inline" style= 'padding:0px 0px 5px; margin:0px 30px;'>
-        <input type="radio" name="admauth" id="A" value="A" /> 관리자</label>    
-      <label class="radio-inline" style= 'padding:0px 0px 5px;'>
-        <input type="radio" name="admauth" id="M" value="M" /> 마스터</label>    
-    </div>
-  </div>
-  </c:when>
-  <c:otherwise>
-  <div class="form-group" style= 'padding: 20px;'>
-    <div class="col-md-offset-3 col-md-2" style='background-color: #e4e4e4; text-align: center; padding: 8px;'><strong>* 권한</strong></div>
-    <div class="col-sm-6" style='padding-left: 10px;'>
-      <input type="text" class="form-control" id="admauth" name="admauth" value="${adminVO.admauth }" style='padding: 6px; margin: 0px; width:50%;' disabled="disabled">
-    </div>  
-  </div>    
-  </c:otherwise>
-</c:choose>   
-  
+<div class="logmod__container" style='width: 50%; margin: 0px auto; padding-top: 30px;'>
+  <ul class="logmod__tabs">
+    <li data-tabtar="lgm-1"><a href="#">관리자 수정</a></li>
+  </ul>
+  <div class="logmod__tab-wrapper">
+  <div class="logmod__tab lgm-1">
+    <div class="logmod__form"> 
+    <FORM name='frm_update' id='frm_update' method='POST' enctype="multipart/form-data" class="form-horizontal">  
+    <input type="hidden" id="adminno" name="adminno" value="${adminVO.adminno }">
+    <input type="hidden" id="admid" name="admid" value="${adminVO.admid }">
+    <input type="hidden" id="admconfirm" name="admconfirm" value="Y">
 
-  <div class="form-group" style='padding: 30px;'>        
-    <div class="col-sm-offset-5 col-sm-2" style='padding: 30px; margin-bottom: 150px;'>
-      <button type="submit" id="update" name="update" class="btn btn-success">수정하기</button>
-      <button type="button" onclick='history.back()' class="btn btn-success">취소</button>      
+      <div class="sminputs">        
+        <div class="input full">
+          <label class="string optional" for="user-name">* ID</label>
+          <input class="string optional" style='margin-bottom: 0px; width: 45%;' maxlength="255" value="${adminVO.admid }" type="text" size="50" disabled="disabled" />
+        </div> 
+      </div>
+
+    <c:choose>
+      <c:when test="${sessionScope.adminno != adminVO.adminno && sessionScope.admauth == 'M'}">
+        <input type="hidden" id="admpasswd" name="admpasswd" value="">  
+      </c:when>
+      <c:otherwise> 
+      <div class="sminputs">        
+        <div class="input full">
+          <label class="string optional" for="user-name">* PASSWORD</label>
+          <input class="string optional" style='margin-bottom: 0px;' maxlength="255" id="admpasswd" name="admpasswd" value='' placeholder="Password 영어나 숫자(6 ~ 12자)" type="password" size="50" />
+          <span class="hide-password">Show</span>
+        </div> 
+      </div>      
+  
+      <div class="sminputs">        
+        <div class="input full">
+          <label class="string optional" for="user-name">* PASSWORD 확인</label>
+          <input class="string optional" style='margin-bottom: 0px;' maxlength="255" id="admpasswd_c" name="admpasswd_c" value='' placeholder="Password 확인" type="password" size="50" />
+          <span class="hide-password">Show</span>
+        </div> 
+      </div>
+      </c:otherwise>
+    </c:choose> 
+      
+      <div class="sminputs">
+        <div class="input full">
+          <label class="string optional" for="user-pw">* EMAIL</label>
+          <input class="string optional" style='margin-bottom: 0px; width: 45%;' maxlength="255" id="admemail" name="admemail" value='${adminVO.admemail }' placeholder="이메일" type="email" size="50" />
+          <button type="button" class="btn" id="email_btn" style='margin-left: 10px; padding: 0px;'><strong>중복 검사</strong></button>
+          <span id="panel_email" style='font-size: 15px;'></span>
+        </div>
+      </div>    
+
+      <div class="sminputs">
+        <div class="input full">
+          <label class="string optional" for="user-pw">* EMAIL 인증</label>
+          <button type="button" class="btn" id="code_btn" style='margin-left: 10px; padding: 0px;'><strong>코드 전송</strong></button>
+          <span id="panel_code" style='font-size: 15px;'></span>
+        </div>
+      </div>       
+
+      <div class="sminputs">
+        <div class="input full">
+          <label class="string optional" for="user-pw">* CODE</label>
+          <input class="string optional" style='margin-bottom: 0px; width: 45%;' maxlength="255" id="mailcode" name=mailcode value='' placeholder="메일에서 인증 코드를 복사하여 붙여주세요." type="text" size="50" />
+          <button type="button" class="btn" id="codecf_btn" style='margin-left: 10px; padding: 0px;'><strong>인증 확인</strong></button>
+          <span id="panel_confirm" style='font-size: 15px;'></span>
+        </div>
+      </div> 
+
+      <div class="sminputs">
+         <div class="input full">
+           <label class="string optional" for="user-pw">* NAME</label>
+           <input class="string optional" maxlength="255" id="admname" name="admname" value="${adminVO.admname }" placeholder="이름" type="text" size="50" />
+         </div>
+       </div>
+
+      <c:choose>
+        <c:when test="${sessionScope.admauth == 'M'}">
+          <div class="sminputs">
+            <div class="input full">
+              <label class="string optional" for="user-pw">* AUTHORITY</label>
+              <label class="string optional">
+              <input type="radio" name="admauth" id="N" value="N" style= 'width: 10%;' checked> <span style='font-size: 15px;'>대기</span>
+              <input type="radio" name="admauth" id="A" value="A" style= 'width: 10%;'> <span style='font-size: 15px;'>관리자</span>
+              <input type="radio" name="admauth" id="M" value="M" style= 'width: 10%;'> <span style='font-size: 15px;'>마스터</span>
+              </label>
+            </div>
+          </div>
+        </c:when>
+        <c:otherwise>
+        </c:otherwise>
+      </c:choose> 
+  
+      <div class="simform__actions">
+        <input class="sumbit" id="update" type="button" value="UPDATE" />
+      </div> 
+
+    </FORM>
     </div>
   </div>
-  
-
-</FORM>
+  </div>
+</div> 
  
  
 </DIV> <!-- content END -->

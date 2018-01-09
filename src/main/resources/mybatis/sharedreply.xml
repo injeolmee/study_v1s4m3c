@@ -62,7 +62,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     VALUES ((SELECT NVL(MAX(shreplyno), 0) + 1 as shreplyno from sharedreply), #{shreplycontent}, #{shreplyname}, sysdate, 
                #{shreplygrpno}, #{shreplyindent}, #{shreplyansnum}, #{sharedno}, #{memberno}, #{seqno})
   </insert>
-
+  
+  <!-- 댓글의 답변(대댓글) 등록 (관리자용) --> 
+  <insert id="reply_admin" parameterType="SharedreplyVO">
+    INSERT INTO sharedreply (shreplyno, shreplycontent, shreplyname, shreplydate, 
+                                     shreplygrpno, shreplyindent, shreplyansnum, sharedno, adminno, seqno)    
+    VALUES ((SELECT NVL(MAX(shreplyno), 0) + 1 as shreplyno from sharedreply), #{shreplycontent}, #{shreplyname}, sysdate, 
+               #{shreplygrpno}, #{shreplyindent}, #{shreplyansnum}, #{sharedno}, #{adminno}, #{seqno})
+  </insert>
   <!-- ******************** 대댓글(답변) 관련 종료 ******************** -->
   
   <!-- 댓글 수정 -->
@@ -97,5 +104,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     DELETE FROM sharedreply
     WHERE sharedno = #{sharedno}
   </delete>
+  
+  <!-- 관리자 댓글 등록 -->
+  <insert id="create_admin" parameterType="SharedreplyVO">
+    INSERT INTO sharedreply (shreplyno, shreplycontent, shreplyname, shreplydate, 
+                                 shreplygrpno, shreplyindent, shreplyansnum, sharedno, adminno, seqno) 
+    VALUES ((SELECT NVL(MAX(shreplyno), 0) + 1 as shreplyno from sharedreply), #{shreplycontent}, #{shreplyname}, sysdate, 
+               (SELECT NVL(MAX(shreplygrpno), 0) + 1 as shreplygrpno from sharedreply), 0, 0, #{sharedno}, #{adminno}, 1)
+  </insert>
+  
+  <!-- 부모 댓글일경우 하위댓글이 존재하는지 검사 -->
+  <select id="parent_check" parameterType="int" resultType="int">
+    SELECT COUNT(*) as cnt
+    FROM sharedreply
+    WHERE shreplygrpno = #{shreplygrpno}
+  </select>
+  
+  <!-- 대댓글과 관련되어 맨 마지막 댓글인지 검사 -->
+  <select id="reply_check" parameterType="HashMap" resultType="int">
+    SELECT MAX(SHREPLYINDENT)
+    FROM sharedreply
+    WHERE sharedno = #{sharedno} AND shreplygrpno = #{shreplygrpno}
+  </select>
 
 </mapper>

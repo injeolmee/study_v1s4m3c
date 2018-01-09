@@ -17,15 +17,6 @@ public interface SharedDAOInter {
   
   /**
    * <XMP>
-   * 게시판 목록
-   * <select id="list" resultType="SharedVO">
-   * </XMP>
-   * @return 게시판 목록
-   */
-  public List<SharedVO> list();
-  
-  /**
-   * <XMP>
    * 게시판 검색 기능
    * <select id="list" resultType="SharedVO" parameterType="HashMap">
    * </XMP>
@@ -63,27 +54,7 @@ public interface SharedDAOInter {
    * @return
    */
   public int increaseCnt (int sharedno);
-  
-  /**
-   * <XMP>
-   * 추천수 상승
-   * <update id="increaseLike" parameterType="int">
-   * </XMP>
-   * @param sharedno
-   * @return
-   */
-  public int increaseLike (int sharedno);
-  
-  /**
-   * <XMP>
-   * 패스워드 검사
-   * <select id="passwd_check" resultType="int" parameterType="HashMap">
-   * </XMP>
-   * @param hashMap
-   * @return
-   */
-  public int passwd_check (HashMap<String, Object>  hashMap);
-  
+
   /**
    * <XMP>
    * 게시글 수정
@@ -133,5 +104,15 @@ public interface SharedDAOInter {
    * @return
    */
   public int member_check (HashMap<String, Object> hashMap);
+  
+  /**
+   * <XMP>
+   * 관리자 게시글 등록
+   * <insert id="create_adminno" parameterType="SharedVO">
+   * </XMP>
+   * @param sharedVO
+   * @return int
+   */
+  public int create_admin (SharedVO sharedVO);
 
 }

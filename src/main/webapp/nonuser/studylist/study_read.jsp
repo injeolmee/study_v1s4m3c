@@ -15,9 +15,9 @@
 <link href="./css/style.css" rel='Stylesheet' type='text/css'>
 
 <script type="text/JavaScript"
-  src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<script
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuKbPMccNHjVr8PDmG5zRjxZEManXR_MI&libraries=places"></script>
+          src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuKbPMccNHjVr8PDmG5zRjxZEManXR_MI&libraries=places"></script>
 <style>
 * {
   color: #000000;
@@ -48,12 +48,13 @@ html, body {
 <script type="text/javascript">
 
 $(function(){
-  
-  
+    
+  //댓글 수정폼 숨기고 등록 폼 출력
   $('#reply_create').show();
   $('#reply_update').hide();
   
   //스터디 리스트 등록자의 memberno
+  var memberno = ${readVO.memberno};
   var stdlist_no = $("#stdlist_no").val();
   
  /*  alert("memberno:"+memberno);
@@ -65,10 +66,19 @@ $(function(){
   //댓글 입력 버튼 클릭 event
   $('#reply_but_create').click(function(){
     
+    
+    if(${sessionScope.memberno == null}){
+      
+      alert("로그인해주세요.");
+      
+    }else{
+      
     var reply = $("#reply_create").serialize();
     /* alert(reply); */
     replyinsert(reply);
-   
+    
+    }
+    
    });    
   
   //댓글 수정 버튼 클릭 event
@@ -85,8 +95,13 @@ $(function(){
   //신청하기 버튼 클릭 event
   $("#join").click(function(){
     
+    if(${sessionScope.memberno == null}){
+      
+      alert("로그인해주세요.");
+    }else{
     //이미 신청 되어있는지 검사
     check_memberno(stdlist_no);
+    }
     
   });
   
@@ -94,9 +109,8 @@ $(function(){
   
   //스터디리스트 수정 버튼에 대한 클릭 이벤트 updata_form 으로 이동
   $("#update_form").click(function(){
-    
-    var url = "/study/user/studylist/update.do?stdlist_no="+${readVO.stdlist_no};
-    $(location).attr('href',url);
+    var url = "/study/user/studylist/update.do?stdlist_no=${readVO.stdlist_no}";
+    $(location).attr('href',url); 
     
   });
   
@@ -105,9 +119,12 @@ $(function(){
   //지도 출력
   map(stdlist_area);
   
+  //좋아요 이미지 출력
   heart();
   
-});
+
+  
+}); // 
   
   //신청 버튼에 대한 event
   function alert_join(stdlist_no){
@@ -437,6 +454,7 @@ $(function(){
      
    };
    
+
 /*-----------------------------  좋아요  --------------------------------------- */   
  
    function heart(){
@@ -601,48 +619,27 @@ $(function(){
 <body>
   <jsp:include page="/menu/top.jsp" flush='false' />
 
-  <DIV class='container'>
+  <DIV class='container' style='margin-bottom:5%;'>
     <DIV class='content'>
 
-
-      <DIV style='width: 80%; margin: 0px auto;'>
-
-
-        <div style='border-bottom: solid 1px; margin: 90px;'>
-          <div class="form-group"
-            style='float: left; width: 50%; margin: 30px;'>
-            <label for="stdlist" class="col-md-3 control-label">
-              <a href="/study/user/recruit/recruit_list.do?stdlist_no=${readVO.stdlist_no}">
-                신청 리스트</a>
-            </label>
-            <div class="col-md-6" style='text-align: left;'>
-
-              <c:choose>
-                <c:when
-                  test="${readVO.stdlist_curr_num == readVO.stdlist_tot_num }">
-                  <span class="label label-default">신청이 완료되었습니다.</span>
-                </c:when>
-                <c:otherwise>
-                  <button type='button' id='join'>신청하기</button>
-                </c:otherwise>
-
-              </c:choose>
-            </div>
-          </div>
-          
-          <div style='float: right; margin-right: 30px; margin-top: 30px;'>
-
+        <div style='width: 80%; height:100px;'>
+          <div style='float: right; margin-right: 30px; margin-top: 30px; margin-bottom:20px;'>
             <div id='heart' style='float: left; margin-left: 10px; margin-right:20px;'>
             </div>
             <button type='button'
               onclick="location.href='<%=root%>/nonuser/studylist/list.do'"
               class="btn btn-primary btn-md">목록</button>
-            <button type='button' class="btn btn-primary btn-md"
-              id='update_form'>수정</button>
-            <button type='button' class="btn btn-primary btn-md"
-              onclick='javascript:alert_delete_form()'>삭제</button>
+            <c:choose>
+            <c:when test="${readVO.memberno == sessionScope.memberno}">
+              <button type='button' class='btn btn-primary btn-md' onclick="location.href='/study/user/recruit/recruit_list.do?stdlist_no=${readVO.stdlist_no}'">신청리스트</button>
+              <button type='button' class='btn btn-primary btn-md' id='update_form'>수정</button>
+              <button type='button' class='btn btn-primary btn-md' onclick='javascript:alert_delete_form()'>삭제</button>
+            </c:when>
+            </c:choose>
           </div>
         </div>
+
+      <DIV style='width: 80%; margin: 0px auto;'>
 
         <div style='float: left; margin-left: 10%;'>
           <div class="form-group" style='padding: 20px; margin: 0; width:400px'>
@@ -714,9 +711,20 @@ $(function(){
         <div id="map"
           style='width: 300px; height: 300px; margin: 0px auto;'></div>
 
-        <div style='margin-top: 10%'>
-        
-          
+        <div style='text-align:center; margin-top: 10%;'>
+              <c:choose>
+                <c:when
+                  test="${readVO.stdlist_curr_num == readVO.stdlist_tot_num }">
+                  <span class="label label-default">신청이 완료되었습니다.</span>
+                </c:when>
+                <c:otherwise>
+                  <button type='button' id='join'>신청하기</button>
+                </c:otherwise>
+              </c:choose>         
+         </div>     
+         
+        <div style='margin-top: 5%'>
+ 
       <FORM name='reply' id='reply_update' action="" style="text-align: left; width: 50%; height:40px; padding-bottom:5%; margin: 0px auto;">
         <input type='hidden' name='stdlist_no' id='stdlist_no'value='${readVO.stdlist_no}'>
         <input type='hidden' name='std_repno' id='std_repno' value=''>
@@ -735,13 +743,13 @@ $(function(){
         </div>
 
 
-        <div id='reply_list'style='margin-top:70px; width: 60%; margin: 0px auto;'></div>
+        <div id='reply_list' style='margin-top:70px; width: 60%; margin: 0px auto;'></div>
 
         <div id="paging" style='text-align: center;'></div>
 
-      </DIV>
     </DIV>
     <!-- content END -->
+  </DIV>
   </DIV>
   <!-- container END -->
   <jsp:include page="/menu/bottom.jsp" flush='false' />

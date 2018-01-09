@@ -13,9 +13,10 @@ CREATE TABLE salereply(
     sreplygrpno                       NUMBER(7)    NOT NULL,
     sreplyindent                      NUMBER(7)    DEFAULT 0     NOT NULL,
     sreplyansnum                      NUMBER(7)    DEFAULT 0     NOT NULL,
+    seqno                             NUMBER(5)    DEFAULT 1     NULL ,
     saleno                            NUMBER(7)    NULL ,
-    MEMBERNO                          NUMBER(10)     NULL,
-    seqno                                NUMBER(5) default 1         NULL
+    MEMBERNO                          NUMBER(10)     NULL ,
+    ADMINNO                           NUMBER(10)     NULL 
 );
 
 COMMENT ON TABLE salereply is '거래 게시판 댓글';
@@ -26,13 +27,17 @@ COMMENT ON COLUMN salereply.sreplydate is '댓글 등록일';
 COMMENT ON COLUMN salereply.sreplygrpno is '댓글 그룹번호';
 COMMENT ON COLUMN salereply.sreplyindent is '대댓글 차수';
 COMMENT ON COLUMN salereply.sreplyansnum is '대댓글 순서';
+COMMENT ON COLUMN salereply.seqno is '출력 권한';
 COMMENT ON COLUMN salereply.saleno is '거래게시판 번호';
 COMMENT ON COLUMN salereply.MEMBERNO is '회원번호';
-COMMENT ON COLUMN salereply.seqno is '출력권한';
+COMMENT ON COLUMN salereply.ADMINNO is '관리자번호';
+
 
 ALTER TABLE salereply ADD CONSTRAINT IDX_salereply_PK PRIMARY KEY (sreplyno);
 ALTER TABLE salereply ADD CONSTRAINT IDX_salereply_FK0 FOREIGN KEY (MEMBERNO) REFERENCES MEMBER (MEMBERNO);
 ALTER TABLE salereply ADD CONSTRAINT IDX_salereply_FK1 FOREIGN KEY (saleno) REFERENCES sale (saleno);
+ALTER TABLE salereply ADD CONSTRAINT IDX_salereply_FK2 FOREIGN KEY (ADMINNO) REFERENCES ADMIN (ADMINNO);
+
 
 1. 등록
 
@@ -171,3 +176,15 @@ WHERE r >= 1 AND r <= 10;
 UPDATE salereply
 SET sreplyansnum = sreplyansnum + 1
 WHERE saleno=1 AND sreplygrpno = 1 AND sreplyansnum > 1;
+
+8. 부모 댓글일 경우 하위 댓글이 존재하는지 검사
+
+SELECT COUNT(*) as cnt
+FROM salereply
+WHERE sreplygrpno =6 ;
+
+ CNT
+ ---
+   2
+
+   

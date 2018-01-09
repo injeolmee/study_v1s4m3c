@@ -83,7 +83,7 @@ html {
   display: table;
 }
 .logmod__tabs li.current a {
-  background: #FFF;
+  background: #fcd853;
   color: #333;
 }
 .logmod__tabs li a {
@@ -91,7 +91,7 @@ html {
   position: relative;
   float: left;
   text-align: center;
-  background: #D2D8D8;
+  background: #FFF;
   line-height: 72px;
   height: 72px;
   text-decoration: none;

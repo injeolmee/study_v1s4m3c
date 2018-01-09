@@ -34,10 +34,8 @@ CREATE TABLE contest (
     cdate                             DATE                         NOT NULL,
     conWord                           VARCHAR2(100)                    NULL,
     adminno                           NUMBER(10)                       NULL,
-    cateno                            NUMBER(10)                       NULL,
     memberno                          NUMBER(10)                       NULL,
     FOREIGN KEY (adminno) REFERENCES admin (adminno),
-    FOREIGN KEY (cateno) REFERENCES category (cateno),
     FOREIGN KEY (memberno) REFERENCES member (memberno)
 );
 
@@ -65,7 +63,6 @@ COMMENT ON COLUMN contest.conCnt is '공모전 조회수';
 COMMENT ON COLUMN contest.cdate is '공모전 등록일';
 COMMENT ON COLUMN contest.conWord is '공모전 검색어';
 COMMENT ON COLUMN contest.adminno is '관리자번호';
-COMMENT ON COLUMN contest.cateno is '카테고리번호';
 COMMENT ON COLUMN contest.memberno is '회원번호';
 
 2) 삽입

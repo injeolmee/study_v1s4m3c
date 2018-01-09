@@ -7,8 +7,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace = "qna">
 
   <insert id="create" parameterType="QnaVO">
-    INSERT INTO qnaboard(qnano, adminno, memberno, qnatitle, wname, qnacont, qnafile1, qnasize1, qnafstor1, qnagrp, qnapwd, qnacnt, qnaword, qdate)
-    VALUES ((SELECT NVL(MAX(qnano), 0) + 1 as qnano FROM qnaboard), 1, 1, #{qnatitle}, #{wname}, #{qnacont}, 
+    INSERT INTO qnaboard(qnano, memberno, qnatitle, wname, qnacont, qnafile1, qnasize1, qnafstor1, qnagrp, qnapwd, qnacnt, qnaword, qdate)
+    VALUES ((SELECT NVL(MAX(qnano), 0) + 1 as qnano FROM qnaboard), #{memberno}, #{qnatitle}, #{wname}, #{qnacont}, 
             #{qnafile1}, #{qnasize1}, #{qnafstor1}, #{qnagrp}, #{qnapwd}, #{qnacnt}, #{qnaword}, sysdate)
   </insert>
   
@@ -35,7 +35,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   </select>
   
   <select id="read" resultType="QnaVO" parameterType="int">
-    SELECT qnano, adminno, memberno, qnaTitle, wname, qnaCont, qnafile1, qnasize1, qnafstor1, qnagrp, 
+    SELECT qnano, adminno, memberno, qnaTitle, wname, qnaCont, qnafile1, qnasize1, qnafstor1, qnagrp, qnapwd,
            qnacnt, qdate
     FROM qnaboard
     WHERE qnano = #{qnano}
@@ -57,6 +57,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   <select id="total_count" resultType="int">
     SELECT COUNT(*) as count
     FROM qnaboard
+  </select>
+  
+  <select id="member_check" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as count
+    FROM qnaboard
+    WHERE qnano = #{qnano} AND memberno = #{memberno}
   </select>
   
   <select id="search_count" resultType="int" parameterType="HashMap">

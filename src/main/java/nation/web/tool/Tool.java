@@ -430,6 +430,19 @@ public class Tool {
   }
   
   /**
+   * 201710 형식의 날짜를 리턴합니다.
+   * @return 20101214 형식의 문자열 리턴
+   */
+  public static synchronized String getDate2(){
+    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    
+    String date = sd.format(new Date());
+    
+    // System.out.println(date);        
+    return date;
+  }
+  
+  /**
    * 폴더를 입력받아 절대 경로를 산출합니다. 
    * 예) getRealPath(request, "/media/storage")
    * 

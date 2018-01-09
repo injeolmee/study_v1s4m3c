@@ -163,13 +163,14 @@ public class NrepCont {
     // System.out.println("--> nrep_update() POST executed");
     JSONObject obj = new JSONObject();
 
+    
     // ID 별로 가지고 있는 고유 memberno 를 댓글 등록시 넘겨줌
-    int memberno = (Integer) session.getAttribute("memberno");
+    //int memberno = (Integer) session.getAttribute("memberno");
 
     // 댓글수정에 대한 페이지유지
     int nowPage = nrepVO.getNowPage();
 
-    nrepVO.setMemberno(memberno);
+    //nrepVO.setMemberno(memberno);
 
     int count = nrepProc.nrep_update(nrepVO);
 
@@ -253,6 +254,7 @@ public class NrepCont {
     // count 값이 1이면 작성자와 삭제 수정하려는 회원과 일치
     // 0이면 수정, 삭제 불가.
     int count = nrepProc.nrep_ck_memberno(hashMap);
+    
 
     System.out.println("count:" + count);
     System.out.println("str:" + str);

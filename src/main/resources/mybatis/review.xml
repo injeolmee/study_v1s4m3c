@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="review">
+
+  <insert id="create" parameterType="ReviewVO">
+    INSERT INTO review(rvno, rono, memberno, rvmemname, rvdate, rvgood, rvcont, rvfile1, rvsize1, rvthumb, rvup)
+    VALUES((SELECT NVL(MAX(rvno), 0)+1 as rvno FROM review), #{rono}, #{memberno}, #{rvmemname}, sysdate, 
+                #{rvgood}, #{rvcont}, #{rvfile1}, #{rvsize1}, #{rvthumb}, 0)
+  </insert>
+  
+  
+  <select id="list" resultType="ReviewVO" parameterType="HashMap">
+    SELECT rvno, rono, memberno, rvmemname, rvdate, rvgood, rvcont, rvfile1, 
+               rvsize1, rvthumb, rvup, r
+    FROM (
+               SELECT rvno, rono, memberno, rvmemname, rvdate, rvgood, rvcont, rvfile1, 
+                          rvsize1, rvthumb, rvup, rownum as r
+               FROM (
+                          SELECT rvno, rono, memberno, rvmemname, rvdate, rvgood, rvcont, rvfile1, 
+                                     rvsize1, rvthumb, rvup
+                          FROM review
+                          WHERE rono=#{rono} 
+                          ORDER BY rvno DESC
+               )
+               
+    )
+    
+    WHERE r &gt;= #{startNum} AND r &lt; = #{endNum}
+  </select>
+  
+  <select id="search_count" resultType="int">
+    SELECT COUNT(*) as cnt
+    FROM review
+    WHERE rono=#{rono} 
+  </select>
+  
+  <select id="read" resultType="ReviewVO" parameterType="int">
+    SELECT rvno, rono, memberno, rvmemname, rvdate, rvgood, rvcont, rvfile1, rvsize1, rvthumb, rvup
+    FROM review
+    WHERE rvno=#{rvno}
+  </select>
+  
+  <update id="update" parameterType="ReviewVO">
+    UPDATE review
+    SET rvgood=#{rvgood}, rvcont=#{rvcont}, rvthumb=#{rvthumb}, rvfile1=#{rvfile1}, rvsize1=#{rvsize1}
+    WHERE rvno=#{rvno}
+  </update>
+  
+  <delete id="delete"  parameterType="int">
+    DELETE FROM review
+    WHERE rvno=#{rvno}  
+  </delete>
+  
+  
+  <!-- FK 컬럼 값이 사용된 레코드 갯수 산출 -->
+  <select id="countByRono" resultType="int" >
+    SELECT COUNT(*) as rvcnt
+    FROM review
+    WHERE rono = #{rono} 
+  </select>
+  
+  <delete id="deleteByRono" parameterType="int">
+    DELETE FROM review
+    WHERE rono=#{rono}
+  </delete>
+  
+  <!-- 리뷰글 좋아요 +1 -->
+  <update id="likecnt_up" parameterType="int">
+    UPDATE review
+    SET rvup = rvup + 1
+    WHERE rvno = #{rvno}
+  </update>
+  
+  <!-- 리뷰글 좋아요 -1 -->
+  <update id="likecnt_down" parameterType="int">
+    UPDATE review
+    SET rvup = rvup - 1
+    WHERE rvno = #{rvno}
+  </update>
+ 
+ <!-- 등록된 리뷰의 가장큰 리뷰번호값을 가져옴. -->
+ <select id="rvno" resultType="int">
+    SELECT NVL(MAX(rvno), 0) as rvno 
+    FROM review
+ </select>
+
+</mapper>

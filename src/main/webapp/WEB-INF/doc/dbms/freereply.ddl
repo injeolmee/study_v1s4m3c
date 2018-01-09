@@ -1,6 +1,6 @@
 DROP TABLE freereply;
 DELETE FROM freereply;
-
+  
 /**********************************/
 /* Table Name: 자유 게시판 댓글 */
 /**********************************/
@@ -9,13 +9,13 @@ CREATE TABLE freereply(
     freplycontent                     VARCHAR2(500)    NOT NULL,
     freplyname                        VARCHAR2(100)    NOT NULL,
     freplydate                        DATE     NOT NULL,
-    freplypasswd                      VARCHAR2(50)     NULL ,
     freplygrpno                       NUMBER(7)    NOT NULL,
     freplyindent                      NUMBER(7)    DEFAULT 0     NOT NULL,
     freplyansnum                      NUMBER(7)    DEFAULT 0     NOT NULL,
+    seqno                             NUMBER(5)    DEFAULT 1     NULL ,
     freeno                            NUMBER(7)    NULL ,
-    MEMBERNO                          NUMBER(10)     NULL,
-    seqno                                NUMBER(5) default 1         NULL
+    MEMBERNO                          NUMBER(10)     NULL ,
+    ADMINNO                           NUMBER(10)     NULL 
 );
 
 COMMENT ON TABLE freereply is '자유 게시판 댓글';
@@ -23,17 +23,20 @@ COMMENT ON COLUMN freereply.freplyno is '댓글 번호';
 COMMENT ON COLUMN freereply.freplycontent is '댓글 내용';
 COMMENT ON COLUMN freereply.freplyname is '댓글 작성자';
 COMMENT ON COLUMN freereply.freplydate is '댓글 등록일';
-COMMENT ON COLUMN freereply.freplypasswd is '댓글 패스워드';
 COMMENT ON COLUMN freereply.freplygrpno is '댓글 그룹번호';
 COMMENT ON COLUMN freereply.freplyindent is '대댓글 차수';
 COMMENT ON COLUMN freereply.freplyansnum is '대댓글 순서';
+COMMENT ON COLUMN freereply.seqno is '출력 권한';
 COMMENT ON COLUMN freereply.freeno is '게시판 번호';
 COMMENT ON COLUMN freereply.MEMBERNO is '회원번호';
-COMMENT ON COLUMN freereply.seqno is '출력권한';
+COMMENT ON COLUMN freereply.ADMINNO is '관리자번호';
+
 
 ALTER TABLE freereply ADD CONSTRAINT IDX_freereply_PK PRIMARY KEY (freplyno);
 ALTER TABLE freereply ADD CONSTRAINT IDX_freereply_FK0 FOREIGN KEY (MEMBERNO) REFERENCES MEMBER (MEMBERNO);
 ALTER TABLE freereply ADD CONSTRAINT IDX_freereply_FK1 FOREIGN KEY (freeno) REFERENCES free (freeno);
+ALTER TABLE freereply ADD CONSTRAINT IDX_freereply_FK2 FOREIGN KEY (ADMINNO) REFERENCES ADMIN (ADMINNO);
+
 
 1. 등록
 
@@ -160,5 +163,13 @@ UPDATE freereply
 SET freplyansnum = freplyansnum + 1
 WHERE freeno=1 AND freplygrpno = 1 AND freplyansnum > 1;
 
+8. 부모 댓글일 경우 하위 댓글이 존재하는지 검사
 
+SELECT COUNT(*) as cnt
+FROM freereply
+WHERE freplygrpno = 2;
+
+ CNT
+ ---
+   1
 

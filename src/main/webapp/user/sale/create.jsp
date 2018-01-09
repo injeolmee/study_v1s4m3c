@@ -13,8 +13,10 @@
 <!---------------------------------------------------------------------->
 <link href="${pageContext.request.contextPath}/user/sale/gnacss/style.css" rel="Stylesheet" type="text/css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/ckeditor/ckeditor.js"></script>
+<!--------------------------J Query Part ------------------------------>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-   
+<!---------------------------------------------------------------------->
+ 
 <script type="text/JavaScript">
   window.onload=function(){
     CKEDITOR.replace('salecontent');  // <TEXTAREA>태그 id 값을 받아와 ckeditor 형식으로 변환
@@ -29,7 +31,14 @@
     
     // alert("내용 출력: " + ck_salecontent);
     
-    formData.append("memberno", $("input[name=memberno]").val());
+    if ($("input[name=memberno]").val() != null) { // 회원일 경우
+      formData.append("memberno", $("input[name=memberno]").val());
+    }
+    
+    if ($("input[name=adminno]").val() != null) { // 관리자일 경우
+      formData.append("adminno", $("input[name=adminno]").val());
+    }
+    
     formData.append("salename", $("input[name=salename]").val());
     formData.append("saleseqno", $("input[name=saleseqno]").val());
     formData.append("saletitle", $("input[name=saletitle]").val());
@@ -60,17 +69,14 @@
     if(ck_salecontent.length < 1) {
       alert("내용을 입력해주세요.");
       return false;
-    }
-    
+    }  
   //**********************************************************************************
    
   if($("input[name=file1MF")[0].files[0] == null) { // 파일 업로드 X의 경우
     // alert("그냥업로드 실행"); 
   
     var frm = $('#frm').serialize(); // 위의 코드 사용하지 않고 파일 제외한 모든 데이터를 serialize
-    // alert("frm의 serialize: " + frm);
     var new_frm = frm + ck_salecontent; // frm의 내용과 ckeditor의 내용 결합
-    // alert("결합한 소스: " + new_frm);
     create_nom(new_frm);
     
   } else { // 파일 업로드하는 경우
@@ -137,8 +143,14 @@
   
   <FORM name='frm' id="frm" method='POST'
                            enctype="multipart/form-data" class="form-horizontal" style="text-align: left;">
-     <input type='hidden' name='memberno' id='memberno' value=${sessionScope.memberno }>
-     <input type='hidden' name='salename' id='salename' value=${sessionScope.memname }>
+     <c:if test="${sessionScope.memberno ne null }">
+       <input type='hidden' name='memberno' id='memberno' value=${sessionScope.memberno }>
+       <input type='hidden' name='salename' id='salename' value=${sessionScope.memname }>
+     </c:if>
+     <c:if test="${sessionScope.adminno ne null}">
+       <input type='hidden' name='adminno' id='adminno' value=${sessionScope.adminno }>
+       <input type='hidden' name='salename' id='salename' value=${sessionScope.admname }>
+     </c:if>
      <input type='hidden' name='saleseqno' id='saleseqno' value=0>
   
     <div class="form-group">   
@@ -159,7 +171,7 @@
     <div class="form-group">   
       <div class="col-md-10" style="width: 100%; margin-top: 30px;">
         <label for="title" class="control-label" style="margin-right: 30px;">가격</label>
-        <input type='number' class="form-control input-md" name='saleprice' id='saleprice' value= 30000 style='width: 20%;'>
+        <input type='number' class="form-control input-md" name='saleprice' id='saleprice' value='' style='width: 20%;'>
         <label for="tel" class="control-label" style="margin-right: 30px; margin-left: 22%;">전화번호</label>
         <input type="text" class="form-control input-md" name='saletel' id='saletel' style='width: 30%;'>
       </div>
@@ -168,9 +180,9 @@
     <div class="form-group">   
       <div class="col-md-10" style="width: 100%; margin-top: 30px;">
         <label for="address" class="control-label" style="margin-right: 30px;">주소</label>
-        <input type='text' class="form-control input-md" name='saleaddress' id='saleaddress' value= "서울시 양천구" style='width: 35%;'>
+        <input type='text' class="form-control input-md" name='saleaddress' id='saleaddress' value= "" style='width: 35%;'>
         <label for="email" class="control-label" style="margin-right: 43px; margin-left: 7%;">이메일</label>
-        <input type="text" class="form-control input-md" name='saleemail' id='saleemail' value="min@na.com" style='width: 30%;'>
+        <input type="text" class="form-control input-md" name='saleemail' id='saleemail' value="" style='width: 30%;'>
       </div>
     </div>
     

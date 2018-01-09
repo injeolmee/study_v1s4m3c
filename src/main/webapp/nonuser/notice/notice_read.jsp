@@ -42,7 +42,7 @@ $(function(){
   //댓글 수정 버튼 클릭 event
   $('#reply_but_update').click(function(){
     var reply = $("#frm_reply_update").serialize();
-      /* alert(reply);   */
+     //alert(reply);
     reply_update(reply);
    
    });
@@ -71,7 +71,7 @@ $(function(){
   
 //댓글 수정에 대한 ajax   
   function reply_update(reply){
-   /* alert("replyupdate");  */
+    //alert("replyupdate"); 
     $.ajax({
       url : '/study/user/notice_reply/nrep_update.do',
       type: "POST",
@@ -94,6 +94,9 @@ $(function(){
   //댓글 리스트 ajax
   // 댓글에 대한 출력으로 기존의 스터디그룹 번호와  현재페이지
  function reply_List(noticeno, nowPage){
+   var admauth = '${sessionScope.admauth}';
+   var memberno_ss = '${sessionScope.memberno}';
+  
    $.ajax({
        url : '/study/nonuser/notice_reply/nrep_list.do',
        type : 'get',
@@ -107,6 +110,7 @@ $(function(){
           var nrepname = "";
           var noticeno ;
           var nrepno ;
+          var memberno;
           
           //댓글 수정을 위한 페이지 유지 nowpage값
           var nowPage = data.nowPage;
@@ -120,6 +124,7 @@ $(function(){
             nrepname = data.reply[i].nrepname;
             noticeno = data.reply[i].noticeno;
             nrepno = data.reply[i].nrepno;
+            memberno = data.reply[i].memberno;
   
             reply+=  "<DIV style='border-bottom-style: dotted; border-bottom-width: 1px; border-bottom-color: #999999; padding: 10px 0px 10px 0px; height:50px;'>";
             reply+=  " <span style='font-weight: bold; line-height: 30px;'>";
@@ -129,8 +134,16 @@ $(function(){
             reply+=  nrepdate+"</span>";
             
             reply+= "<div style='float: right;'>";
-            reply+=  "<a style='font-size: 0.8em; color: #999999;' onclick='javascript:check_memberno_reply("+noticeno+","+nrepno+"," + 1 +" )'>수정</a>";
-            reply+=  "<a style='font-size: 0.8em; color: #999999;' onclick='javascript:check_memberno_reply("+noticeno+","+nrepno+"," + 2 +" )'> | 삭제</a>";
+            if(admauth == 'M' || admauth == 'A') {
+              reply+=  "<a style='font-size: 0.8em; color: #999999;' onclick='javascript:notice_reply_update("+noticeno+","+nrepno+")'>수정</a>";
+              reply+=  "<a style='font-size: 0.8em; color: #999999;' onclick='javascript:notice_reply_delete("+noticeno+","+nrepno+")'> | 삭제</a>";
+            } else {
+              if(memberno == memberno_ss){
+                reply+=  "<a style='font-size: 0.8em; color: #999999;' onclick='javascript:check_memberno_reply("+noticeno+","+nrepno+"," + 1 +" )'>수정</a>";
+                reply+=  "<a style='font-size: 0.8em; color: #999999;' onclick='javascript:check_memberno_reply("+noticeno+","+nrepno+"," + 2 +" )'> | 삭제</a>";
+              }
+              
+            }
             reply+= "</div>";
             reply+= "<div>";
             reply+=  "<span style='margin-bottom: 10px;'>"+nrepcont+"</span>";
@@ -142,8 +155,10 @@ $(function(){
           $("#nowPage", frm_reply_update).val(nowPage);
           $("#paging").html(data.paging);
           $("#reply_list").html(reply);
-         }
-     });
+          
+         } // success 끝
+       
+     }); // ajax 끝
   }
   
   
@@ -156,7 +171,7 @@ $(function(){
        data : params,
        dataType : 'JSON',
        success : function(data){
-        alert(data.count + "/" + data.str);
+        //alert(data.count + "/" + data.str);
         var noticeno = data.noticeno
         var nrepno =  data.nrepno
          if(data.count == 1){
@@ -295,27 +310,34 @@ $(function(){
   <div id='reply_list'style='margin-top:70px; width: 70%; margin: 0px auto;'></div>
   <div id="paging" style='text-align: center; margin: 20px;'></div>
   
-  <!---------------------------- 댓글 등록창 시작 (새로운 댓글이 등록되는 창) ---------------------------->
-  <FORM name='frm_reply_create' id='frm_reply_create' style="text-align: left; width: 70%; margin: 0px auto; margin-bottom: 40px;">
-    <input type='hidden' name='noticeno' id='noticeno' value= ${nrepVO.noticeno }>
-    <input type='hidden' name='nowPage' id='nowPage' value= '${nrepVO.nowPage }'>
-    
-    <textarea name= "nrepcont" id="nrepcont" rows="100" cols="50" placeholder="댓글을 입력해주세요." style="width: 90%; height: 76px;"></textarea>
-    <button type="button" id="reply_but_create" name= "reply_but_create" style="width: 7%; height:80px; float: right;">등록</button> 
-  </FORM>
-  <!---------------------------- 댓글 등록창 종료 (새로운 댓글이 등록되는 창) ---------------------------->
-  
-  <!---------------------------- 댓글 수정창 시작 (기존 댓글이 수정되는 창) ---------------------------->
-  <FORM name='frm_reply_update' id='frm_reply_update' action='' style="text-align: left; width: 70%; margin: 0px auto; margin-bottom: 40px;">
-    <input type='hidden' name='nrepno' id='nrepno' value= ''>
-    <input type='hidden' name='nowPage' id='nowPage' value= '${nrepVO.nowPage}'>
-    <input type='hidden' name='noticeno' id='noticeno' value= '${nrepVO.noticeno}'>
-    
-    <textarea name= "nrepcont" id="nrepcont" rows="100" cols="50" style="width: 90%; height: 76px;"></textarea>
-    <button type="button" name="reply_but_update" id="reply_but_update" onclick="" style="width: 7%; height:80px; float: right;">수정</button> 
-  </FORM>
-  <!---------------------------- 댓글 수정창 종료 (기존 댓글이 수정되는 창) ---------------------------->
+  <c:choose>
+    <c:when test="${sessionScope.memauth == 'U' }">
+      <!---------------------------- 댓글 등록창 시작 (새로운 댓글이 등록되는 창) ---------------------------->
+      <FORM name='frm_reply_create' id='frm_reply_create' style="text-align: left; width: 70%; margin: 0px auto; margin-bottom: 40px;">
+        <input type='hidden' name='noticeno' id='noticeno' value= ${nrepVO.noticeno }>
+        <input type='hidden' name='nowPage' id='nowPage' value= '${nrepVO.nowPage }'>
+        
+        <textarea name= "nrepcont" id="nrepcont" rows="100" cols="50" placeholder="댓글을 입력해주세요." style="width: 90%; height: 76px;"></textarea>
+        <button type="button" id="reply_but_create" name= "reply_but_create" style="width: 7%; height:80px; float: right;">등록</button> 
+      </FORM>
+      <!---------------------------- 댓글 등록창 종료 (새로운 댓글이 등록되는 창) ---------------------------->
+    </c:when>
+    <c:otherwise>
+    </c:otherwise>
+  </c:choose>
+      
+      <!---------------------------- 댓글 수정창 시작 (기존 댓글이 수정되는 창) ---------------------------->
+      <FORM name='frm_reply_update' id='frm_reply_update' action='' style="text-align: left; width: 70%; margin: 0px auto; margin-bottom: 40px;">
+        <input type='hidden' name='nrepno' id='nrepno' value= ''>
+        <input type='hidden' name='nowPage' id='nowPage' value= '${nrepVO.nowPage}'>
+        <input type='hidden' name='noticeno' id='noticeno' value= '${nrepVO.noticeno}'>
+        
+        <textarea name= "nrepcont" id="nrepcont" rows="100" cols="50" style="width: 90%; height: 76px;"></textarea>
+        <button type="button" name="reply_but_update" id="reply_but_update" onclick="" style="width: 7%; height:80px; float: right;">수정</button> 
+      </FORM>
+      <!---------------------------- 댓글 수정창 종료 (기존 댓글이 수정되는 창) ---------------------------->
 
+  
   <DIV class='bottom_menu'>
     <button type='button' onclick="location.href='<%=root%>/nonuser/notice/notice_list.do?nowPage=${nowPage }&word=${noticeVO.word }&search=${noticeVO.search }'">목록</button>
     <c:if test="${sessionScope.admauth == 'M' || sessionScope.admauth == 'A'}">

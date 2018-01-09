@@ -17,10 +17,10 @@ public interface FreeDAOInter {
   
   /**
    * <XMP>
-   * 게시판 목록
+   * 목록 + 검색 + 페이징
    * <select id="list" resultType="FreeVO">
    * </XMP>
-   * @return 게시판 목록
+   * @return
    */
   public List <FreeVO> list();
   
@@ -53,17 +53,6 @@ public interface FreeDAOInter {
    * @return
    */
   public int increaseCnt (int freeno);
-  
-  /**
-   * <XMP>
-   * 패스워드 검사
-   * <select id="passwd_check" resultType="int" parameterType="HashMap">
-   * </XMP>
-   * @param hashMap
-   * @return
-   */
-  public int passwd_check (HashMap<String, Object> hashMap);
-  
   
   /**
    * <XMP>
@@ -163,4 +152,13 @@ public interface FreeDAOInter {
    */
   public int decreaseLike(int freeno);
   
+  /**
+   * <XMP>
+   * 관리자 게시글 등록
+   * <insert id="create_admin" parameterType="FreeVO">
+   * </XMP>
+   * @param freeVO
+   * @return
+   */
+  public int create_admin(FreeVO freeVO);
 }

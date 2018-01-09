@@ -26,7 +26,7 @@ public class Std_RecomCont {
   private StudyListProcInter studylistProc = null;
   
   public Std_RecomCont() {
-    System.out.println("-->Std_RecomCont created");
+    // System.out.println("-->Std_RecomCont created");
   }
 
   
@@ -38,7 +38,7 @@ public class Std_RecomCont {
   @ResponseBody
   @RequestMapping(value = "/nonuser/std_recom/heart.do", method = RequestMethod.GET, produces = "application/text; charset=utf8")
   public String heart(HttpSession session, int stdlist_no) {
-    System.out.println("heart()");
+    // System.out.println("heart()");
     
     JSONObject obj = new JSONObject();
   
@@ -58,7 +58,7 @@ public class Std_RecomCont {
    
     obj.put("count", count);
     
-    System.out.println(obj);
+    // System.out.println(obj);
     
     return obj.toString();
   }

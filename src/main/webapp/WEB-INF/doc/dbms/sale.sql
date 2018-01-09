@@ -4,7 +4,6 @@ DROP TABLE shared CASCADE CONSTRAINTS;
 DROP TABLE admin;
 DROP TABLE member;
 
-
 /**********************************/
 /* Table Name: 거래 게시판 */
 /**********************************/
@@ -20,13 +19,13 @@ CREATE TABLE sale(
     saleaddress                       VARCHAR2(50)     NULL ,
     saletel                           VARCHAR2(50)     NULL ,
     saleemail                         VARCHAR2(50)     NULL ,
-    salepasswd                        VARCHAR2(50)     NULL ,
     salefile                          VARCHAR2(500)    NULL ,
     salefstor                         VARCHAR2(500)    NULL ,
     saletum                           VARCHAR2(500)    NULL ,
     salesize                          NUMBER(30)     DEFAULT 0     NOT NULL,
     saleseqno                         NUMBER(10)     DEFAULT 1     NOT NULL,
-    MEMBERNO                          NUMBER(10)     NULL 
+    MEMBERNO                          NUMBER(10)     NULL ,
+    ADMINNO                           NUMBER(10)     NULL 
 );
 
 COMMENT ON TABLE sale is '거래 게시판';
@@ -41,16 +40,17 @@ COMMENT ON COLUMN sale.saleprice is '가격';
 COMMENT ON COLUMN sale.saleaddress is '주소';
 COMMENT ON COLUMN sale.saletel is '휴대폰 번호';
 COMMENT ON COLUMN sale.saleemail is '이메일';
-COMMENT ON COLUMN sale.salepasswd is '패스워드';
 COMMENT ON COLUMN sale.salefile is '파일';
 COMMENT ON COLUMN sale.salefstor is '실제 파일명';
 COMMENT ON COLUMN sale.saletum is '파일 썸네일';
 COMMENT ON COLUMN sale.salesize is '파일 크기';
 COMMENT ON COLUMN sale.saleseqno is '출력 여부';
 COMMENT ON COLUMN sale.MEMBERNO is '회원번호';
+COMMENT ON COLUMN sale.ADMINNO is '관리자번호';
 
 ALTER TABLE sale ADD CONSTRAINT IDX_sale_PK PRIMARY KEY (saleno);
 ALTER TABLE sale ADD CONSTRAINT IDX_sale_FK0 FOREIGN KEY (MEMBERNO) REFERENCES MEMBER (MEMBERNO);
+ALTER TABLE sale ADD CONSTRAINT IDX_sale_FK1 FOREIGN KEY (ADMINNO) REFERENCES ADMIN (ADMINNO);
 
 1. 등록
 
@@ -76,7 +76,7 @@ VALUES ((SELECT NVL(MAX(saleno), 0) + 1 as saleno from sale), '○○책 어때요.', 
 
 1) 전체 목록 조회
 SELECT saleno, saletitle, salecontent, saletname, salename, saledate, salecnt, saleprice, saleaddress, 
-          saletel, saleemail, salepasswd, salefile, salefstor, saletum, salesize, saleseqno, memberno
+          saletel, saleemail, salefile, salefstor, saletum, salesize, saleseqno, memberno
 FROM sale
 ORDER BY saleno DESC;
 

@@ -70,7 +70,7 @@ String root = request.getContextPath();
   <DIV class = "form-group form-group-sm">
     <label for='wname' class='col-md-2 control-label' style='width: 12%;'>작성자</label>
     <DIV class="col-md-6" style='width: 10%;'>
-      <input type='text' class="form-control input-sm" name='wname' id='wname' value='${qnaVO.wname }' required="required">
+      <input type='text' class="form-control input-sm" name='wname' id='wname' value='${sessionScope.memname}' required="required">
     </DIV>
     <DIV style='margin: 0px auto; text-align: center; width:80%; padding-top: 10px;'>
       <button class='btn btn-default' type="submit">수정</button>

@@ -1,5 +1,5 @@
-<%@page import="java.util.Date"%>
-<%@page import="java.text.SimpleDateFormat"%>
+<%@ page import="java.util.Date"%>
+<%@ page import="java.text.SimpleDateFormat"%>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -37,15 +37,17 @@ $(document).ready(function(){
 
 function deleteOne(conNo) {
   var frm_delete = $('#frm_delete');
+  $('#conNo', frm_delete).val(conNo);
+  $('#target_del').html(conNo + "번 게시글을 삭제합니다.");
   $.ajax({
-    url: "/study/admin/contest/delete.do",
+    url: "/admin/contest/delete.do",
     type: "GET",
     cache: false,
     dataType: "json",
     data: 'conNo=' + conNo,
     success: function(data) {
       $('#conNo', frm_delete).val(conNo);
-      $("#myModal_delete").modal();
+      $("#myModal").modal();
     }
   });
 }
@@ -257,17 +259,17 @@ function resize(obj) {
               <div style="color: #888888; font-size: 11px; line-height: 18px;">${contestVO.conGood}</div>
             </td>
             <c:choose>
-            <c:when test="${sessionScope.admauth == 'M' or sessionScope.admauth == 'A'}">
-            <td style="text-align: center;">
-              <button onclick="location.href='/study/admin/contest/update.do?conNo=${contestVO.conNo}'">
-                <IMG src='./images/edit.png' style='width: 15px; height: 15px; line-height: 18px;'>
-              </button>
-              <A href="javascript: deleteOne(${contestVO.conNo});" type="button" class="btn btn-default btn-sm" id="myBtn">
-                <IMG src='/study/nonuser/contest/images/trash.png' style='width: 15px; height: 15px; line-height: 18px;'>
-              </A>
-            </td>
-            </c:when>
-            <c:otherwise></c:otherwise>
+              <c:when test="${sessionScope.admauth == 'M' or sessionScope.admauth == 'A'}">
+              <td style="text-align: center;">
+                <button onclick="location.href='/study/admin/contest/update.do?conNo=${contestVO.conNo}'">
+                  <IMG src='./images/edit.png' style='width: 15px; height: 15px; line-height: 18px;'>
+                </button>
+                <A href="javascript: deleteOne(${contestVO.conNo});" type="button" class="btn btn-default btn-sm" id="myBtn">
+                  <IMG src='/study/nonuser/contest/images/trash.png' style='width: 15px; height: 15px; line-height: 18px;'>
+                </A>
+              </td>
+              </c:when>
+              <c:otherwise></c:otherwise>
             </c:choose>
           </tr>
         </c:forEach>
@@ -276,17 +278,18 @@ function resize(obj) {
     <div class= "bottom_menu">${paging }</div>
     </DIV>
     
-    <div class="modal fade" id="myModal" role="dialog" style="font-size: 18px; display: none;">
+  <div class="modal fade" id="myModal" role="dialog" style="font-size: 18px; display: none;">
   <!-- Modal content-->
   <div class="modal-content">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal">&times;</button>
       <h4 class="modal-title" style="font-weight: bold; text-align: center; padding-left: 40px;">채용정보 게시글 삭제</h4>
     </div>
-    <div class="modal-body" style='width: 95%; height: 210px; text-align: center; margin: 0px auto;'>
+    <div class="modal-body" style='width: 95%; height: 260px; text-align: center; margin: 0px auto;'>
       <FORM name = 'frm_delete' id = 'frm_delete' method="POST" action="/study/admin/contest/delete.do">
-        <input type="hidden" name="conNo" id="conNo" value='${contestVO.conNo }'>
+        <input type="hidden" name="conNo" id="conNo" value=''>
         <DIV class = "form-group form-group-sm">
+          <p id="target_del" style="color: black; font-size: 25px;"></p>
           <P style="color: red; font-weight: bold; font-size: 25px;">
             <IMG src="./images/warning.png" style="width: 20px; height: 20px;">
              <span>게시글을 삭제 합니다.</span>

@@ -11,7 +11,7 @@ import dev.mvc.visit.VisitCountDAO;
  
 public class MemberInterceptor extends HandlerInterceptorAdapter {
   public MemberInterceptor() {
-    System.out.println("--> MemberInterceptor created.");
+     System.out.println("--> MemberInterceptor created.");
   }
  
   @Override
@@ -28,7 +28,7 @@ public class MemberInterceptor extends HandlerInterceptorAdapter {
     
     String memauth = (String) session.getAttribute("memauth");
     String admauth = (String) session.getAttribute("admauth");
-    System.out.println("세션권한 member: " + memauth);
+    // System.out.println("세션권한 member: " + memauth);
     
     if (admauth == null) {
       admauth = "";
@@ -38,10 +38,10 @@ public class MemberInterceptor extends HandlerInterceptorAdapter {
     } 
 
     if (memauth.equals("U") == true || admauth.equals("M") == true || admauth.equals("A") == true ) { // 접근 가능, 요청 페이지 처리
-      System.out.println("인터셉터 안됨");
+      // System.out.println("인터셉터 안됨");
       return true; // 요청 페이지로 계속 진행
     } else{
-      System.out.println("인터셉터됨");
+      // System.out.println("인터셉터됨");
       response.sendRedirect(request.getContextPath() + "/nonuser/login/login.do");
       return false;
     }

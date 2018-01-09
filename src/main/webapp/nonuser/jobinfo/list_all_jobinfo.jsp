@@ -246,7 +246,7 @@ function resize(obj) {
             <c:choose>
             <c:when test="${sessionScope.admauth == 'M' or sessionScope.admauth == 'A'}">
             <td style="text-align: center;">
-              <A type="button" class="btn btn-default btn-sm" onclick="location.href='./update.do?jobNo=${jobVO.jobNo}'">
+              <A type="button" class="btn btn-default btn-sm" onclick="location.href='/study/admin/jobinfo/update.do?jobNo=${jobVO.jobNo}'">
                 <IMG src='/study/admin/jobinfo/images/edit.png' style='width: 15px; height: 15px; line-height: 18px;'>
               </A>
               <A href="javascript: deleteOne(${jobVO.jobNo});" type="button" class="btn btn-default btn-sm" id="myBtn">

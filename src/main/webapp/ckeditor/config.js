@@ -30,10 +30,10 @@ config.enterMode = CKEDITOR.ENTER_BR; //엔터키 태그 1:<p>, 2:<br>, 3:<div>
 config.font_defaultLabel = '굴림체'; //기본글씨
 config.font_names = '굴림체/Gulim;돋움체/Dotum;맑은 고딕/맑은 고딕;';
  
-config.filebrowserBrowseUrl = '../ckfinder/ckfinder.html';
-    config.filebrowserImageBrowseUrl = '../ckfinder/ckfinder.html?type=Images';
-    config.filebrowserFlashBrowseUrl = '../ckfinder/ckfinder.html?type=Flash';
-    config.filebrowserUploadUrl = '../ckfinder/core/connector/java/connector.java?command=QuickUpload&type=Files';
-    config.filebrowserImageUploadUrl = '../ckfinder/core/connector/java/connector.java?command=QuickUpload&type=Images';
-    config.filebrowserFlashUploadUrl = '../ckfinder/core/connector/java/connector.java?command=QuickUpload&type=Flash'; 
+config.filebrowserBrowseUrl = '../../ckfinder/ckfinder.html';
+config.filebrowserImageBrowseUrl = '../../ckfinder/ckfinder.html?type=Images';
+config.filebrowserFlashBrowseUrl = '../../ckfinder/ckfinder.html?type=Flash';
+config.filebrowserUploadUrl = '../../ckfinder/core/connector/java/connector.java?command=QuickUpload&type=Files';
+config.filebrowserImageUploadUrl = '../../ckfinder/core/connector/java/connector.java?command=QuickUpload&type=Images';
+config.filebrowserFlashUploadUrl = '../../ckfinder/core/connector/java/connector.java?command=QuickUpload&type=Flash'; 
 };

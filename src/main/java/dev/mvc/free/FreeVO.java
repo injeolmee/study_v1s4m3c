@@ -33,6 +33,8 @@ public class FreeVO {
   private String freepasswd; 
   /* 회원번호 */
   private int memberno;
+  /* 관리자번호 */
+  private int adminno;
   /* 출력 순서 */
   private int freeseqno;
   /* 검색을 위한 임시 변수*/
@@ -48,6 +50,12 @@ public class FreeVO {
   /* 다음글 조회 위한 임시 변수*/
   private int post_num;
   
+  public int getAdminno() {
+    return adminno;
+  }
+  public void setAdminno(int adminno) {
+    this.adminno = adminno;
+  }
   public int getPre_num() {
     return pre_num;
   }

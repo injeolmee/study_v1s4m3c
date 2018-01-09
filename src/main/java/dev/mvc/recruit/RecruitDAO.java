@@ -15,7 +15,7 @@ public class RecruitDAO implements RecruitDAOInter{
   private SqlSessionTemplate mybatis;
   
   public RecruitDAO(){
-    System.out.println("--> RecruitDAO created.");
+   // System.out.println("--> RecruitDAO created.");
   }
 
   @Override
@@ -71,6 +71,11 @@ public class RecruitDAO implements RecruitDAOInter{
   public int delete(int stdlist_no) {
     
     return mybatis.delete("recruit.delete", stdlist_no);
+  }
+  
+  @Override
+  public String check_leader(HashMap<String, Object> hashMap) {
+    return mybatis.selectOne("recruit.check_leader", hashMap);
   }
 
 

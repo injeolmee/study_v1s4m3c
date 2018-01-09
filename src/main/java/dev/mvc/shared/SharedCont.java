@@ -1,10 +1,10 @@
 package dev.mvc.shared;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import dev.mvc.salereply.SalereplyVO;
 import dev.mvc.sharedreply.SharedreplyProcInter;
 import dev.mvc.sharedreply.SharedreplyVO;
 import nation.web.tool.Tool;
@@ -62,7 +61,7 @@ public class SharedCont {
    */
   @ResponseBody
   @RequestMapping(value="/user/shared/create.do", method=RequestMethod.POST, produces = "application/text; charset=utf8")
-  public String create(HttpServletRequest request, SharedVO sharedVO) {
+  public String create(HttpSession session, HttpServletRequest request, SharedVO sharedVO) {
     
     JSONObject obj = new JSONObject();
     
@@ -100,9 +99,14 @@ public class SharedCont {
     // 파일전송 코드 종료
     //*********************************************************************************
     
-    int count = 0;
-    count = sharedProc.create(sharedVO);
+    int count = 0; // 게시글 등록을 처리할 변수
     
+    if (session.getAttribute("memberno") != null) { // 회원일 경우
+      count = sharedProc.create(sharedVO);
+    } else if (session.getAttribute("adminno") != null) { // 관리자일 경우
+      count = sharedProc.create_admin(sharedVO);
+    }
+   
     if (count == 1) { // 글 등록에 성공했을 경우
       // System.out.println("글 등록 성공");
     } else { // 글 등록에 실패했을 경우
@@ -205,25 +209,7 @@ public class SharedCont {
     
     return mav;  
   }
-  
-  /**
-   * <XMP>
-   * 추천수 상승 (현재 사용하지 않음)
-   * </XMP>
-   * @param sharedno
-   * @return
-   */
-/*  @RequestMapping(value = "/user/shared/increaseLike.do", method = RequestMethod.POST)
-  public ModelAndView increaseLike(int sharedno) {
-    ModelAndView mav = new ModelAndView();
    
-    if (sharedProc.increaseLike(sharedno) == 1) {
-      mav.setViewName("redirect:/user/shared/read.do?sharedno=" + sharedno);
-    }
-    
-    return mav;
-  }*/
-  
   /**
    * <XMP>
    * 게시글 수정폼 출력
@@ -262,7 +248,7 @@ public class SharedCont {
    */
   @ResponseBody
   @RequestMapping(value="/user/shared/update.do", method=RequestMethod.POST, produces = "application/text; charset=utf8")
-  public String update(HttpServletRequest request, SharedVO sharedVO) {
+  public String update(HttpSession session, HttpServletRequest request, SharedVO sharedVO) {
     
     JSONObject obj = new JSONObject();
     String root = request.getContextPath(); // 절대경로 산출
@@ -325,10 +311,15 @@ public class SharedCont {
     
     int sharedno = sharedVO.getSharedno();
     
-    int check = sharedProc.member_check(sharedVO);
-    int count = 0; 
+    int check = 0; // 아이디 검사를 처리할 변수 (회원일 경우)
+    
+    if (session.getAttribute("memberno") != null) { // 회원일 경우
+      check = sharedProc.member_check(sharedVO); // 아이디 검사
+    }
+    
+    int count = 0;  // 아이디 검사가 성공할 경우 처리할 변수
 
-    if (check == 1) { // 등록된 아이디와 일치하는 경우
+    if (check == 1 || session.getAttribute("adminno") != null) { // 등록된 아이디와 일치하거나 관리자일 경우
       count = sharedProc.update(sharedVO);
     
       if(count == 1) { 
@@ -345,25 +336,7 @@ public class SharedCont {
      
     return obj.toString();
   }
-  
-  /**
-   * <XMP>
-   * 게시글 삭제폼 출력 (지금은 사용하지 않음)
-   * </XMP>
-   * @param sharedno
-   * @return
-   */
-/*  @RequestMapping(value = "/user/shared/delete.do", method = RequestMethod.GET)
-  public ModelAndView delete(int sharedno) {
-    ModelAndView mav = new ModelAndView();
-    mav.setViewName("/user/shared/delete");
-    
-    SharedVO sharedVO = sharedProc.read(sharedno);
-    mav.addObject("sharedVO", sharedVO);
-    
-    return mav;
-  }*/
-  
+
   /**
    * <XMP>
    * 게시글 삭제결과 출력
@@ -373,7 +346,7 @@ public class SharedCont {
    */
   @ResponseBody
   @RequestMapping(value = "/user/shared/delete.do", method = RequestMethod.POST, produces = "application/text; charset=utf8")
-  public String delete(HttpServletRequest request, int sharedno) {
+  public String delete(HttpSession session, HttpServletRequest request, int sharedno) {
 
     JSONObject obj = new JSONObject();
     String root = request.getContextPath(); // 절대경로 산출
@@ -392,14 +365,19 @@ public class SharedCont {
     // 파일 삭제 코드 종료
     // *************************************************************************
           
-    int check = sharedProc.member_check(sharedVO); // 아이디 검사
-    int count_check;
-    int count = 0; 
+    int check = 0; // 아이디 검사를 처리할 변수 (회원일 경우)
     
-    if (check == 1) { // 등록된 아이디와 일치하는 경우
+    if (session.getAttribute("memberno") != null) { // 회원일 경우
+      check = sharedProc.member_check(sharedVO); // 아이디 검사
+    }
+    
+    int count_check; // 아이디 검사를 성공할 경우 처리할 변수 ①
+    int count = 0;  // 아이디 검사를 성공할 경우 처리할 변수 ②
+    
+    if (check == 1 || session.getAttribute("adminno") != null) { // 등록된 아이디와 일치하거나 관리자일 경우
       
-      count_check = sharedreplyProc.delete_all(sharedno); // 해당 게시글의 댓글 전체 삭제
-      count = sharedProc.delete(sharedno);                   // 게시글 삭제
+      count_check = sharedreplyProc.delete_all(sharedno); // ⓐ 해당 게시글의 댓글 전체 삭제
+      count = sharedProc.delete(sharedno);                   // ⓑ 게시글 삭제
       
       if (count == 1) { // 삭제 처리가 성공했을 경우
         // System.out.println("삭제 처리 성공");
@@ -462,12 +440,18 @@ public class SharedCont {
    * @return
    */
   @RequestMapping(value = "/user/shared/reply.do", method = RequestMethod.POST)
-  public ModelAndView reply(HttpServletRequest request, SharedreplyVO sharedreplyVO) {
+  public ModelAndView reply(HttpSession session, HttpServletRequest request, SharedreplyVO sharedreplyVO) {
     // System.out.println("--> reply() POST called.");
     ModelAndView mav = new ModelAndView();
     
     int sharedno = sharedreplyVO.getSharedno();
-    int count = sharedreplyProc.create(sharedreplyVO);
+    int count = 0; // 댓글 등록을 처리할 변수
+    
+    if (session.getAttribute("memberno") != null) { // 회원일 경우
+      count = sharedreplyProc.create(sharedreplyVO);
+    } else if (session.getAttribute("adminno") != null) { // 관리자일 경우
+      count = sharedreplyProc.create_admin(sharedreplyVO);
+    }
     
     if (count == 1) {
       // System.out.println("댓글등록 성공");
@@ -488,7 +472,7 @@ public class SharedCont {
    * @return
    */
   @RequestMapping(value = "/user/shared/rereply.do", method = RequestMethod.POST)
-  public ModelAndView rereply(HttpServletRequest request, SharedreplyVO sharedreplyVO) {
+  public ModelAndView rereply(HttpSession session, HttpServletRequest request, SharedreplyVO sharedreplyVO) {
     // System.out.println("--> rereply() POST called.");
     ModelAndView mav = new ModelAndView();
 
@@ -502,8 +486,16 @@ public class SharedCont {
     
     int seqno_ch = 1; // 자식값에 주는 seqno를 1로 처리하기 위한 변수
 
-    sharedreplyVO.setSharedno(parentVO.getSharedno());                // 게시글 번호
-    sharedreplyVO.setMemberno(sharedreplyVO.getMemberno());      // 회원번호 => 부모에서 받으면 X
+    sharedreplyVO.setSharedno(parentVO.getSharedno());                  // 게시글 번호
+    
+    //**************** session에 따른 받아오는 값 구분 시작 ***********************************
+    if (session.getAttribute("memberno") != null) { // 회원일 경우
+      sharedreplyVO.setMemberno(sharedreplyVO.getMemberno());      // 회원번호 => 부모에서 받으면 X
+    } else if (session.getAttribute("adminno") != null) { // 관리자일 경우
+      sharedreplyVO.setAdminno(sharedreplyVO.getAdminno());          // 관리자번호 => 부모에서 받으면 X
+    }
+    //**************** session에 따른 받아오는 값 구분 종료 ***********************************
+    
     sharedreplyVO.setShreplyname(sharedreplyVO.getShreplyname());  // 작성자 => 부모에서 받으면 X
     sharedreplyVO.setShreplygrpno(parentVO.getShreplygrpno());      // 그룹 번호
     sharedreplyVO.setShreplyansnum(parentVO.getShreplyansnum());  // 댓글 순서
@@ -518,7 +510,13 @@ public class SharedCont {
     // 대댓글(답변) 등록 처리 종료
     // *************************************************************************
 
-    int count = sharedreplyProc.reply(sharedreplyVO);
+    int count = 0; // 댓글 등록을 처리하기 위한 변수
+    
+    if (session.getAttribute("memberno") != null) { // 회원일 경우
+      count = sharedreplyProc.reply(sharedreplyVO);
+    } else if (session.getAttribute("adminno") != null) { // 관리자일 경우
+      count = sharedreplyProc.reply_admin(sharedreplyVO);
+    }
     
     if (count == 1) {
       // System.out.println("대댓글 등록 성공");     
@@ -532,7 +530,7 @@ public class SharedCont {
   
   /**
    * <XMP>
-   * 수정을 위한 해당 댓글의 댓글 내용 read
+   * 수정을 위한 해당 댓글내용 조회
    * </XMP>
    * @param shreplyno 댓글 번호
    * @return shreplyno, shreplycontent
@@ -622,12 +620,44 @@ public class SharedCont {
     // System.out.println(" => Update_parent() POST executed");
     
     JSONObject obj = new JSONObject(); 
-      
-    int shreplyno = sharedreplyVO.getShreplyno();
-    int nowPage = sharedreplyVO.getNowPage();
-
-    int count = sharedreplyProc.update_parent(shreplyno);
     
+    int parent_check = 0; // ⓐ 부모 댓글에 대한 검사를 처리하기 위한 변수
+    int reply_check = 0;   // ⓑ 맨 마지막 댓글 검사를 처리하기 위한 변수
+    int count = 0;          // ⓒ 검사 후 댓글에 대해 처리하기 위한 변수
+      
+    //*****************************************************************************************************
+    // 댓글과 관련된 내용을 조회하는 부분 시작
+    //*****************************************************************************************************
+    int shreplyno = sharedreplyVO.getShreplyno();                             // 댓글 번호
+    sharedreplyVO = sharedreplyProc.read(shreplyno);                         // 댓글 조회
+    int shreplygrpno = sharedreplyVO.getShreplygrpno();                    // 댓글그룹 번호
+    int nowPage = sharedreplyVO.getNowPage();                              // 현재페이지
+    int shreplyindent = sharedreplyVO.getShreplyindent();                   // 대댓글 차수
+    //*****************************************************************************************************
+    // 댓글과 관련된 내용을 조회하는 부분 종료
+    //*****************************************************************************************************
+    
+    //*****************************************************************************************************
+    // 맨 마지막 댓글인지 검사하기 위한 부분 시작
+    //*****************************************************************************************************
+    HashMap hashMap = new HashMap();
+    hashMap.put("sharedno", sharedreplyVO.getSharedno()); 
+    hashMap.put("shreplygrpno", shreplygrpno);
+    
+    reply_check = sharedreplyProc.reply_check(hashMap); // 댓글의 차수 최대값 검사
+    int max_value =  reply_check;                              // 대댓글 차수 최대값
+    //*****************************************************************************************************
+    // 맨 마지막 댓글인지 검사하기 위한 부분 종료
+    //*****************************************************************************************************
+    
+    parent_check = sharedreplyProc.parent_check(shreplygrpno); // 부모 댓글에 대하여 하위 댓글이 존재하는지 검사
+    
+    if (parent_check == 1 || max_value == shreplyindent) { // ⓐ 하위 댓글이 존재하지 않는 경우 또는 대댓글 차수가 최대값일 경우
+      count = sharedreplyProc.delete(shreplyno);
+    } else {                     // ⓑ 하위 댓글이 존재할 경우
+      count = sharedreplyProc.update_parent(shreplyno);
+    }
+
     obj.put("count", count);
     obj.put("nowPage", nowPage);
 

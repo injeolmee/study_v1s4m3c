@@ -19,7 +19,7 @@ window.onload=function(){
   CKEDITOR.replace('freecontent');  // <TEXTAREA>태그 id 값
   
   //*********** CKEDITOR에 대한 내용을 받아와 출력 *************
-  var content = '${param.freecontent}';
+  var content = '${freeVO.freecontent}';
   CKEDITOR.instances.freecontent.setData(content);
   //****************************************************************
 
@@ -50,6 +50,9 @@ window.onload=function(){
       alert("내용을 입력해주세요.");
       return false;
     }
+    
+    // alert("실행합니다.")
+    // alert("update_data: " + update_data);
     
     $.ajax({
       url: "/study/user/free/update.do",
@@ -89,8 +92,12 @@ window.onload=function(){
   
     <FORM name='frm' id='frm' method='POST' action='./update.do'
                              enctype="multipart/form-data" class="form-horizontal" style="text-align: left;">
-       <input type='hidden' name='freename' id='freename' value=${sessionScope.memname }>
-       <input type='hidden' name='memberno' id='memberno' value=${sessionScope.memberno }>
+       <c:if test = "${sessionScope.adminno ne null }">
+         <input type='hidden' name='adminno' id='adminno' value='${sessionScope.adminno }'>
+       </c:if>
+       <c:if test = "${sessionScope.memberno ne null }">
+         <input type='hidden' name='memberno' id='memberno' value='${sessionScope.memberno }'>
+       </c:if>
        <input type="hidden" name='freeno' id='freeno' value='${freeVO.freeno }'>
   
       <div class="form-group">   
