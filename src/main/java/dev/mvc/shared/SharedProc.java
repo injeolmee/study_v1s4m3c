@@ -46,7 +46,7 @@ public class SharedProc implements SharedProcInter {
     //*********** 제목이 길 경우 "..."로 처리하는 구문 ****************************
     while (iter.hasNext()) { 
       SharedVO sharedVO = iter.next();
-      String sharedtitle = Tool.textLength(sharedVO.getSharedtitle(), 20);
+      String sharedtitle = Tool.textLength(sharedVO.getSharedtitle(), 15);
       sharedVO.setSharedtitle(sharedtitle);
     }
     //********************************************************************************
@@ -73,7 +73,7 @@ public class SharedProc implements SharedProcInter {
     //*********** 제목이 길 경우 "..."로 처리하는 구문 ****************************
     while (iter.hasNext()) {
       SharedVO sharedVO = iter.next();
-      String sharedtitle = Tool.textLength(sharedVO.getSharedtitle(), 25);
+      String sharedtitle = Tool.textLength(sharedVO.getSharedtitle(), 20);
       sharedVO.setSharedtitle(sharedtitle);
     }
     //********************************************************************************
@@ -103,7 +103,7 @@ public class SharedProc implements SharedProcInter {
     StringBuffer str = new StringBuffer(); 
      
     str.append("<style type='text/css'>"); 
-    str.append("  #paging {text-align: center; margin-top: 5px; font-size: 1em;}"); 
+    str.append("  #paging {text-align: center; margin-top: 5px; font-size: 1em; float:left;}"); 
     str.append("  #paging A:link {text-decoration:none; color:black; font-size: 1em;}"); 
     str.append("  #paging A:hover{text-decoration:none; background-color: #FFFFFF; color:black; font-size: 1em;}"); 
     str.append("  #paging A:visited {text-decoration:none;color:black; font-size: 1em;}"); 

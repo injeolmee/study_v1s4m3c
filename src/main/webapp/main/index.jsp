@@ -72,8 +72,6 @@ session.setMaxInactiveInterval(10);
         <span style='margin:5px;'>|</span>
         <span style="font-weight: bold;"><img src='<%=root%>/jeimages/mypage.png' style='margin-right:5px;'>${sessionScope.admid } 님의
         <a href="<%=root%>/admin/admin/admin_read.do?adminno=${sessionScope.adminno}">My Page</a></span>
-        <span style='margin:5px;'>|</span> 
-        <a href='${pageContext.request.contextPath }/user/message/message_home.do'><img src='<%=root%>/jeimages/message.png' style='margin-right:5px;'>쪽지함</a>
       </c:when> 
       <c:otherwise> 
         <a href="<%=root%>/nonuser/login/login.do">로그인</a>
@@ -225,7 +223,7 @@ session.setMaxInactiveInterval(10);
              또한, 가입한 Study의 Project에 대해 알림 서비스를 제공하여 <br>
              체계적인 일정 관리를 도와드립니다! <br>
           </p>
-          <a href="#" class="da-link button">더보기</a>
+          <a href="${pageContext.request.contextPath }/user/mystudy/mystudy.do" class="da-link button">더보기</a>
           <div class="da-img">
             <img src="images/Slider03.png" width="240" alt="image03">
           </div>

@@ -213,7 +213,6 @@ public class My_pdsCont {
   public ModelAndView mypds_create(My_pdsVO my_pdsVO, HttpServletRequest request, int stdlist_no, int cateno){
     System.out.println(" --> mypds_create [POST]호출");
     ModelAndView mav=new ModelAndView();
-    mav.setViewName("/user/my_pds/message"); 
     
     // mylistno 구하기
     HashMap<String, Integer> hm_mylistno =new HashMap<String, Integer>();
@@ -254,20 +253,17 @@ public class My_pdsCont {
     int lastest_pdsno=my_pdsProc.lastest_pdsno(); // 가장 최근에 등록된 pdsno
     
     if(count==1){ // 등록 성공
-      result_msg.add("글 등록에 성공하였습니다.");
-      result_link.add("<button type='button' class='btn btn-info' onclick=\"location.href='./read.do?stdlist_no="+stdlist_no+"&pdsno="+lastest_pdsno+"'\">등록 확인</button>");
-      // redirect()
-    }else{ // 등록 실패
+      //result_msg.add("글 등록에 성공하였습니다."); 
+      //result_link.add("<button type='button' class='btn btn-info' onclick=\"location.href='./read.do?stdlist_no="+stdlist_no+"&pdsno="+lastest_pdsno+"'\">등록 확인</button>");
+      mav.setViewName("redirect:/user/mystudy/mystudy_space.do?stdlist_no="+stdlist_no);  
+    }else{ // 등록 실패  
+      mav.setViewName("/user/my_pds/message");  
       result_msg.add("글 등록에 실패하였습니다.");
       result_msg.add("관리자에게 문의해주세요.");
       result_link.add("<button type='button' class='btn btn-warning' onclick=\"history.back()\">다시 시도</button>");
-      //
+      mav.addObject("result_msg", result_msg);
+      mav.addObject("result_link", result_link);
     }
-    result_link.add("<button type='button' class='btn btn-info' onclick=\"location.href='./mystudy_space.do?stdlist_no="+stdlist_no+"'\">글 목록 가기</button>");
-    
-    mav.addObject("result_msg", result_msg);
-    mav.addObject("result_link", result_link); 
-    
     return mav;
   }
   
@@ -329,8 +325,6 @@ public class My_pdsCont {
   public ModelAndView update(My_pdsVO my_pdsVO, HttpServletRequest request, int mylistno){
     System.out.println(" --> update() POST 호출 ");
     ModelAndView mav=new ModelAndView();
-    mav.setViewName("/user/my_pds/message"); 
-    
     // ---------------------------------------------------------------------------
     // 파일 전송
     // ---------------------------------------------------------------------------
@@ -392,18 +386,19 @@ public class My_pdsCont {
     int count=my_pdsProc.update(my_pdsVO);
     
     if(count==1){ // 수정 성공
-      result_msg.add("글 수정에 성공하였습니다.");
-      result_link.add("<button type='button' onclick=\"location.href='./read.do?stdlist_no="+stdlist_no+"&pdsno="+my_pdsVO.getPdsno()+"'\">변경 확인</button>");
+      //result_msg.add("글 수정에 성공하였습니다.");
+      //result_link.add("<button type='button' onclick=\"location.href='./read.do?stdlist_no="+stdlist_no+"&pdsno="+my_pdsVO.getPdsno()+"'\">변경 확인</button>");
+      mav.setViewName("redirect:/user/mystudy/read.do?stdlist_no="+stdlist_no+"&pdsno="+my_pdsVO.getPdsno());
     }else{ // 수정 실패
+      mav.setViewName("/user/my_pds/message");
       result_msg.add("글 수정에 실패하였습니다.");
       result_msg.add("관리자에게 문의해주세요.");
       result_link.add("<button type='button' onclick=\"history.back()\">다시 시도</button>");
+      result_link.add("<button type='button' onclick=\"location.href='./mystudy_space.do?stdlist_no="+stdlist_no+"'\">글 목록 가기</button>");
+      mav.addObject("result_msg", result_msg);
+      mav.addObject("result_link", result_link);
     }
-    result_link.add("<button type='button' onclick=\"location.href='./mystudy_space.do?stdlist_no="+stdlist_no+"'\">글 목록 가기</button>");
-    
-    mav.addObject("result_msg", result_msg);
-    mav.addObject("result_link", result_link);
-    mav.addObject("count", count);
+    mav.addObject("count", count); 
     
     return mav;
   }
@@ -449,16 +444,15 @@ public class My_pdsCont {
     int count=my_pdsProc.delete(pdsno);
     
     if(count==1){ // 삭제 성공
-      result_msg.add("글 삭제에 성공하였습니다.");
+      mav.setViewName("redirect:/user/mystudy/mystudy_space.do?stdlist_no="+stdlist_no);
     }else{ // 수정 실패
       result_msg.add("글 삭제에 실패하였습니다.");
       result_msg.add("관리자에게 문의해주세요.");
       result_link.add("<button type='button' onclick=\"history.back()\">다시 시도</button>");
-    }
-    result_link.add("<button type='button' onclick=\"location.href='./mystudy_space.do?stdlist_no="+stdlist_no+"'\">글 목록 가기</button>");
-    
-    mav.addObject("result_msg", result_msg);
-    mav.addObject("result_link", result_link);
+      result_link.add("<button type='button' onclick=\"location.href='./mystudy_space.do?stdlist_no="+stdlist_no+"'\">글 목록 가기</button>");
+      mav.addObject("result_msg", result_msg);
+      mav.addObject("result_link", result_link);
+    } 
     mav.addObject("count", count);
     
     return mav;

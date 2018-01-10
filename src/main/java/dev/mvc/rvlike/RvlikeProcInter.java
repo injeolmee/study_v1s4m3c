@@ -58,4 +58,13 @@ public interface RvlikeProcInter {
    */
   public int like_chk_n(HashMap hashMap);
   
+  
+  /**
+   * 좋아요 rvno별 삭제
+   * <delete id="delete" parameterType="int">
+   * @param rvno
+   * @return
+   */
+  public int deleteByRvno(int rvno);
+  
 }

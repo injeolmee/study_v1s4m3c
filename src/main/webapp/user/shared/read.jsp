@@ -198,7 +198,7 @@
 </head>
 <body>
 <jsp:include page="/menu/top.jsp" flush="false" />
-<div class="container">
+<div class="container" style='margin-bottom: 5%;'>
 <DIV class='content' style='width: 50%; margin: 0px auto;'>  
 
   <FORM name='frm_like' id='frm_like' method='POST' action=''>

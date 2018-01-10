@@ -1,9 +1,10 @@
 *{
   color: #000000;
+  font-size: 14px; 
 }
 
 .content{
-  width: 90%;
+  width: 70%;
   margin: 0px auto;
   margin-bottom: 50px;
 }

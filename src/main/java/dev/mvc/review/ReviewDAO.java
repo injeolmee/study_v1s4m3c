@@ -13,7 +13,7 @@ public class ReviewDAO implements ReviewDAOInter {
   private SqlSessionTemplate mybatis;
   
   public ReviewDAO() {
-    System.out.println("--> ReviewDAO created.");
+    //System.out.println("--> ReviewDAO created.");
   }
 
   @Override

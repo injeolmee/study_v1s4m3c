@@ -54,11 +54,23 @@
     formData.append("rorunday", $("input[name=rorunday]").val());
     formData.append("rocost", $("input[name=rocost]").val());
     formData.append("rocount", $("input[name=rocount]").val());
-    formData.append("option1", $("input[name=option1]").val());
-    formData.append("option2", $("input[name=option2]").val());
-    formData.append("option3", $("input[name=option3]").val());
-    formData.append("option4", $("input[name=option4]").val());
-    formData.append("option5", $("input[name=option5]").val());
+    
+    if($("input[name='option1']:checked").val()){
+      formData.append("option1", $("input[name=option1]").val());
+    }
+    if($("input[name='option2']:checked").val()){
+      formData.append("option2", $("input[name=option2]").val());
+    }
+    if($("input[name='option3']:checked").val()){
+      formData.append("option3", $("input[name=option3]").val());
+    }
+    if($("input[name='option4']:checked").val()){
+      formData.append("option4", $("input[name=option4]").val());
+    }
+    if($("input[name='option5']:checked").val()){
+      formData.append("option5", $("input[name=option5]").val());
+    }
+    
     formData.append("rofile1", rofile1);
     formData.append("rosize1", rosize1);
     formData.append("rothumb", rothumb);

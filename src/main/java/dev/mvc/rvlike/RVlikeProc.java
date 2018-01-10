@@ -38,5 +38,11 @@ public class RVlikeProc implements RvlikeProcInter {
   public int like_chk_n(HashMap hashMap) {
     return rvlikeDAO.like_chk_n(hashMap);
   }
+
+  @Override
+  public int deleteByRvno(int rvno) {
+    int count = rvlikeDAO.deleteByRvno(rvno);
+    return count; 
+  }
   
 }

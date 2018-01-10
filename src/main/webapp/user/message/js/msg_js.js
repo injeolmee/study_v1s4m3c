@@ -154,7 +154,7 @@ function search_clear(index){
   $('#search_condition option:eq(0)').prop("selected", true);   // 첫번째 옵션으로
   $('#msgword').val('');                                        // 검색창 clear
   
-  console.log($("#recv_list_tbody").text());
+  //console.log($("#recv_list_tbody").text());
   
   if(index==0){
     msg_recv_list(1);
@@ -231,12 +231,12 @@ function msg_recv_list(nowpage){
           add_tr+='  <div id="dropdown'+data[0].list_info[i].msg_no+'" class="dropdown">';
           add_tr+='    <button onclick="dropdown('+data[0].list_info[i].msg_no+', event);" class="btn btn-link" type="button" data-toggle="dropdown">'+data[0].list_info[i].memid+'('+data[0].list_info[i].memname+')<span class="caret"></span></button>';
           add_tr+='    <ul id="dropdown_menu'+data[0].list_info[i].msg_no+'" class="dropdown-menu">';
-          add_tr+='      <li style="text-align:left;"><a onclick="javascript:meminfo();"><img src="/study/my_pds/images/mem_info.png">회원정보</a></li>';
-          add_tr+='      <li style="text-align:left;"><a onclick="javascript:msg_create(\''+data[0].list_info[i].memid+'\');"><img src="/study/my_pds/images/message_add.png">쪽지보내기</a></li>';
+          add_tr+='      <li style="text-align:left;"><a onclick="javascript:meminfo('+data[0].list_info[i].memberno_send+');"><img src="/study/user/my_pds/images/mem_info.png">회원정보</a></li>';
+          add_tr+='      <li style="text-align:left;"><a onclick="javascript:msg_create(\''+data[0].list_info[i].memid+'\');"><img src="/study/user/my_pds/images/message_add.png">쪽지보내기</a></li>';
           add_tr+='      <li style="text-align:left;"><a onclick="javascript:wait();">그외 기능</a></li>';
           add_tr+='    </ul>';
           add_tr+='  </div>';  
-          add_tr+='</td>';    
+          add_tr+='</td>';     
           add_tr+="<td style='text-align: center; cursor:pointer;' onclick='read("+data[0].list_info[i].msg_no+", 0)'><a>"+data[0].list_info[i].msg_title+"</a></td>";
           add_tr+="<td style='text-align: center; cursor:pointer;' onclick='read("+data[0].list_info[i].msg_no+", 0)'><a>"+data[0].list_info[i].msg_content+"</a></td>"; 
           add_tr+="<td style='text-align: center;'>"+data[0].list_info[i].msg_date+"</td>";
@@ -261,8 +261,8 @@ function msg_recv_list(nowpage){
   });
 }
 
-function meminfo() {
-  window.open("/study/user/member/mem_read_info.do?memberno=3", "a", "resizable, width=450, height=500, left=500, top=100");
+function meminfo(memberno) {
+  window.open("/study/user/member/mem_read_info.do?memberno="+memberno, "a", "resizable, width=450, height=500, left=500, top=100");
 }
 
 /**
@@ -326,9 +326,9 @@ function msg_send_list(nowpage){
           add_tr+='  <td style="text-align: center;">';
           add_tr+='  <div id="dropdown'+data[0].list_info[i].msg_no+'" class="dropdown">';
           add_tr+='    <button onclick="dropdown('+data[0].list_info[i].msg_no+', event);" class="btn btn-link" type="button" data-toggle="dropdown">'+data[0].list_info[i].memid+'('+data[0].list_info[i].memname+')<span class="caret"></span></button>';
-          add_tr+='    <ul id="dropdown_menu'+data[0].list_info[i].msg_no+'" class="dropdown-menu">';
-          add_tr+='      <li style="text-align:left;"><a onclick="javascript:meminfo();"><img src="/study/my_pds/images/mem_info.png">회원정보</a></li>';
-          add_tr+='      <li style="text-align:left;"><a onclick="javascript:msg_create(\''+data[0].list_info[i].memid+'\');"><img src="/study/my_pds/images/message_add.png">쪽지보내기</a></li>';
+          add_tr+='    <ul id="dropdown_menu'+data[0].list_info[i].msg_no+'" class="dropdown-menu">'; 
+          add_tr+='      <li style="text-align:left;"><a onclick="javascript:meminfo('+data[0].list_info[i].memberno_send+');"><img src="/study/user/my_pds/images/mem_info.png">회원정보</a></li>';
+          add_tr+='      <li style="text-align:left;"><a onclick="javascript:msg_create(\''+data[0].list_info[i].memid+'\');"><img src="/study/user/my_pds/images/message_add.png">쪽지보내기</a></li>';
           add_tr+='      <li style="text-align:left;"><a onclick="javascript:wait();">그외 기능</a></li>';
           add_tr+='    </ul>';
           add_tr+='  </div>';
@@ -810,8 +810,8 @@ function read(msg_no, index){
        
       var read_msg="";       // 읽기 폼
       if(data.length!=""){   // 선택한 쪽지의 정보가 있을 때.
-        console.log(data);
-        
+        //console.log(data);
+         
         // alert(data.msg_content);
         /*
         var msg_content_str = data.msg_content;

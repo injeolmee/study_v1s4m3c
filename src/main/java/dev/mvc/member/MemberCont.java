@@ -370,9 +370,9 @@ public class MemberCont {
     mav.setViewName("/user/member/mem_read_info");
 
     MemberVO memberVO = memberProc.mem_read(memberno);
-    if(memberVO.getMemauth() != "U") {
+    if(!memberVO.getMemauth().equals("U")) {
       mav.addObject("check_memauth", 1);
-    }
+    } 
     mav.addObject("memberVO", memberVO);
 
     return mav;
@@ -779,7 +779,7 @@ public class MemberCont {
     String root = request.getContextPath();
 
     mav.setViewName("redirect:/main/index.do"); // 확장자 명시
-
+    
     session.removeAttribute("memberno");
     session.removeAttribute("memid");
     session.removeAttribute("memauth");

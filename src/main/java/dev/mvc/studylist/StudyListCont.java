@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import dev.mvc.my_std_catelist.My_std_catelistProcInter;
 import dev.mvc.recruit.RecruitProcInter;
 import dev.mvc.std_recom.Std_RecomProcInter;
 import dev.mvc.studylist_reply.ReplyProcInter;
@@ -41,6 +42,15 @@ public class StudyListCont {
   @Autowired
   @Qualifier("dev.mvc.std_recom.Std_RecomProc")
   private Std_RecomProcInter Std_RecomProc = null;
+  
+//==============이동석=====================================//
+  // my_std_catelistProc를 사용하기 위해 선언.
+  @Autowired
+  @Qualifier("dev.mvc.my_std_catelist.My_std_catelistProc")
+  private My_std_catelistProcInter catelistProc;
+  
+  //=========================================================//
+ 
 
   public StudyListCont() {
     // System.out.println("-->StudyListCont created");
@@ -150,6 +160,20 @@ public class StudyListCont {
 
         recruitProc.leader_auth(hashmap);
         Std_RecomProc.create(hashmap);
+        
+      //=================이동석 추가 ========================//
+        // 스터디가 정상 등록되면 해당 스터디의 하위 카테고리를 생성한다.
+        // stdlist_no와 cateno(2, 3, 4, 5)가 필요하므로 반복문을 통해 여러번 호출한다.
+        HashMap<String, Integer> my_std=new HashMap<String, Integer>();
+        
+        for(int i=2; i<6; i++){
+          my_std.put("stdlist_no", studyListVO.getStdlist_no());
+          my_std.put("cateno", i);
+          catelistProc.insert(my_std);
+          my_std.clear();
+        }
+        
+        //=====================================================//
 
         mav.setViewName("redirect:/nonuser/studylist/list.do"); // 확장자 명시 
       }

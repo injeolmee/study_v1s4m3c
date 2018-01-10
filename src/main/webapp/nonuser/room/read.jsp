@@ -154,7 +154,7 @@ $(function(){
              if(admin == "M" || admin == "A" || semem == memberno) {
               li = li + "&nbsp;<a href='javascript: PopupWindowrvedit("+rvno+")'><IMG src='./images/edit.png' style='width: 15px; height: 15px;' title='수정'  border='0'></a>";
               /* li = li + "&nbsp;<IMG src='./images/delete.png' style='width: 15px; height: 15px;' title='삭제'  border='0' onclick='alert_delete_check("+rvno+")'>"; */
-              li = li + "&nbsp;<a href='javascript: alert_delete_form("+rvno+")'><IMG src='./images/delete.png' style='width: 15px; height: 15px;' title='삭제'  border='0'></a>";
+              li = li + "&nbsp;<a href='javascript: alert_rvdelete_form("+rvno+")'><IMG src='./images/delete.png' style='width: 15px; height: 15px;' title='삭제'  border='0'></a>";
              } else {
                
              }
@@ -207,12 +207,12 @@ $(function(){
 
 
 //********************** 리뷰 삭제버튼을 누르면 실행되는 alert ******************
-function alert_delete_form(rvno){
+function alert_rvdelete_form(rvno){
   
   var check = confirm("리뷰를 삭제하시겠습니까? 삭제 하면 복구 할 수 없습니다.");
   
   if (check == true) { // 댓글 삭제 확인을 눌렀을 경우
-      delete_check(rvno);
+      rvdelete_check(rvno);
   } else {                 // 댓글 삭제 취소를 눌렀을 경우
     alert("취소되었습니다.");
   }
@@ -223,7 +223,7 @@ function alert_delete_form(rvno){
   
   
 //********************** 리뷰 삭제 버튼 클릭시 이벤트 처리 ******************
-  function delete_check(rvno) {
+  function rvdelete_check(rvno) {
     
     var param = "rvno=" + rvno;
     var rono = '${param.rono}';
@@ -259,7 +259,7 @@ function like(rvno){
       
     }else if( str == './images/goodup.png'){
       if( ${sessionScope.memberno == null} ){ // 거짓 에러가 뜸
-       alert("로그인해주세요") 
+       alert("로그인해주세요")
       }else{
           like.attr("src", "./images/gooddown.png");
           likecnt_up(rvno);
@@ -305,6 +305,51 @@ function like(rvno){
    }); 
  }
  
+//********************** 스터디룸 글 삭제버튼을 누르면 실행되는 alert ******************
+ function alert_rodelete_form(rono){
+   $.ajax({
+     url: "/study/admin/room/delete.do",
+     type: "GET",
+     caghe: false,
+     dataType: "json",
+     data: 'rono='+rono,
+     success: function(data) {
+       var check = confirm("리뷰 " +data.count+"건이 함께 삭제 됩니다. 삭제 하면 복구 할 수 없습니다. 삭제하시겠습니까?");
+       
+       if (check == true) { // 글 삭제 확인을 눌렀을 경우
+           rodelete_check(rono);
+       } else {                 // 글 삭제 취소를 눌렀을 경우
+         alert("취소되었습니다.");
+       }
+       }
+   })  
+ };
+
+ //************************************************************************
+ 
+//********************** 스터디룸 글 삭제 버튼 클릭시 이벤트 처리 ******************
+ function rodelete_check(rono) {
+   
+   var param = "rono=" + rono;
+   
+   $.ajax({
+     url: "/study/admin/room/delete.do",
+     type: "POST",
+     data: param,
+     dataType: "JSON",
+     success: function (data) {
+       
+       if (data.count == 1) {
+         alert("글이 삭제되었습니다.");
+         document.location.href = "/study/nonuser/room/list.do"
+       } else {
+         alert("오류가 발생하여 글을 삭제하지 못했습니다. 다시 시도해주십시오.");
+       }
+     }
+   }); 
+ }
+//************************************************************************
+ 
  
 
 </script>
@@ -331,7 +376,7 @@ function like(rvno){
         <span class='menu_divide' >│</span>
         <A href='${pageContext.request.contextPath}/admin/room/update.do?rono=${roomVO.rono }'>수정</A>
         <span class='menu_divide' >│</span> 
-        <A href='${pageContext.request.contextPath}/admin/room/delete.do?rono=${roomVO.rono }'>삭제</A>
+        <A href="javascript: alert_rodelete_form(${roomVO.rono})">삭제</A>
       </c:when>
       <c:otherwise></c:otherwise>
     </c:choose>
@@ -485,7 +530,7 @@ function like(rvno){
     <div id="review" class="tab-pane fade"> 
     
     <c:choose>
-      <c:when test="${sessionScope.admauth == 'M' or sessionScope.admauth == 'A' or sessionScope.memauth == 'U'}">
+      <c:when test="${sessionScope.memauth == 'U'}">
         <button type='button' onclick='javascript:PopupWindow()' class="btn btn-default" style="float:right;">리뷰 등록</button>      
       </c:when>
       <c:otherwise></c:otherwise>

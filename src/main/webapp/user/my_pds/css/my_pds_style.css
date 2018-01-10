@@ -1,11 +1,14 @@
 
+*{ 
+  font-size: 14px; 
+}
 
 ::-webkit-scrollbar {
   display:none;
 } 
 
 .content{
-  width: 95%;
+  width: 70%;
   margin: 0px auto;
   margin-bottom: 50px;
   margin-top: -15px; 

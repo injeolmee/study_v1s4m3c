@@ -83,9 +83,9 @@ $(function() {
     
     // alert($("input[name=memberno]").val());
     formData.append("rvdate", $("input[name=rvdate]").val());
-    formData.append("rvgood", $("input[name=rvgood]").val());
+    formData.append("rvgood", $("input[name=rvgood]:checked").val());
     formData.append("rvcont", $("textarea[name=rvcont]").val());
-    formData.append("rvup", $("input[name=rvup]").val());
+    //formData.append("rvup", $("input[name=rvup]").val());
     formData.append("rvfile1", rvfile1);
     formData.append("rvsize1", rvsize1);
     formData.append("rvthumb", rvthumb);
@@ -141,13 +141,13 @@ $(function() {
        
        if (data.count == 1) { // 등록 처리가 성공한 경우
          alert("리뷰를 수정하였습니다.");
-         window.opener = window.location.href; 
-         self.close();
+         window.opener.document.location.href = window.opener.document.URL;    // 부모창 새로고침​
+         self.close();        // 팝업창 닫기
          document.location.href = "/study/nonuser/room/read.do?rono=${roomVO.rono}";
        } else { // 등록 처리가 실패한 경우
          alert("오류가 생겨 게시글을 수정하지 못했습니다. 다시 시도해주십시오.");
-         window.opener = window.location.href;
-         self.close(); 
+         window.opener.document.location.href = window.opener.document.URL;    // 부모창 새로고침​
+         self.close();        // 팝업창 닫기
          document.location.href = "/study/nonuser/room/read.do?rono=${roomVO.rono}";
        } 
      }
@@ -167,12 +167,12 @@ $(function() {
        
        if (data.count == 1) { // 등록 처리가 성공한 경우
          alert("리뷰를 수정하였습니다.")
-         window.opener = window.location.href;
+         window.opener.document.location.href = window.opener.document.URL;    // 부모창 새로고침
          self.close();
          document.location.href = "/study/nonuser/room/read.do?rono=${roomVO.rono}";
        } else { // 등록 처리가 실패한 경우
          alert("오류가 생겨 리뷰를 수정하지 못했습니다. 다시 시도해주십시오.");
-         window.opener = window.location.href;
+         window.opener.document.location.href = window.opener.document.URL;    // 부모창 새로고침
          self.close();
          document.location.href = "/study/nonuser/room/read.do?rono=${roomVO.rono}";
        } 
@@ -181,12 +181,12 @@ $(function() {
  }
  //********************************************************************************
   
-  function rvupdate(){
+/*   function rvupdate(){
 
     var params =$('#frm').serialize();
     params += "&file1MF="+$('#file1MF').val();
     
-    alert(params);
+    // alert(params);
     $.ajax({
       url : "/study/user/review/update.do",
       type : "POST",
@@ -197,7 +197,7 @@ $(function() {
         alert(data.alert);
       }
     })
-  }
+  } */
     
 </script>
  
@@ -227,13 +227,13 @@ $(function() {
             <c:set var='rofile1' value="${fn:toLowerCase(roomVO.rofile1)}" />
             <c:choose>
               <c:when test="${fn:endsWith(rofile1, '.jpg')}">
-                <IMG id='rofile1' src='../room/storage/${roomVO.rofile1}'  width="300px" height="200px">
+                <IMG id='rofile1' src='/study/admin/room/storage/${roomVO.rofile1}'  width="420px" height="280px">
               </c:when>  
               <c:when test="${fn:endsWith(rofile1, '.gif')}">
-                <IMG id='rofile1'  src='../room/storage/${roomVO.rofile1}' width="300px" height="200px">
+                <IMG id='rofile1' src='/study/admin/room/storage/${roomVO.rofile1}'  width="420px" height="280px">
               </c:when>
               <c:when test="${fn:endsWith(rofile1, '.png')}">
-                <IMG id='rofile1'  src='../room/storage/${roomVO.rofile1}'' width="300px" height="200px">
+                <IMG id='rofile1' src='/study/admin/room/storage/${roomVO.rofile1}'  width="420px" height="280px">
               </c:when>
             </c:choose>
           </div>

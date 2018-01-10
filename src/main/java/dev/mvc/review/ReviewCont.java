@@ -38,7 +38,7 @@ public class ReviewCont {
   private RvlikeProcInter rvlikeProc = null;
   
   public ReviewCont() {
-    System.out.println("--> ReviewCont created.");
+    //System.out.println("--> ReviewCont created.");
   }
   
   
@@ -46,7 +46,7 @@ public class ReviewCont {
   // http://localhost:9090/study/review/create.do
   @RequestMapping(value= "/user/review/create.do", method= RequestMethod.GET)
   public ModelAndView create(@RequestParam(value="rono", defaultValue="") int rono) {
-    System.out.println("--> create() GET executed");
+    //System.out.println("--> create() GET executed");
     ModelAndView mav = new ModelAndView();
     mav.setViewName("/user/review/create"); // webapp/review/create.jsp
     
@@ -61,12 +61,12 @@ public class ReviewCont {
   @RequestMapping(value= "/user/review/create.do", method= RequestMethod.POST, produces = "application/text; charset=utf8")
   public String create(HttpServletRequest request, ReviewVO reviewVO) {
    
-    // System.out.println("review create()");
+    //System.out.println("review create()");
     JSONObject obj = new JSONObject();
     
     int rono = reviewVO.getRono();
     String rvcont = reviewVO.getRvcont();
-    System.out.println("rvcont : " + rvcont);
+    //System.out.println("rvcont : " + rvcont);
     
     //***************************************************************** 
     // 파일 전송 코드 시작
@@ -85,7 +85,7 @@ public class ReviewCont {
       rvsize1 = file1MF.getSize();
     }
     
-    System.out.println("rvsize1 : " + rvsize1);
+    //System.out.println("rvsize1 : " + rvsize1);
     
     if (rvsize1 > 0) { // 파일사이즈가 0 이상일 경우 (업로드할 경우)
       rvfile1 = Upload.saveFileSpring(file1MF, upDir);
@@ -120,9 +120,9 @@ public class ReviewCont {
         }
       
 
-      System.out.println("등록햇어");
+      //System.out.println("등록햇어");
     } else {
-      System.out.println("등록 못햇어");
+      //System.out.println("등록 못햇어");
     }
     
     obj.put("rono", rono);
@@ -183,7 +183,7 @@ public class ReviewCont {
   
   @RequestMapping(value= "/review/list.do", method= RequestMethod.GET)
   public ModelAndView list(ReviewVO reviewVO) { 
-    System.out.println("--> list() GET executed");
+    //System.out.println("--> list() GET executed");
     ModelAndView mav = new ModelAndView();
     mav.setViewName("/review/list"); // webapp/review/list.jsp
     
@@ -225,7 +225,7 @@ public class ReviewCont {
 
   @RequestMapping(value = "/user/review/update.do", method = RequestMethod.GET)
   public ModelAndView update(int rono, int rvno) {
-    System.out.println("--> update() GET executed");
+    //System.out.println("--> update() GET executed");
     ModelAndView mav = new ModelAndView();
     mav.setViewName("/user/review/update"); // webapp/room/update.jsp
 
@@ -245,12 +245,12 @@ public class ReviewCont {
   @RequestMapping(value= "/user/review/update.do", method= RequestMethod.POST,  produces = "application/text; charset=utf8")
   public String update(HttpServletRequest request, ReviewVO reviewVO) {
     
-    System.out.println(" Update Post called");
+    //System.out.println(" Update Post called");
     
     JSONObject obj = new JSONObject();
     ReviewVO reviewVO_old = reviewVO; 
     
-    System.out.println("cont의 memberno: " + reviewVO_old.getMemberno());
+    //System.out.println("cont의 memberno: " + reviewVO_old.getMemberno());
     
     //***************************************************************** 
     // 파일 전송 코드 시작
@@ -258,7 +258,7 @@ public class ReviewCont {
     String upDir = Tool.getRealPath(request, "/user/review/storage"); // 파일 upload 저장 위치
     MultipartFile file1MF = reviewVO.getFile1MF(); // 업로드 될 파일
     
-    System.out.println("file1MF ---> " + file1MF);
+    //System.out.println("file1MF ---> " + file1MF);
     
     long rvsize1 = 0;
     String rvfile1 = "";
@@ -268,7 +268,7 @@ public class ReviewCont {
       rvsize1 = file1MF.getSize();
     }
     
-    System.out.println("rvsize1 : " + rvsize1);
+    //System.out.println("rvsize1 : " + rvsize1);
     
     if (rvsize1 > 0) { // 파일사이즈가 0 이상일 경우 (업로드할 경우)
       Tool.deleteFile(upDir, reviewVO_old.getRvfile1()); // 기존 파일 삭제
@@ -279,7 +279,7 @@ public class ReviewCont {
       System.out.println("rvsize1 ---> " + rvsize1);
       System.out.println("rvthumb ---> " + rvthumb);
       System.out.println("upDir ---> " + upDir);*/
-      System.out.println("file1MF ---> " + file1MF);
+      //System.out.println("file1MF ---> " + file1MF);
       if (Tool.isImage(rvfile1)) { // 이미지 일 경우
         rvthumb = Tool.preview(upDir, rvfile1, 200, 250); // Thumb 이미지 생성
       }
@@ -294,23 +294,23 @@ public class ReviewCont {
     reviewVO.setRvsize1(rvsize1);
     reviewVO.setRvthumb(rvthumb);
     
-    System.out.println("rvno --->"+reviewVO.getRvno());
-    System.out.println("rvfile1 ---> " + rvfile1);
-    System.out.println("rvsize1 ---> " + rvsize1);
-    System.out.println("rvthumb ---> " + rvthumb);  
+    //System.out.println("rvno --->"+reviewVO.getRvno());
+    //System.out.println("rvfile1 ---> " + rvfile1);
+    //System.out.println("rvsize1 ---> " + rvsize1);
+    //System.out.println("rvthumb ---> " + rvthumb);  
     
-    System.out.println("reviewVO의 memno: " + reviewVO.getMemberno());
+    //System.out.println("reviewVO의 memno: " + reviewVO.getMemberno());
     
     int count = 0;
     count = reviewProc.update(reviewVO);
     
-    System.out.println("count: " + count);
+    //System.out.println("count: " + count);
     if (count == 1) {
-      System.out.println("수정햇어"); 
-      System.out.println("==========================================");
+      //System.out.println("수정햇어"); 
+      //System.out.println("==========================================");
     } else {
-      System.out.println("수정 못햇어");
-      System.out.println("==========================================");
+      //System.out.println("수정 못햇어");
+      //System.out.println("==========================================");
     }
     
     obj.put("count", count);
@@ -393,7 +393,7 @@ public class ReviewCont {
   
   @RequestMapping(value = "/user/review/delete.do", method = RequestMethod.GET)
   public ModelAndView delete(int rvno) {
-    System.out.println("--> review delete() GET executed");
+    //System.out.println("--> review delete() GET executed");
     ModelAndView mav = new ModelAndView();
     mav.setViewName("review/delete"); // webapp/room/delete.jsp
     
@@ -416,6 +416,8 @@ public class ReviewCont {
   public String delete(HttpServletRequest request, int rvno) {
     
     JSONObject obj = new JSONObject();
+    
+    int rvno_delete = rvlikeProc.deleteByRvno(rvno);
     
     ReviewVO reviewVO = reviewProc.read(rvno);
 

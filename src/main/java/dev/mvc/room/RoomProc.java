@@ -17,7 +17,7 @@ public class RoomProc implements RoomProcInter {
   private RoomDAOInter roomDAO = null;
   
   public RoomProc() {
-    System.out.println("--> RoomProc created.");
+    //System.out.println("--> RoomProc created.");
   }
 
   /**

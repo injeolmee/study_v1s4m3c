@@ -105,8 +105,6 @@ session.setMaxInactiveInterval(10);
         <span style='margin:5px;'>|</span>
         <span style="font-weight: bold;"><img src='<%=root%>/jeimages/mypage.png' style='margin-right:5px;'>${sessionScope.admid } 님의
         <a href="<%=root%>/admin/admin/admin_read.do?adminno=${sessionScope.adminno}">My Page</a></span>
-        <span style='margin:5px;'>|</span> 
-        <a href='${pageContext.request.contextPath }/user/message/message_home.do'><img src='<%=root%>/jeimages/message.png' style='margin-right:5px;'>쪽지함</a>
       </c:when> 
       <c:otherwise> 
         <a href="<%=root%>/nonuser/login/login.do">로그인</a>

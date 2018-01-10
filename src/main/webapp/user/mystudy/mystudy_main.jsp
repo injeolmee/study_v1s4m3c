@@ -266,11 +266,11 @@ function cancel_apply(){
   </div> 
   
   <DIV style="text-align: center;">
-    <DIV class="well well-xs" style="border: solid 1px #000000; margin-top: 1%; width: 46.4%; height:200px; display:inline-block;">
+    <DIV class="well well-xs" style="border: solid 1px #000000; margin-top: 1%; width: 45%; height:200px; display:inline-block;">
       <h1>공모전 요약 정보들</h1>
     </DIV>
     
-    <DIV class="well well-xs" style="border: solid 1px #000000; margin-top: 1%; width: 46.4%; height:200px; display: inline-block;">
+    <DIV class="well well-xs" style="border: solid 1px #000000; margin-top: 1%; width: 45%; height:200px; display: inline-block;">
       <h1>취업정보 요약 정보들</h1>
     </DIV>
   </DIV>

@@ -39,12 +39,27 @@
     formData.append("rorunday", $("input[name=rorunday]").val());
     formData.append("rocost", $("input[name=rocost]").val());
     formData.append("rocount", $("input[name=rocount]").val());
-    formData.append("option1", $("input[name=option1]").val());
-    formData.append("option2", $("input[name=option2]").val());
-    formData.append("option3", $("input[name=option3]").val());
-    formData.append("option4", $("input[name=option4]").val());
-    formData.append("option5", $("input[name=option5]").val());
+    /* formData.append("option1", $("input[name=option1]:checkbox:checked").val());
+    formData.append("option2", $("input[name=option2]:checkbox:checked").val());
+    formData.append("option3", $("input[name=option3]:checkbox:checked").val());
+    formData.append("option4", $("input[name=option4]:checkbox:checked").val());
+    formData.append("option5", $("input[name=option5]:checkbox:checked").val());  */
     
+    if($("input[name='option1']:checked").val()){
+      formData.append("option1", $("input[name=option1]").val());
+    }
+    if($("input[name='option2']:checked").val()){
+      formData.append("option2", $("input[name=option2]").val());
+    }
+    if($("input[name='option3']:checked").val()){
+      formData.append("option3", $("input[name=option3]").val());
+    }
+    if($("input[name='option4']:checked").val()){
+      formData.append("option4", $("input[name=option4]").val());
+    }
+    if($("input[name='option5']:checked").val()){
+      formData.append("option5", $("input[name=option5]").val());
+    }
     
 
     //********** NULL 값 Check해  입력안했으면 실행하지 못하도록 함 *****************
@@ -70,7 +85,7 @@
     
   //**********************************************************************************
    
-    if($("input[name=file1MF")[0].files[0] == null) { // 파일 업로드 X의 경우
+    if($("input[name=file1MF]")[0].files[0] == null) { // 파일 업로드 X의 경우
       //alert("그냥업로드 실행"); 
     
       var frm = $('#frm').serialize(); // 위의 코드 사용하지 않고 파일 제외한 모든 데이터를 serialize
@@ -84,7 +99,7 @@
     } else { // 파일 업로드하는 경우
       //alert("파일업로드 실행");
     
-      formData.append("file1MF", $("input[name=file1MF")[0].files[0]); // 파일 업로드까지 추가
+      formData.append("file1MF", $("input[name=file1MF]")[0].files[0]); // 파일 업로드까지 추가
       create_file(formData);
       }
     }
@@ -99,9 +114,9 @@
      dataType: "JSON",
      processData: false,      // 필수 코드 1
      contentType: false,      // 필수 코드 2
-     success: function (data) {
+     success: function (formData) {
        
-       if (data.count == 1) { // 등록 처리가 성공한 경우
+       if (formData.count == 1) { // 등록 처리가 성공한 경우
          alert("스터디룸 게시글을 등록하였습니다.")
          document.location.href = "/study/nonuser/room/list.do";
        } else { // 등록 처리가 실패한 경우

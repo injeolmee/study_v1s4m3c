@@ -49,7 +49,7 @@ public class SaleProc implements SaleProcInter {
     //*************** 제목이 길 경우 "..."로 처리하는 구문 ***************
     while (iter.hasNext()) {
       SaleVO saleVO = iter.next();
-      String saletitle = Tool.textLength(saleVO.getSaletitle(), 25);
+      String saletitle = Tool.textLength(saleVO.getSaletitle(), 20);
       saleVO.setSaletitle(saletitle);
     }
     //*********************************************************************
@@ -76,7 +76,7 @@ public class SaleProc implements SaleProcInter {
     //*************** 제목이 길 경우 "..."로 처리하는 구문 ***************
     while (iter.hasNext()) { 
       SaleVO saleVO = iter.next();
-      String saletitle = Tool.textLength(saleVO.getSaletitle(), 20);
+      String saletitle = Tool.textLength(saleVO.getSaletitle(), 15);
       saleVO.setSaletitle(saletitle);
     }
     //***********************************************************************
@@ -106,7 +106,7 @@ public class SaleProc implements SaleProcInter {
     StringBuffer str = new StringBuffer();
 
     str.append("<style type='text/css'>");
-    str.append("  #paging {text-align: center; margin-top: 5px; font-size: 1em;}");
+    str.append("  #paging {text-align: center; margin-top: 5px; font-size: 1em; float:left;}");
     str.append("  #paging A:link {text-decoration:none; color:black; font-size: 1em;}");
     str.append("  #paging A:hover{text-decoration:none; background-color: #FFFFFF; color:black; font-size: 1em;}");
     str.append("  #paging A:visited {text-decoration:none;color:black; font-size: 1em;}");

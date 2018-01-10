@@ -62,6 +62,10 @@ $(document).ready(function(){
   $("#tab_div > #tab"+cateno).addClass("active");
   
 });
+ 
+function meminfo(memberno) {
+  window.open("/study/user/member/mem_read_info.do?memberno="+memberno, "a", "resizable, width=450, height=500, left=500, top=100");
+}
 
 /* 버튼 드롭다운 */
 function dropdown(pdsno, event){
@@ -137,10 +141,6 @@ function hello(event){
     var pre=$('#preview'+pdsno);
     pre.css("display", "none");
   });
-}
-
-function wait(){
-  alert("개발중!");
 }
 
 /* 쪽지 폼 출력
@@ -283,12 +283,12 @@ function notice(cateno, stdlist_no){  // 페이지을 위해 start_page, end_pag
       var value="";
       
       value+="<TABLE class='table table-striped' style='margin-top: 1%; border-radius:10px;'>"
-      value+="  <colgroup>";
-      value+="    <col style='width: 5%;'/>";
-      value+="    <col style='width: 35%;'/>";
+      value+="  <colgroup>"; 
+      value+="    <col style='width: 5%;'/>"; 
+      value+="    <col style='width: 30%;'/>";
       value+="    <col style='width: 10%;'/>";
       value+="    <col style='width: 10%;'/>";
-      value+="    <col style='width: 10%;'/>";
+      value+="    <col style='width: 15%;'/>";
       value+="    <col style='width: 10%;'/>";
       value+="    <col style='width: 10%;'/>";
       value+="  </colgroup> "; 
@@ -314,13 +314,13 @@ function notice(cateno, stdlist_no){  // 페이지을 위해 start_page, end_pag
           value+="    <td style='text-align: center;'>"+data[i].pdscnt+"</td>";
           
           /* 회원 버튼 클릭시 드롭다운 메뉴 */
-          value+="    <td style='text-align: center;'>"; 
+          value+="    <td style='text-align: center;'>";  
           value+="    <div id='dropdown"+data[i].pdsno+"' class='dropdown'>"; 
-          value+="      <button onclick='dropdown("+data[i].pdsno+", event);' class='btn btn-link' type='button' data-memberno='"+data[i].memberno+"' data-toggle='dropdown'>"+data[i].memid+"("+data[i].memname+")<span class='caret'></span></button>";
-          value+="      <ul id='dropdown_menu"+data[i].pdsno+"' class='dropdown-menu'>";
-          value+="      <li style='text-align:left;'><a onclick='javascript:wait();'><img src='/study/user/my_pds/images/mem_info.png'>회원정보</a></li>";
-          value+="      <li style='text-align:left;'><a onclick='javascript:message(1,"+data[i].memberno+");'><img src='/study/user/my_pds/images/message_add.png'>쪽지보내기</a></li>";
-          //value+="      <li style='text-align:left;'><a onclick='javascript:wait();'>그외 기능</a></li>"; 
+          value+="      <button onclick='dropdown("+data[i].pdsno+", event);' class='btn btn-link' type='button' data-memberno='"+data[i].memberno+"' data-toggle='dropdown'><span style='font-size:0.8em';>"+data[i].memid+"("+data[i].memname+")</span><span class='caret'></span></button>";
+          value+="      <ul id='dropdown_menu"+data[i].pdsno+"' class='dropdown-menu'>";    
+          value+="      <li style='text-align:left;'><a onclick='javascript:meminfo("+data[i].memberno+");'><img src='/study/user/my_pds/images/mem_info.png'>회원정보</a></li>";
+          value+="      <li style='text-align:left;'><a onclick='javascript:message("+${sessionScope.memberno}+" ,"+data[i].memberno+");'><img src='/study/user/my_pds/images/message_add.png'>쪽지보내기</a></li>";
+          //value+="      <li style='text-align:left;'><a onclick='javascript:wait();'>그외 기능</a></li>";  
           value+="      </ul>"; 
           value+="    </div>";
           value+="    </td>";

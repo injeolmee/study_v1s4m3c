@@ -13,7 +13,7 @@ public class RvlikeDAO implements RvlikeDAOInter{
   private SqlSessionTemplate mybatis;
   
   public RvlikeDAO() {
-    System.out.println("---> RvlikeDAO created.");
+    //System.out.println("---> RvlikeDAO created.");
   }
   
   @Override
@@ -41,6 +41,12 @@ public class RvlikeDAO implements RvlikeDAOInter{
   @Override
   public int like_chk_n(HashMap hashMap) {
     return mybatis.update("rvlike.like_chk_n", hashMap);
+  }
+
+  @Override
+  public int deleteByRvno(int rvno) {
+    int count = mybatis.delete("rvlike.deleteByRvno", rvno); 
+    return count;
   }
   
 }

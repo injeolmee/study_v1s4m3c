@@ -165,6 +165,7 @@ public class RoomCont {
    // System.out.println("--> create() GET executed");
    ModelAndView mav = new ModelAndView();
    mav.setViewName("/admin/room/create");
+
    
    return mav;
   }
@@ -195,7 +196,7 @@ public class RoomCont {
     // ---------------------------------------------------------------
     String rolocation = roomVO.getRocity() + " " + roomVO.getRogu() + " " + roomVO.getRodong();
     roomVO.setRolocation(rolocation);
-    System.out.println(rolocation);
+    //System.out.println(rolocation);
     // ---------------------------------------------------------------
     // 주소 조합 & 저장 종료
     // ---------------------------------------------------------------
@@ -205,7 +206,7 @@ public class RoomCont {
     // ---------------------------------------------------------------
     String ronalo = roomVO.getRoname() + " " + roomVO.getRocity() + " " + roomVO.getRogu() + " " + roomVO.getRodong();
     roomVO.setRonalo(ronalo);
-    System.out.println(ronalo); 
+    //System.out.println(ronalo); 
     // ---------------------------------------------------------------
     //  검색 조합 & 저장 종료
     // ---------------------------------------------------------------
@@ -242,7 +243,7 @@ public class RoomCont {
     if (option5 != null) {
       rooption += option5;
     }
-
+    System.out.println("rooption"+rooption);
     roomVO.setRooption(rooption);
 
     // ---------------------------------------------------------------
@@ -294,9 +295,9 @@ public class RoomCont {
     count = roomProc.create(roomVO);
     
     if ( count == 1) {
-      System.out.println("등록햇어");
+      //System.out.println("등록햇어");
     } else {
-      System.out.println("등록 못햇어");
+      //System.out.println("등록 못햇어");
     }
     
     obj.put("count", count);
@@ -317,7 +318,7 @@ public class RoomCont {
    */
   @RequestMapping(value = "/nonuser/room/list.do", method = RequestMethod.GET)
   public ModelAndView list(RoomVO roomVO, ReviewVO reviewVO) { // int cateno, String roname, int nowPage
-    System.out.println("--> list(RoomVO roomVO) GET called");
+    //System.out.println("--> list(RoomVO roomVO) GET called");
     
     ModelAndView mav = new ModelAndView();
     mav.setViewName("/nonuser/room/list"); // webapp/room/list_by_categoryno.jsp
@@ -332,9 +333,9 @@ public class RoomCont {
     List<RoomVO> list = roomProc.list(hashMap);
     mav.addObject("list", list);
     
-    System.out.println("--> nowPage:" + roomVO.getNowPage());
-    System.out.println("--> Rolocation:" + roomVO.getRolocation());
-    System.out.println("--> Ronalo:" + roomVO.getRonalo()); 
+    //System.out.println("--> nowPage:" + roomVO.getNowPage());
+    //System.out.println("--> Rolocation:" + roomVO.getRolocation());
+    //System.out.println("--> Ronalo:" + roomVO.getRonalo()); 
     
     // 검색된 레코드 갯수
     int search_count = roomProc.search_count(hashMap);
@@ -354,7 +355,7 @@ public class RoomCont {
 
   @RequestMapping(value = "/nonuser/room/read.do", method = RequestMethod.GET)
   public ModelAndView read(int rono, HttpSession session) {
-    System.out.println("--> read() GET executed");
+    //System.out.println("--> read() GET executed");
     ModelAndView mav = new ModelAndView();
     mav.setViewName("/nonuser/room/read"); // webapp/room/read.jsp
     
@@ -379,7 +380,7 @@ public class RoomCont {
 
     RoomVO roomVO = roomProc.read(rono);
     
-    System.out.println("roomVO" + roomVO);
+    //System.out.println("roomVO" + roomVO);
     mav.addObject("roomVO", roomVO);
 
     /*
@@ -449,8 +450,8 @@ public class RoomCont {
         // int memberno =  list.get(index).getMemberno();
         int rvno =  list.get(index).getRvno();
        
-        System.out.println("memberno ---> " + memberno);
-        System.out.println("rvno ---> " + rvno);
+        //System.out.println("memberno ---> " + memberno);
+        //System.out.println("rvno ---> " + rvno);
         HashMap hashmap1 = new HashMap();
         hashmap1.put("memberno", memberno);
         hashmap1.put("rvno",  rvno);
@@ -465,17 +466,17 @@ public class RoomCont {
         
         list.get(index).setCount(cnt);
         
-        System.out.println("count ---> " + count);
+        //System.out.println("count ---> " + count);
       }
     }
     
     JSONArray list2 = JSONArray.fromObject(list);
-    System.out.println("list2 ---> " + list2);
+    //System.out.println("list2 ---> " + list2);
     obj.put("list2", list2);
     obj.put("search_count", search_count);
     obj.put("paging", paging);
 
-    System.out.println(obj);
+    //System.out.println(obj);
     return obj.toJSONString();
 
   }
@@ -483,12 +484,25 @@ public class RoomCont {
 
   @RequestMapping(value = "/admin/room/update.do", method = RequestMethod.GET)
   public ModelAndView update(int rono) {
-    System.out.println("--> update() GET executed");
+    //System.out.println("--> update() GET executed");
     ModelAndView mav = new ModelAndView();
     mav.setViewName("/admin/room/update"); // webapp/room/update.jsp
 
     RoomVO roomVO = roomProc.read(rono);
     mav.addObject("roomVO", roomVO);
+    
+  //**************************************************************************
+    // 내용의 특수문자 처리를 위한 구문 시작 
+    //**************************************************************************
+    String rocontent = roomVO.getRocontent(); // 기존 내용을 가져와서
+    String new_rocontent = Tool.toJS(rocontent); // 자바스크립트가 인식할 수 있는 코드로 변환한다.
+    
+    roomVO.setRocontent(new_rocontent);
+    // System.out.println("원래 내용: " + rocontent);
+    // System.out.println("변환한 후의 내용: " + new_rocontent);
+    //**************************************************************************
+    // 내용의 특수문자 처리를 위한 구문 종료
+    //**************************************************************************
 
     // 요일 가져오기
     String rooption = roomVO.getRooption();
@@ -529,7 +543,7 @@ public class RoomCont {
  @ResponseBody
  @RequestMapping(value="/admin/room/update.do", method=RequestMethod.POST, produces = "application/text; charset=utf8")
  public String update(HttpServletRequest request, RoomVO roomVO) {
-   System.out.println("rono" + roomVO.getRono());
+   //System.out.println("rono" + roomVO.getRono());
    JSONObject obj = new JSONObject();
 
    String root = request.getContextPath(); // 절대경로 산출
@@ -648,9 +662,9 @@ public class RoomCont {
    count = roomProc.update(roomVO);
    
    if ( count == 1) {
-     System.out.println("수정했어");
+     //System.out.println("수정했어");
    } else {
-     System.out.println("수정 못했어");
+     //System.out.println("수정 못했어");
    }
    
    obj.put("count", count);
@@ -663,12 +677,12 @@ public class RoomCont {
   @ResponseBody 
   @RequestMapping(value = "/admin/room/delete.do", method = RequestMethod.GET, produces="text/plain;charset=UTF-8")
   public String delete(int rono) {
-    System.out.println("--> delete() GET executed");
+    //System.out.println("--> delete() GET executed");
     
     JSONObject obj = new JSONObject();
 
     int count = reviewProc.countByRono(rono);
-    System.out.println("리뷰글 갯수" + count);
+    //System.out.println("리뷰글 갯수" + count);
     obj.put("count", count);
     
     return obj.toJSONString();
@@ -687,7 +701,7 @@ public class RoomCont {
     JSONObject obj = new JSONObject();
     
     int rvcnt = reviewProc.countByRono(rono);
-    System.out.println(rvcnt);
+    //System.out.println(rvcnt);
     obj.put("rvcnt", rvcnt);
 
     int rono_delete = reviewProc.deleteByRono(rono);

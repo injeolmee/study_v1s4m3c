@@ -105,8 +105,6 @@ $(function() {
  
  //************************ 파일까지 포함한 create.do ***********************
  function create_file(formData) { 
-   alert("rono(file) "+formData.get("rono"))
-   alert("rono(file1MF) "+formData.get("file1MF"))
    $.ajax({
      url: "/study/user/review/create.do",
      type: "POST",
@@ -116,7 +114,6 @@ $(function() {
      processData: false,      // 필수 코드 1
      contentType: false,      // 필수 코드 2
      success: function (formData) {
-       alert("rono3="+rono);
        if (formData.count == 1) { // 등록 처리가 성공한 경우
          alert("게시글을 등록하였습니다.");
          window.opener.document.location.href = window.opener.document.URL;    // 부모창 새로고침​
@@ -153,7 +150,7 @@ $(function() {
  }
  //********************************************************************************
   
-  function rvcreate(){
+/*   function rvcreate(){
 
     var params =$('#frm').serialize();
     params += "&file1MF="+$('#file1MF').val();
@@ -169,7 +166,7 @@ $(function() {
         alert(data.alert);
       }
     })
-  }
+  } */
   
 
 
@@ -201,10 +198,10 @@ $(function() {
                 <IMG id='rofile1' src='/study/admin/room/storage/${roomVO.rofile1}'  width="420px" height="280px">
               </c:when>  
               <c:when test="${fn:endsWith(rofile1, '.gif')}">
-                <IMG id='rofile1'  src='/study/admin/room/storage/${roomVO.rofile1}' width="300px" height="200px">
+                <IMG id='rofile1' src='/study/admin/room/storage/${roomVO.rofile1}'  width="420px" height="280px">
               </c:when>
               <c:when test="${fn:endsWith(rofile1, '.png')}">
-                <IMG id='rofile1'  src='/study/admin/room/storage/${roomVO.rofile1}'' width="300px" height="200px">
+                <IMG id='rofile1' src='/study/admin/room/storage/${roomVO.rofile1}'  width="420px" height="280px">
               </c:when>
             </c:choose>
           </div>

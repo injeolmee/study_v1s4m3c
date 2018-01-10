@@ -149,7 +149,7 @@ $(function(){
     <button type="submit" class="btn btn-default">검색</button>
   </ASIDE> 
   
-  <DIV style="width: 100%; padding-top: 30px; display: table; padding-left: 50%; margin: 0px auto;">
+  <DIV style="width: 100%; padding-top: 30px; display: table; padding-left: 50%; margin: 0px auto; ">
      ${paging}
   </DIV>
   

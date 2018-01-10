@@ -18,7 +18,7 @@ public class ReviewProc implements ReviewProcInter {
   private ReviewDAOInter reviewDAO = null;
   
   public ReviewProc() {
-    System.out.println("--> ReviewProc created.");
+    //System.out.println("--> ReviewProc created.");
   }
 
   @Override

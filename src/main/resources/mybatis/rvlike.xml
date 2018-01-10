@@ -35,4 +35,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     WHERE rvno = #{rvno} AND memberno = #{memberno}
   </update>
   
+  <delete id="deleteByRvno" parameterType="int">
+    DELETE FROM rvlike
+    WHERE rvno=#{rvno}
+  </delete>
+  
 </mapper>
